@@ -12,6 +12,8 @@ import { ParticleSystem } from '../actors/particles';
 import { buildRig } from '../actors/rigs';
 import { CameraRig } from '../player/camera';
 import { Player, type CarryTarget, type CollisionWorld } from '../player/player';
+import { CompanionParty } from '../companions/companions';
+import type { DialogueEngine } from '../dialogue/engine';
 
 export interface SceneServices {
   content: Content;
@@ -19,6 +21,7 @@ export interface SceneServices {
   renderer: RendererSystem;
   input: Input;
   audio: AudioEngine;
+  dialogue: DialogueEngine;
 }
 
 interface Projectile {
@@ -47,6 +50,8 @@ export class PlayScene implements CollisionWorld {
   readonly cameraRig: CameraRig;
   readonly particles: ParticleSystem;
   readonly chips: ChipField;
+  readonly party: CompanionParty;
+  private idleTimer = 0;
   private projectiles: Projectile[] = [];
   private crates: { target: CarryTarget; free: boolean }[] = [];
   private springPads: SpringPad[] = [];
@@ -124,6 +129,16 @@ export class PlayScene implements CollisionWorld {
       };
       this.crates.push(entry);
     }
+
+    // companions travel everywhere with Max
+    this.party = new CompanionParty(s.content, s.renderer.scene, this.build.spawn, ['kenji', 'marcus', 'digger']);
+    s.dialogue.setSpeakerHooks({
+      onSpeakStart: (charId) => {
+        const c = this.party.byId(charId);
+        if (c) { c.setTalking(true); c.face(this.player.pos); }
+      },
+      onSpeakEnd: (charId) => this.party.byId(charId)?.setTalking(false),
+    });
 
     const music = s.content.music[def.music];
     if (music) s.audio.playMusic(music);
@@ -298,12 +313,35 @@ export class PlayScene implements CollisionWorld {
   }
 
   /** Overridden by later phases (NPCs, tasks, enemies, hazards). */
-  protected updateExtras(_dt: number): void { /* base scene has none */ }
+  protected updateExtras(dt: number): void {
+    // companions + ambient voice
+    this.party.update(dt, this.player.pos, this.player.facing, this.build.staticWorld,
+      this.s.content.config.companions.catchUpTeleport);
+
+    // cutscenes freeze the player and can be advanced with interact/jump
+    if (this.s.dialogue.cutsceneActive) {
+      if (this.player.state !== 'dizzy') this.player.state = 'locked';
+      if (this.s.input.pressed('interact') || this.s.input.pressed('jump')) this.s.dialogue.skip();
+    } else if (this.player.state === 'locked') {
+      this.player.state = 'normal';
+    }
+
+    // idle nudges + quiet banter
+    const moving = this.s.input.moveVector().x !== 0 || this.s.input.moveVector().y !== 0;
+    this.idleTimer = moving || this.s.dialogue.speaking ? 0 : this.idleTimer + dt;
+    if (this.idleTimer > 22) {
+      this.idleTimer = 0;
+      this.s.dialogue.idleNudge(this.party.ids());
+    }
+    if (moving && !this.s.dialogue.cutsceneActive) this.s.dialogue.maybeBanter(this.party.ids());
+  }
   protected projectileLanded(_pr: { mesh: THREE.Object3D; carried: CarryTarget }, _hit: THREE.Intersection | null): void { /* combat uses this */ }
 
   dispose(): void {
     this.s.renderer.scene.remove(this.build.group);
     this.s.renderer.scene.remove(this.player.rig.root);
+    for (const c of this.party.actors) this.s.renderer.scene.remove(c.rig.root);
+    this.s.dialogue.setSpeakerHooks({});
     this.s.renderer.clearOutlines();
     this.build.staticWorld.dispose();
     this.particles.dispose();

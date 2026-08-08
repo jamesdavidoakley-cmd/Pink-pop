@@ -1,0 +1,10 @@
+{
+  "$schema": "../schemas/dialogue.schema.json",
+  "id": "banter_blue",
+  "lines": [
+    { "speaker": "digger", "text": "Max, mate — settle this once and for all. Who wore blue first?" },
+    { "speaker": "max", "text": "ME! Sixty-six MILLION years ago!" },
+    { "speaker": "digger", "text": "Yeah but I wore it BETTER." },
+    { "speaker": "marcus", "text": "Peace, champions! You are BOTH magnificent in blue. Marcus has spoken." }
+  ]
+}

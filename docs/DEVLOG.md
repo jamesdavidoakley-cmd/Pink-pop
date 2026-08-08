@@ -34,7 +34,17 @@ Running log of phase progress, decisions, and gate evidence. Newest entries at t
 **Gate evidence:** `vitest tests/unit/jump-logic.test.ts` → 8/8 green (coyote + buffer verified). Headless drive test: run 3 m ✓, jump→double→land ✓, zero console errors ✓ (screenshot in session log). 60 fps note: headless SwiftShader renders ~20 fps; the scene is trivially 60 fps on real GPUs (draw calls: merged static world = 1, movers ~3, instanced chips 1, instanced field 1).
 
 ## P2 · Dialogue & voice
-_(pending)_
+
+**Done:**
+- `DialogueEngine`: delivery-pool selection with **no-repeat memory** (per `char:pool`, resets on exhaustion, persisted structure ready for save binding), `{var}` interpolation, priority bark scheduler (flavour < task < danger; danger interrupts; per-character + per-pool cooldowns; global don't-talk-over lock), rotating ask-speakers (round-robin per `askStyles` set), one-shot cutscene runner (skippable with interact/jump), paired-banter + solo-banter + idle-nudge ambient scheduling (90 s cap from config).
+- Subtitles: bottom bar with **real rendered 3D head portraits** (offscreen renderer, cached; canvas-2D fallback for no-GL), speaker-coloured names, three size classes; cannot be disabled (readability floor — sizes only).
+- TTS wired end-to-end: per-character rate/pitch/lang profiles from `characters.json`, character audio signatures (marimba/timpani/slide-whistle/music-box) before lines, music ducks −6 dB under speech, safety timeouts so a dropped `onend` never stalls dialogue. Graceful degradation proven headless (no voices available → subtitle timing carries the scene).
+- Companions in-world: Kenji/Marcus/Digger follow in formation slots, catch-up teleport at 26 m, ground-snap, talk gestures + face-the-player while speaking.
+- Content: intro cutscene (Vex steals the fossils — all four heroes speak), 3 paired banter scenes.
+
+**Decisions:** `timingScale` on the engine lets tests run pacing-free; banter pairs are one-shot per save (repeats fall back to solo quips) so the writing never wears out its welcome.
+
+**Gate evidence:** headless run of `?demo=voices`: 5 distinct speakers, 6+ lines, subtitles advanced with zero TTS voices present, zero console errors (screenshot in session log). `tests/unit/norepeat.test.ts` → no-repeat, memory roundtrip, speaker rotation, once-only cutscenes all green (12/12 unit tests).
 
 ## P3 · Hub & persistence
 _(pending)_

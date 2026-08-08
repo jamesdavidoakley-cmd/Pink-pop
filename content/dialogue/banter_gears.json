@@ -1,0 +1,10 @@
+{
+  "$schema": "../schemas/dialogue.schema.json",
+  "id": "banter_gears",
+  "lines": [
+    { "speaker": "marcus", "text": "Kenji! Could your machines beat a gladiator in an arm-wrestle?" },
+    { "speaker": "kenji", "text": "With the right lever, Marcus, a machine could arm-wrestle a mountain." },
+    { "speaker": "marcus", "text": "…Marcus would PAY to see that." },
+    { "speaker": "digger", "text": "Put me down for front-row seats, mate." }
+  ]
+}

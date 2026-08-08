@@ -1,0 +1,142 @@
+/* Max & the Star Fossils — UI styles. Big fonts, high contrast, kid-first. */
+
+:root {
+  --ui-font: 'Segoe UI', 'Trebuchet MS', Verdana, system-ui, sans-serif;
+  --ui-font-dyslexia: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
+  --panel-bg: rgba(20, 18, 34, 0.92);
+  --panel-border: #4a4468;
+  --accent: #ffd24a;
+  --accent2: #7fb2ff;
+  --text: #f4f2ff;
+  --good: #6bcb77;
+  --bad: #ff8a8a;
+  --sub-size: 22px;
+}
+
+.ui-root { position: fixed; inset: 0; pointer-events: none; font-family: var(--ui-font); color: var(--text); z-index: 20; }
+.ui-root.dyslexia { font-family: var(--ui-font-dyslexia); }
+.ui-root * { box-sizing: border-box; }
+
+/* ---------------- subtitles ---------------- */
+.subtitle-bar {
+  position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%);
+  max-width: min(880px, 92vw); min-width: 320px;
+  background: var(--panel-bg); border: 3px solid var(--panel-border); border-radius: 18px;
+  padding: 12px 20px 14px 12px; display: flex; gap: 14px; align-items: center;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  opacity: 0; transition: opacity 0.15s ease; pointer-events: none;
+}
+.subtitle-bar.visible { opacity: 1; }
+.subtitle-portrait {
+  width: 64px; height: 64px; border-radius: 14px; flex: 0 0 64px;
+  border: 3px solid var(--panel-border); background: #2a2740; image-rendering: auto;
+}
+.subtitle-body { display: flex; flex-direction: column; gap: 2px; }
+.subtitle-name { font-weight: 800; font-size: calc(var(--sub-size) * 0.72); letter-spacing: 0.4px; }
+.subtitle-text { font-size: var(--sub-size); line-height: 1.35; font-weight: 600; }
+
+/* ---------------- toasts & banners ---------------- */
+.toast-wrap { position: absolute; top: 12%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.toast {
+  background: var(--panel-bg); border: 3px solid var(--panel-border); border-radius: 14px;
+  padding: 10px 22px; font-size: 20px; font-weight: 700; animation: toast-in 0.25s ease;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+}
+@keyframes toast-in { from { transform: translateY(-12px) scale(0.9); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.banner {
+  position: absolute; top: 30%; left: 50%; transform: translateX(-50%);
+  font-size: 54px; font-weight: 900; color: var(--accent);
+  text-shadow: 0 4px 0 #7a5a10, 0 8px 24px rgba(0, 0, 0, 0.6);
+  animation: banner-pop 0.5s cubic-bezier(0.2, 1.6, 0.4, 1);
+  white-space: nowrap;
+}
+@keyframes banner-pop { from { transform: translateX(-50%) scale(0.2); opacity: 0; } to { transform: translateX(-50%) scale(1); opacity: 1; } }
+
+/* ---------------- HUD ---------------- */
+.hud { position: absolute; top: 14px; left: 16px; display: flex; flex-direction: column; gap: 8px; }
+.hud-row { display: flex; align-items: center; gap: 8px; font-size: 22px; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,.6); }
+.hud-hearts { color: #ff6b8a; font-size: 26px; letter-spacing: 2px; }
+.hud-hearts .empty { color: rgba(255,255,255,0.25); }
+.hud-chip { color: var(--accent); }
+.hud-fossil { color: #ffe87f; }
+.brain-meter { display: flex; gap: 4px; }
+.brain-seg { width: 22px; height: 14px; border-radius: 4px; background: rgba(255,255,255,0.15); border: 2px solid var(--panel-border); }
+.brain-seg.full { background: #b47fff; box-shadow: 0 0 8px #b47fff; }
+.hud-prompt {
+  position: absolute; left: 50%; bottom: 22%; transform: translateX(-50%);
+  background: var(--panel-bg); border: 2px solid var(--panel-border); border-radius: 12px;
+  padding: 8px 16px; font-size: 19px; font-weight: 700;
+}
+.hud-prompt .key { background: var(--accent); color: #201a00; padding: 1px 9px; border-radius: 7px; margin-right: 8px; }
+
+/* ---------------- menus ---------------- */
+.menu-screen {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 18px;
+  background: radial-gradient(ellipse at 50% 30%, rgba(38, 34, 66, 0.88), rgba(14, 12, 26, 0.96));
+  pointer-events: auto;
+}
+.menu-title { font-size: 64px; font-weight: 900; color: var(--accent); text-shadow: 0 5px 0 #7a5a10, 0 10px 30px rgba(0,0,0,.7); margin-bottom: 4px; text-align: center; }
+.menu-sub { font-size: 22px; opacity: 0.85; margin-bottom: 18px; }
+.menu-list { display: flex; flex-direction: column; gap: 10px; min-width: 380px; max-height: 62vh; overflow-y: auto; padding: 4px; }
+.menu-btn {
+  font: inherit; font-size: 24px; font-weight: 800; color: var(--text);
+  background: rgba(58, 52, 94, 0.85); border: 3px solid var(--panel-border); border-radius: 14px;
+  padding: 12px 26px; cursor: pointer; text-align: center; transition: transform 0.08s ease, background 0.12s;
+}
+.menu-btn:hover, .menu-btn:focus-visible { background: #4a4276; transform: scale(1.03); outline: none; border-color: var(--accent); }
+.menu-btn:disabled { opacity: 0.45; cursor: default; transform: none; }
+.menu-btn.small { font-size: 19px; padding: 8px 18px; }
+.menu-btn.danger { border-color: #a05050; }
+.menu-note { font-size: 17px; opacity: 0.75; max-width: 560px; text-align: center; line-height: 1.4; }
+.menu-panel {
+  background: var(--panel-bg); border: 3px solid var(--panel-border); border-radius: 18px;
+  padding: 22px 28px; min-width: 420px; max-width: 92vw; max-height: 80vh; overflow-y: auto;
+}
+.menu-panel h2 { margin: 0 0 14px; color: var(--accent); font-size: 28px; }
+.setting-row { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 7px 0; font-size: 19px; font-weight: 600; }
+.setting-row select, .setting-row input[type=range] { font: inherit; pointer-events: auto; }
+.setting-row .toggle { min-width: 74px; }
+.fossil-grid { display: flex; flex-direction: column; gap: 8px; }
+.fossil-row {
+  display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 700;
+  background: rgba(58, 52, 94, 0.6); border: 2px solid var(--panel-border); border-radius: 12px; padding: 10px 14px;
+  cursor: pointer; pointer-events: auto; text-align: left; color: var(--text); font-family: inherit;
+}
+.fossil-row:hover, .fossil-row:focus-visible { border-color: var(--accent); outline: none; }
+.fossil-row .icon { font-size: 26px; width: 36px; text-align: center; }
+.fossil-row .done { color: var(--good); }
+.fossil-row .hint { font-size: 15px; font-weight: 500; opacity: 0.8; }
+
+/* mastery constellations */
+.constellation { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.topic-card { background: rgba(58, 52, 94, 0.55); border: 2px solid var(--panel-border); border-radius: 12px; padding: 10px 14px; }
+.topic-card .stars { color: var(--accent); font-size: 22px; letter-spacing: 3px; }
+.topic-card .stars .off { color: rgba(255,255,255,0.2); }
+.topic-card .name { font-weight: 800; font-size: 17px; }
+.topic-card .note { font-size: 14px; opacity: 0.8; line-height: 1.35; }
+
+/* loading */
+.loading-screen {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: #171428; gap: 20px; pointer-events: auto;
+}
+.loading-title { font-size: 40px; font-weight: 900; color: var(--accent2); }
+.loading-fact { font-size: 22px; max-width: 620px; text-align: center; line-height: 1.5; background: var(--panel-bg); border: 3px solid var(--panel-border); border-radius: 16px; padding: 18px 26px; }
+.loading-fact b { color: var(--accent); }
+
+/* Grown-ups gate */
+.hold-gate { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.hold-bar { width: 260px; height: 18px; border-radius: 9px; background: rgba(255,255,255,0.15); overflow: hidden; border: 2px solid var(--panel-border); }
+.hold-bar > div { height: 100%; width: 0%; background: var(--accent); transition: width 0.05s linear; }
+
+.subtitle-size-small { --sub-size: 17px; }
+.subtitle-size-medium { --sub-size: 22px; }
+.subtitle-size-large { --sub-size: 28px; }
+
+.reduce-flash * { animation-duration: 0.01s !important; }
+
+/* colour-safe tweaks: pair every colour signal with shape/text (handled in markup);
+   this class just boosts contrast a touch */
+.color-safe { --accent: #ffdf70; --good: #7fd4ff; --bad: #ffb37f; }

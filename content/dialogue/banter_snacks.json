@@ -1,0 +1,9 @@
+{
+  "$schema": "../schemas/dialogue.schema.json",
+  "id": "banter_snacks",
+  "lines": [
+    { "speaker": "marcus", "text": "Tonight, my friends, I cook my nonna's pasta. A recipe older than the colosseum!" },
+    { "speaker": "kenji", "text": "I have measured your portions before, Marcus. They defy engineering." },
+    { "speaker": "digger", "text": "I volunteer for quality control. It's a serious job. Someone's gotta do it." }
+  ]
+}

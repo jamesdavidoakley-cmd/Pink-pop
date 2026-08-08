@@ -1,3 +1,4 @@
+import './styles.css';
 import { loadContent } from './engine/loader';
 import { validateContentDev } from './engine/validate-dev';
 import { Game } from './game/game';

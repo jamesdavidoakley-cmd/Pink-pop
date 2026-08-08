@@ -1,0 +1,14 @@
+{
+  "$schema": "../schemas/dialogue.schema.json",
+  "id": "intro",
+  "once": true,
+  "lines": [
+    { "speaker": "vex", "text": "Citizens of Terra Nova! Your Star Fossils are MINE — fuel for my magnificent Know-It-All Engine!", "emote": "smug" },
+    { "speaker": "vex", "text": "Why learn, when my Engine can know it FOR you? You're welcome. Ta-ta!", "emote": "smug" },
+    { "speaker": "max", "text": "Hey! Give those BACK! Thinking is my second-favourite thing after stomping!", "emote": "angry" },
+    { "speaker": "kenji", "text": "Steady, Max-kun. He has clamped Obedience Cogs onto seven great champions. We must free them — one clever step at a time.", "emote": "neutral" },
+    { "speaker": "marcus", "text": "Then we train, we THINK, and we WIN! AVE, little rex — the arena of the mind awaits!", "emote": "happy" },
+    { "speaker": "digger", "text": "And I'll sniff out every sneaky secret on the way. G'day, adventure! Let's fetch those fossils, mate!", "emote": "happy" },
+    { "speaker": "max", "text": "Team Terra Nova… let's GO! RAAAAAR!", "emote": "happy" }
+  ]
+}
