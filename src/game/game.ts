@@ -1,48 +1,85 @@
 import * as THREE from 'three';
 import type { Content } from '../engine/loader';
-import { RendererSystem, toonMat } from '../engine/renderer';
-import { buildRig } from './actors/rigs';
+import { makeStrings } from '../engine/loader';
+import { RendererSystem, type Quality } from '../engine/renderer';
+import { Input } from '../engine/input';
+import { audio } from '../engine/audio';
+import { PlayScene, type SceneServices } from './world/playScene';
 
 /**
- * P0 boot scene: a lit, spinning placeholder Max on a toon platform at 60 fps.
- * Later phases replace this with the full screen flow (title → hub → worlds).
+ * P1 shell: boots straight into a playable level (?level=…, default playground)
+ * with a debug HUD. The full screen flow (title → hub → worlds) lands in P3.
  */
 export class Game {
   private rendererSys: RendererSystem;
+  private input: Input;
   private clock = new THREE.Clock();
+  private scene: PlayScene | null = null;
+  private services: SceneServices;
+  private hud: HTMLDivElement;
+  private fpsSamples: number[] = [];
+  private probeDone = false;
 
   constructor(container: HTMLElement, private content: Content) {
     this.rendererSys = new RendererSystem(container);
+    this.input = new Input();
+    this.services = {
+      content,
+      strings: makeStrings(content),
+      renderer: this.rendererSys,
+      input: this.input,
+      audio,
+    };
+    // audio requires a user gesture
+    const unlock = () => { audio.unlock(); };
+    window.addEventListener('pointerdown', unlock, { once: false });
+    window.addEventListener('keydown', unlock, { once: false });
+
+    this.hud = document.createElement('div');
+    this.hud.style.cssText = 'position:fixed;top:8px;left:10px;color:#fff;font:14px/1.4 system-ui;'
+      + 'text-shadow:0 1px 3px rgba(0,0,0,.7);pointer-events:none;z-index:10;white-space:pre;';
+    container.appendChild(this.hud);
   }
 
   start(): void {
-    const { scene, camera } = this.rendererSys;
-    this.rendererSys.applyPalette({
-      skyTop: '#4f9fe8', skyBottom: '#ffd9a8', fog: '#e8c8a0',
-      sun: '#fff2d8', ambient: '#bfd8ff',
-    });
-
-    const platform = new THREE.Mesh(new THREE.CylinderGeometry(3, 3.4, 0.6, 24), toonMat('#C8945A'));
-    platform.position.y = -0.3;
-    platform.receiveShadow = true;
-    scene.add(platform);
-
-    const max = buildRig(this.content.characters.max);
-    scene.add(max.root);
-    this.rendererSys.addOutline(max.root);
-
-    camera.position.set(0, 1.6, 5);
-    camera.lookAt(0, 1, 0);
-
-    let t = 0;
-    const loop = () => {
-      const dt = Math.min(this.clock.getDelta(), 0.05);
-      t += dt;
-      max.root.rotation.y += dt * 0.9;
-      max.update({ mode: 'idle', speed01: 0 }, t, dt);
-      this.rendererSys.render(dt);
-      requestAnimationFrame(loop);
+    const params = new URLSearchParams(location.search);
+    const levelId = params.get('level') ?? 'playground';
+    this.scene = new PlayScene(this.services, levelId);
+    (window as unknown as { __game: unknown }).__game = {
+      scene: this.scene,
+      player: this.scene.player,
+      goto: (id: string) => this.gotoLevel(id),
     };
-    loop();
+    this.loop();
   }
+
+  gotoLevel(id: string): void {
+    this.scene?.dispose();
+    this.scene = new PlayScene(this.services, id);
+  }
+
+  private loop = (): void => {
+    const dt = Math.min(this.clock.getDelta(), 0.05);
+    this.input.update(dt);
+    this.scene?.update(dt);
+    this.rendererSys.render(dt);
+    this.input.endFrame();
+
+    // fps + auto quality probe
+    const fps = dt > 0 ? 1 / dt : 60;
+    this.fpsSamples.push(fps);
+    if (this.fpsSamples.length > 180) this.fpsSamples.shift();
+    if (!this.probeDone && this.fpsSamples.length === 180) {
+      this.probeDone = true;
+      const avg = this.fpsSamples.reduce((a, b) => a + b, 0) / 180;
+      const cfg = this.content.config.quality;
+      const q: Quality = avg < cfg.lowFpsThreshold ? 'low' : avg < 56 ? 'medium' : 'high';
+      this.rendererSys.setQuality(q);
+    }
+    const avgFps = Math.round(this.fpsSamples.reduce((a, b) => a + b, 0) / Math.max(1, this.fpsSamples.length));
+    if (this.scene) {
+      this.hud.textContent = `${avgFps} fps · ${this.rendererSys.quality}\nAmber Chips: ${this.scene.chipsCollected}\nHearts: ${'♥'.repeat(Math.ceil(this.scene.player.hearts))}`;
+    }
+    requestAnimationFrame(this.loop);
+  };
 }

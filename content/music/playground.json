@@ -1,0 +1,12 @@
+{
+  "$schema": "../schemas/music.schema.json",
+  "id": "playground",
+  "tempo": 112,
+  "root": 48,
+  "mode": "pentMajor",
+  "layers": [
+    { "wave": "triangle", "pattern": [0, null, 4, null, 2, null, 5, null, 0, null, 4, null, 7, 5, 4, 2], "octave": 1, "gain": 0.14, "decay": 0.3, "role": "melody" },
+    { "wave": "sine", "pattern": [0, null, null, null, -3, null, null, null], "octave": 0, "gain": 0.2, "decay": 0.5, "role": "bass" },
+    { "wave": "noise", "pattern": [null, null, 0, null], "octave": 0, "gain": 0.25, "decay": 0.05, "role": "perc" }
+  ]
+}

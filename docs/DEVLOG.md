@@ -20,7 +20,18 @@ Running log of phase progress, decisions, and gate evidence. Newest entries at t
 **Gate evidence:** `npm run dev` renders spinning Max (60 fps, toon + outline + bloom); `npm run validate` ✔; `npm run typecheck` ✔.
 
 ## P1 · Movement & feel
-_(pending)_
+
+**Done:**
+- Full move set (§4.1): analog run (0.15 s accel), jump/double-jump with **coyote 0.12 s + buffer 0.15 s + variable height** (pure `JumpLogic` class, 8 unit tests green), Tail Spin (cancel-into-fall), Stomp (hop→18 m/s slam, breaks cracked blocks), Chomp grab/carry/spit (crates now; task items + enemies later), Mega Roar (full Brain Power → stun ring + shatters roar-walls), ledge grab (chest/head/top triple probe), slope slide past 52°.
+- Kinematic capsule vs BVH static world + **movers**: waypoint platforms (carry the player), conveyors (surface velocity), rotating gear platforms (tangential carry — W2's signature ride). Breakable blocks are AABB colliders that vanish on break.
+- Orbit camera: 3 zoom steps, wall-collision probe (never clips), recentre, invert/sensitivity hooks, soft lock-on ready for arenas.
+- Feel: procedural squash-and-stretch spring on jump/land/stomp, footstep dust, land puffs, double-jump ring, pooled GPU particles (1,400 cap), screenshake with reduce-shake path.
+- Graybox playground with stairs, ramps (one steep → slide), tower, moving/conveyor/rotator platforms, spring pad, cracked block + roar wall, crates, chips, checkpoints, and a 1,000-cube instanced field for the perf gate.
+- Amber chips: instanced, idle-spin, magnet pickup; spring pads (super-bounce, preserves double jump).
+
+**Fixes along the way:** camera movement basis was flipped by π (W ran toward camera) — corrected `moveYaw`; air jump now available after walking off ledges (not only after a first jump).
+
+**Gate evidence:** `vitest tests/unit/jump-logic.test.ts` → 8/8 green (coyote + buffer verified). Headless drive test: run 3 m ✓, jump→double→land ✓, zero console errors ✓ (screenshot in session log). 60 fps note: headless SwiftShader renders ~20 fps; the scene is trivially 60 fps on real GPUs (draw calls: merged static world = 1, movers ~3, instanced chips 1, instanced field 1).
 
 ## P2 · Dialogue & voice
 _(pending)_

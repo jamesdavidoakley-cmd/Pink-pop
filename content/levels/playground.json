@@ -1,0 +1,58 @@
+{
+  "$schema": "../schemas/levels.schema.json",
+  "id": "playground",
+  "nameKey": "level.playground",
+  "subKey": "level.playground.sub",
+  "kind": "playground",
+  "palette": {
+    "skyTop": "#5A9FE8",
+    "skyBottom": "#E8D8B8",
+    "fog": "#C8D0D8",
+    "fogNear": 50,
+    "fogFar": 180,
+    "sun": "#FFF2D8",
+    "ambient": "#BFD8FF"
+  },
+  "music": "playground",
+  "spawn": [0, 1, 0],
+  "geometry": [
+    { "type": "box", "pos": [0, -0.5, 0], "size": [60, 1, 60], "color": "#8A9A78" },
+    { "type": "box", "pos": [8, 0.5, 0], "size": [4, 1, 4], "color": "#A8B890" },
+    { "type": "box", "pos": [13, 1.5, 0], "size": [4, 1, 4], "color": "#A8B890" },
+    { "type": "box", "pos": [18, 2.5, 0], "size": [4, 1, 4], "color": "#A8B890" },
+    { "type": "box", "pos": [24, 4.0, 0], "size": [4, 1, 4], "color": "#98A880" },
+    { "type": "box", "pos": [-8, 1.0, -8], "size": [6, 2, 6], "color": "#B0A088" },
+    { "type": "box", "pos": [-8, 3.0, -14], "size": [6, 2, 6], "color": "#B0A088" },
+    { "type": "ramp", "pos": [0, 0.8, 12], "size": [6, 0.5, 8], "rot": [-0.35, 0, 0], "color": "#C0B098" },
+    { "type": "box", "pos": [0, 2.2, 18.5], "size": [6, 0.5, 6], "color": "#C0B098" },
+    { "type": "ramp", "pos": [-14, 1.6, 6], "size": [5, 0.5, 10], "rot": [-0.9, 0, 0], "color": "#A89078" },
+    { "type": "cyl", "pos": [14, 1, 14], "r": 3, "h": 2, "color": "#90A8B8" },
+    { "type": "cyl", "pos": [20, 2, 18], "r": 2.2, "h": 4, "color": "#90A8B8" },
+    { "type": "box", "pos": [-18, 2, -2], "size": [1, 4, 8], "color": "#8898A8" },
+    { "type": "box", "pos": [-24, 3, -2], "size": [4, 0.6, 8], "color": "#98A8B8" },
+    { "type": "box", "pos": [26, 1.25, -10], "size": [2, 2.5, 2], "color": "#B89A6A", "special": "cracked", "contains": "chips" },
+    { "type": "box", "pos": [-4, 1.5, -20], "size": [6, 3, 0.8], "color": "#7A4A8A", "special": "roarwall" }
+  ],
+  "props": [
+    { "type": "tree", "pos": [-14, 0, 14] },
+    { "type": "rock", "pos": [6, 0, -6] },
+    { "type": "rock", "pos": [7.2, 0, -5.2], "scale": 0.7 },
+    { "type": "sign", "pos": [3, 0, 2], "rot": 0.4 },
+    { "type": "lamp", "pos": [-4, 0, 4] },
+    { "type": "crate", "pos": [2, 0, -4] },
+    { "type": "crate", "pos": [3.2, 0, -4.6] }
+  ],
+  "movers": [
+    { "kind": "platform", "pos": [-13, 3.0, -14], "to": [-19, 3.0, -14], "size": [3, 0.5, 3], "speed": 2, "color": "#C8B060" },
+    { "kind": "conveyor", "pos": [5, 0.2, -14], "size": [10, 0.4, 3], "dir": [1, 0, 0], "speed": 2.5, "color": "#6A7A88" },
+    { "kind": "rotator", "pos": [14, 2.6, 14], "r": 2.6, "speed": 0.8, "color": "#B8863B" }
+  ],
+  "chips": [
+    { "pattern": "ring", "center": [8, 1.6, 0], "radius": 1.4, "count": 6 },
+    { "pattern": "line", "from": [0, 3.2, 16], "to": [0, 3.2, 21], "count": 4 },
+    { "pattern": "cluster", "center": [24, 5.2, 0], "count": 5 }
+  ],
+  "springPads": [{ "pos": [-24, 3.4, 2] }],
+  "checkpoints": [[0, 1, 0], [18, 3.5, 0]],
+  "instancedField": { "count": 1000, "center": [0, 0.3, -40], "spread": 18 }
+}
