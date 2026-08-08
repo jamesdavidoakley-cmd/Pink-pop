@@ -129,7 +129,9 @@ export interface GeoItem {
 export interface FossilDefC {
   id: string; nameKey: string; type: 'task' | 'secret' | 'platforming' | 'arena' | 'boss' | 'bonus';
   pos?: Vec3; taskId?: string; arenaId?: string; hint?: string; speaker?: string;
+  unlock?: { kind: 'mastery' | 'flag'; count?: number; name?: string };
 }
+export interface InfoPointDef { pos: Vec3; textKey: string; speaker: string; label?: string }
 export interface PortalDef { to: string; pos: Vec3; kind: 'door' | 'exit' | 'arena' | 'walk'; gateKey?: string; labelKey?: string; yaw?: number; color?: string; sealed?: boolean }
 export interface MoverDef { kind: 'platform' | 'rotator' | 'conveyor'; pos: Vec3; to?: Vec3; size?: Vec3; r?: number; speed?: number; pause?: number; axis?: 'x' | 'y' | 'z'; dir?: Vec3; color?: string; teeth?: boolean }
 export interface HazardDef { kind: 'steam' | 'bumper'; pos: Vec3; period?: number; onTime?: number; height?: number; damage?: number }
@@ -151,6 +153,7 @@ export interface LevelDef {
   movers?: MoverDef[]; hazards?: HazardDef[]; chips?: ChipGroup[];
   fossils?: FossilDefC[]; enemies?: { archetype: string; pos: Vec3; patrolRadius?: number }[];
   portals?: PortalDef[]; npcs?: NpcDef[]; tasks?: TaskPlacement[];
+  infoPoints?: InfoPointDef[];
   checkpoints?: Vec3[]; secrets?: SecretDef[];
   springPads?: { pos: Vec3; power?: number }[]; quizOrbs?: Vec3[];
   boss?: string; bank?: { pos: Vec3 }; garden?: { pos: Vec3 };

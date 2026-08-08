@@ -132,7 +132,29 @@
           "taskId": { "type": "string" },
           "arenaId": { "type": "string" },
           "hint": { "type": "string" },
-          "speaker": { "type": "string" }
+          "speaker": { "type": "string" },
+          "unlock": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {
+              "kind": { "enum": ["mastery", "flag"] },
+              "count": { "type": "integer" },
+              "name": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "infoPoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pos", "textKey", "speaker"],
+        "properties": {
+          "pos": { "$ref": "#/definitions/vec3" },
+          "textKey": { "type": "string" },
+          "speaker": { "type": "string" },
+          "label": { "type": "string" }
         }
       }
     },

@@ -1,0 +1,139 @@
+{
+  "$schema": "../schemas/levels.schema.json",
+  "id": "hub",
+  "nameKey": "level.hub",
+  "subKey": "level.hub.sub",
+  "kind": "hub",
+  "palette": {
+    "skyTop": "#4F9FE8",
+    "skyBottom": "#FFDBA8",
+    "fog": "#E8CFA8",
+    "fogNear": 55,
+    "fogFar": 170,
+    "sun": "#FFF2D8",
+    "ambient": "#BFD8FF"
+  },
+  "music": "hub",
+  "spawn": [0, 1, 6],
+  "spawnYaw": 3.14159,
+  "geometry": [
+    { "type": "cyl", "pos": [0, -0.6, 0], "r": 30, "r2": 32, "h": 1.2, "seg": 36, "color": "#C8A870" },
+    { "type": "cyl", "pos": [0, 0.05, 0], "r": 12, "r2": 12, "h": 0.3, "seg": 28, "color": "#D8BC88" },
+    { "type": "cyl", "pos": [0, 0.6, 0], "r": 3.4, "r2": 3.8, "h": 1.2, "seg": 20, "color": "#B89058" },
+    { "type": "cyl", "pos": [0, 2.2, 0], "r": 2.4, "r2": 2.8, "h": 2.4, "seg": 18, "color": "#C8A068" },
+    { "type": "cyl", "pos": [0, 4.6, 0], "r": 1.6, "r2": 2.0, "h": 2.4, "seg": 16, "color": "#B89058" },
+    { "type": "cyl", "pos": [0, 7.0, 0], "r": 1.0, "r2": 1.3, "h": 2.4, "seg": 14, "color": "#C8A068" },
+    { "type": "cyl", "pos": [0, 8.6, 0], "r": 1.5, "r2": 1.0, "h": 0.8, "seg": 14, "color": "#E8D8A8" },
+    { "type": "box", "pos": [4.4, 0.9, 1.2], "size": [1.6, 1.8, 1.6], "color": "#C8A874" },
+    { "type": "box", "pos": [3.4, 1.9, -1.6], "size": [1.5, 1.5, 1.5], "color": "#B89864" },
+    { "type": "box", "pos": [1.2, 3.1, -3.4], "size": [1.5, 1.4, 1.5], "color": "#C8A874" },
+    { "type": "box", "pos": [-1.8, 4.3, -2.6], "size": [1.4, 1.3, 1.4], "color": "#B89864" },
+    { "type": "box", "pos": [-3.2, 5.5, 0.2], "size": [1.4, 1.2, 1.4], "color": "#C8A874" },
+    { "type": "box", "pos": [-1.9, 6.7, 2.4], "size": [1.3, 1.1, 1.3], "color": "#B89864" },
+    { "type": "box", "pos": [0.6, 7.8, 2.8], "size": [1.3, 1.0, 1.3], "color": "#C8A874" },
+    { "type": "box", "pos": [0, 1.5, 22.5], "size": [14, 3, 0.6], "color": "#A87858" },
+    { "type": "box", "pos": [-6.7, 1.5, 19], "size": [0.6, 3, 7.5], "color": "#A87858" },
+    { "type": "box", "pos": [6.7, 1.5, 19], "size": [0.6, 3, 7.5], "color": "#A87858" },
+    { "type": "box", "pos": [0, 3.2, 19.2], "size": [14, 0.5, 7.6], "color": "#C86A50" },
+    { "type": "box", "pos": [-4.5, 1.2, 15.4], "size": [4, 2.4, 0.4], "color": "#A87858" },
+    { "type": "box", "pos": [4.5, 1.2, 15.4], "size": [4, 2.4, 0.4], "color": "#A87858" },
+    { "type": "box", "pos": [18, 0.45, 8], "size": [7, 0.9, 6], "color": "#8A9AA8" },
+    { "type": "box", "pos": [18, 1.3, 10.6], "size": [7, 1.0, 0.8], "color": "#6E7E8C" },
+    { "type": "box", "pos": [15.2, 1.5, 8], "size": [1.2, 1.2, 4.5], "color": "#7A8A98" },
+    { "type": "cyl", "pos": [-18, 0.3, 8], "r": 6.5, "r2": 7, "h": 0.6, "seg": 24, "color": "#C8B080" },
+    { "type": "box", "pos": [-18, 1.0, 1.8], "size": [4.5, 1.6, 0.7], "color": "#8A6A48" },
+    { "type": "box", "pos": [-12, 0.5, 18], "size": [8, 1, 7], "color": "#9A7A50" },
+    { "type": "box", "pos": [-12, 1.2, 18], "size": [2.5, 1.4, 2.5], "color": "#8A6A40" },
+    { "type": "box", "pos": [12.5, 0.3, 18], "size": [7, 0.6, 6], "color": "#7A9A5A" }
+  ],
+  "props": [
+    { "type": "awning", "pos": [0, 0.4, 15.2], "color": "#D86A5A" },
+    { "type": "table", "pos": [-3, 0, 18.5] },
+    { "type": "chair", "pos": [-4.2, 0, 18.5] },
+    { "type": "chair", "pos": [-1.8, 0, 18.5] },
+    { "type": "table", "pos": [3, 0, 18.8] },
+    { "type": "chair", "pos": [4.2, 0, 18.8] },
+    { "type": "counter", "pos": [0, 0, 20.6] },
+    { "type": "sign", "pos": [0, 0, 14.2], "rot": 3.14159 },
+    { "type": "gearDeco", "pos": [21.2, 1.2, 6.2], "scale": 0.8 },
+    { "type": "gearDeco", "pos": [20.6, 0.9, 9.8], "scale": 0.55 },
+    { "type": "sign", "pos": [14.8, 0.9, 5.2], "rot": -1.2 },
+    { "type": "flag", "pos": [-18, 0.6, 3.2], "color": "#C03A2E" },
+    { "type": "sign", "pos": [-14.5, 0.6, 4.6], "rot": 1.0 },
+    { "type": "rock", "pos": [-14.8, 1.0, 16.2], "scale": 1.2 },
+    { "type": "rock", "pos": [-9.5, 1.0, 19.8], "scale": 0.8 },
+    { "type": "sign", "pos": [-8.4, 1.0, 15.6], "rot": 0.8 },
+    { "type": "bush", "pos": [9.4, 0.6, 17] },
+    { "type": "bush", "pos": [15.8, 0.6, 20.2] },
+    { "type": "sign", "pos": [9.8, 0.6, 15.2], "rot": -0.6 },
+    { "type": "tree", "pos": [24, 0, -2] },
+    { "type": "tree", "pos": [-24, 0, 0.5] },
+    { "type": "bush", "pos": [7, 0.1, 7] },
+    { "type": "bush", "pos": [-7.4, 0.1, 6.4] },
+    { "type": "lamp", "pos": [5.4, 0.1, 12.6] },
+    { "type": "lamp", "pos": [-5.4, 0.1, 12.6] },
+    { "type": "fossilSpiral", "pos": [8.8, 0.25, -3.4], "scale": 1.4 },
+    { "type": "crate", "pos": [16.4, 0.9, 6.4] },
+    { "type": "crate", "pos": [19.8, 0.9, 5.4] }
+  ],
+  "movers": [
+    { "kind": "platform", "pos": [5.6, 2.2, 4.4], "to": [2.2, 6.4, 4.2], "size": [2.2, 0.4, 2.2], "speed": 1.6, "pause": 0.8, "color": "#E8C878" }
+  ],
+  "chips": [
+    { "pattern": "ring", "center": [0, 0.4, 0], "radius": 14, "count": 10 },
+    { "pattern": "arc", "center": [0, 1.2, -10], "radius": 4, "count": 5 },
+    { "pattern": "cluster", "center": [18, 1.2, 8], "count": 4 },
+    { "pattern": "cluster", "center": [-18, 0.9, 8], "count": 4 },
+    { "pattern": "line", "from": [-12, 1.4, 14.8], "to": [-12, 1.4, 21.2], "count": 4 },
+    { "pattern": "ring", "center": [0, 8.4, 0], "radius": 2.6, "count": 6 }
+  ],
+  "fossils": [
+    {
+      "id": "hub-f1",
+      "nameKey": "fossil.hub.f1",
+      "type": "platforming",
+      "pos": [0, 10.1, 0],
+      "hint": "Someone left a Star Fossil on the very top of the old monument. Climb the crates, ride the gold platform… don't look down!",
+      "speaker": "digger"
+    },
+    {
+      "id": "hub-f2",
+      "nameKey": "fossil.hub.f2",
+      "type": "task",
+      "pos": [12.5, 1.4, 18],
+      "hint": "Digger's Garden grows one plant for every topic you master. Grow three plants and something shiny sprouts too!",
+      "speaker": "digger",
+      "unlock": { "kind": "mastery", "count": 3 }
+    },
+    {
+      "id": "hub-f3",
+      "nameKey": "fossil.hub.f3",
+      "type": "task",
+      "pos": [-18, 2.6, 1.8],
+      "hint": "Beat Marcus's Roman numeral drill at the arena scoreboard — three in a row — and the scoreboard pays out in fossil!",
+      "speaker": "marcus",
+      "unlock": { "kind": "flag", "name": "hub_numeral_drill" }
+    }
+  ],
+  "infoPoints": [
+    { "pos": [0, 0.4, 14.2], "textKey": "cafe.empty", "speaker": "digger", "label": "The Fossil Café" },
+    { "pos": [14.8, 1.2, 5.2], "textKey": "workshop.hubSign", "speaker": "kenji", "label": "Kenji's Workshop" },
+    { "pos": [-14.5, 0.9, 4.6], "textKey": "arena.hubSign", "speaker": "marcus", "label": "Marcus's Arena" },
+    { "pos": [-8.4, 1.3, 15.6], "textKey": "digsite.hubSign", "speaker": "digger", "label": "Digger's Dig Site" }
+  ],
+  "portals": [
+    { "to": "w1", "pos": [-21.3, 0, -5.7], "kind": "door", "gateKey": "w1", "labelKey": "level.w1", "yaw": 1.31, "color": "#C8945A", "sealed": true },
+    { "to": "w2", "pos": [-16.9, 0, -14.1], "kind": "door", "gateKey": "w2", "labelKey": "level.w2", "yaw": 0.873, "color": "#B8863B", "sealed": true },
+    { "to": "w3", "pos": [-9.3, 0, -19.9], "kind": "door", "gateKey": "w3", "labelKey": "level.w3", "yaw": 0.436, "color": "#8A6ABF", "sealed": true },
+    { "to": "w4", "pos": [9.3, 0, -19.9], "kind": "door", "gateKey": "w4", "labelKey": "level.w4", "yaw": -0.436, "color": "#5AA86A", "sealed": true },
+    { "to": "w5", "pos": [16.9, 0, -14.1], "kind": "door", "gateKey": "w5", "labelKey": "level.w5", "yaw": -0.873, "color": "#5A6AAF", "sealed": true },
+    { "to": "w6", "pos": [21.3, 0, -5.7], "kind": "door", "gateKey": "w6", "labelKey": "level.w6", "yaw": -1.31, "color": "#4A7A9A", "sealed": true },
+    { "to": "w7", "pos": [21.7, 0, 3.8], "kind": "door", "gateKey": "w7", "labelKey": "level.w7", "yaw": -1.75, "color": "#3A8A5A", "sealed": true },
+    { "to": "w8", "pos": [0, 0.4, -24], "kind": "door", "gateKey": "vexGate", "labelKey": "door.vexGate", "yaw": 0, "color": "#6A5A8A", "sealed": true }
+  ],
+  "npcs": [
+    { "char": "botto", "pos": [17, 1.6, 7], "yaw": -1.4, "chatPool": "idle_nudge" }
+  ],
+  "checkpoints": [[0, 1, 6], [0, 0.5, -16]],
+  "garden": { "pos": [12.5, 0.6, 18] }
+}

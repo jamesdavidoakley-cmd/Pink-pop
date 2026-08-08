@@ -7,13 +7,17 @@ import type { RendererSystem } from '../../engine/renderer';
 import type { LevelDef } from '../../engine/types';
 import { toonMat } from '../../engine/renderer';
 import { buildLevel, type Breakable, type LevelBuild } from './levelBuilder';
-import { ChipField } from './collectibles';
+import { ChipField, FossilPickup } from './collectibles';
 import { ParticleSystem } from '../actors/particles';
 import { buildRig } from '../actors/rigs';
 import { CameraRig } from '../player/camera';
 import { Player, type CarryTarget, type CollisionWorld } from '../player/player';
 import { CompanionParty } from '../companions/companions';
 import type { DialogueEngine } from '../dialogue/engine';
+import type { Session } from '../session';
+import type { Hud } from '../ui/hud';
+import type { FossilDefC, PortalDef } from '../../engine/types';
+import { InteractableManager } from './interactables';
 
 export interface SceneServices {
   content: Content;
@@ -22,6 +26,11 @@ export interface SceneServices {
   input: Input;
   audio: AudioEngine;
   dialogue: DialogueEngine;
+  session: Session;
+  hud: Hud;
+  /** Game-level navigation: the scene asks, the game decides. */
+  onPortal: (portal: PortalDef) => void;
+  isUiBlocked: () => boolean;
 }
 
 interface Projectile {
@@ -51,19 +60,23 @@ export class PlayScene implements CollisionWorld {
   readonly particles: ParticleSystem;
   readonly chips: ChipField;
   readonly party: CompanionParty;
+  readonly interactables: InteractableManager;
   private idleTimer = 0;
   private projectiles: Projectile[] = [];
   private crates: { target: CarryTarget; free: boolean }[] = [];
   private springPads: SpringPad[] = [];
   private checkpoint: THREE.Vector3;
-  private time = 0;
+  protected time = 0;
   chipsCollected = 0;
-  /** Chip indices collected in this level (persisted by the session layer). */
+  /** Chip indices collected in this visit (chips respawn per visit by design). */
   readonly collectedChipIndices = new Set<number>();
-  onChipCollected: ((total: number) => void) | null = null;
-  onPlayerDizzy: (() => void) | null = null;
+  private fossilPickups: FossilPickup[] = [];
+  private lockedFossils: FossilDefC[] = [];
+  private doorLabels: { sprite: THREE.Sprite; portal: PortalDef }[] = [];
+  private gardenGroup: THREE.Group | null = null;
+  private focusBeacon: THREE.Mesh | null = null;
 
-  constructor(protected s: SceneServices, levelId: string) {
+  constructor(protected s: SceneServices, levelId: string, private opts: { focusFossilId?: string | null } = {}) {
     const def = s.content.levels[levelId];
     if (!def) throw new Error(`unknown level '${levelId}'`);
     this.def = def;
@@ -93,9 +106,16 @@ export class PlayScene implements CollisionWorld {
         shake: (a) => s.renderer.shake(a),
       },
       this.particles, s.audio,
-      s.content.config.difficulty.explorer.bonusHearts,
+      s.content.config.difficulty[s.session.data.difficulty].bonusHearts,
     );
     this.player.teleport(this.build.spawn, this.build.spawnYaw);
+    this.player.brainSegments = s.session.brain;
+
+    this.interactables = new InteractableManager(s.hud, s.input);
+    this.buildPortals();
+    this.buildFossils();
+    this.buildInfoPoints();
+    this.buildGarden();
 
     this.cameraRig = new CameraRig(s.content.config.camera, s.renderer.camera, s.input);
     this.cameraRig.snapTo(this.build.spawn, this.build.spawnYaw + Math.PI);
@@ -174,6 +194,175 @@ export class PlayScene implements CollisionWorld {
     return this.build.staticWorld.raycast(origin, dir, far);
   }
 
+  // ---------------- P3: doors, fossils, info points, garden ----------------
+  private buildPortals(): void {
+    const { strings, session } = this.s;
+    for (const p of this.def.portals ?? []) {
+      if (p.kind === 'walk') continue; // handled by proximity in update
+      const group = new THREE.Group();
+      const big = p.gateKey === 'vexGate';
+      const w = big ? 5.2 : 3.2, h = big ? 6.4 : 4.4;
+      const col = p.color ?? '#C8945A';
+      const pillarL = new THREE.Mesh(new THREE.BoxGeometry(0.7, h, 0.9), toonMat(col));
+      pillarL.position.set(-w / 2, h / 2, 0);
+      const pillarR = pillarL.clone(); pillarR.position.x = w / 2;
+      const lintel = new THREE.Mesh(new THREE.BoxGeometry(w + 1.4, 0.8, 1.1), toonMat(col));
+      lintel.position.y = h + 0.4;
+      const open = !p.sealed && session.doorOpen(p.gateKey ?? '');
+      const glowColor = p.sealed ? '#5A5470' : open ? '#7FE0A0' : '#8A8498';
+      const glow = new THREE.Mesh(
+        new THREE.PlaneGeometry(w - 0.5, h - 0.3),
+        new THREE.MeshBasicMaterial({ color: glowColor, transparent: true, opacity: 0.55, side: THREE.DoubleSide }),
+      );
+      glow.position.y = h / 2 - 0.1;
+      group.add(pillarL, pillarR, lintel, glow);
+      group.position.set(...p.pos);
+      group.rotation.y = p.yaw ?? 0;
+      group.traverse((o) => { o.castShadow = true; });
+      this.build.group.add(group);
+
+      // label sprite: world name + fossil requirement
+      const label = makeTextSprite(this.doorLabelText(p), big ? 480 : 380);
+      label.position.set(p.pos[0], h + 1.6, p.pos[2]);
+      this.build.group.add(label);
+      this.doorLabels.push({ sprite: label, portal: p });
+
+      const pos = new THREE.Vector3(...p.pos);
+      this.interactables.add({
+        id: `portal:${p.to}`,
+        pos, radius: 3.4,
+        label: p.sealed ? strings.get('prompt.locked') : open ? strings.get('prompt.enter') : strings.get('prompt.locked'),
+        onInteract: () => this.tryPortal(p),
+      });
+    }
+  }
+
+  private doorLabelText(p: PortalDef): string {
+    const { strings, session } = this.s;
+    const name = strings.has(p.labelKey ?? '') ? strings.get(p.labelKey!) : p.to;
+    if (p.sealed) return `${name}\n~ sealed ~`;
+    const need = session.gateCost(p.gateKey ?? '');
+    if (session.fossilCount >= need) return `${name}\n* open! *`;
+    return `${name}\n* ${session.fossilCount} of ${need} *`;
+  }
+
+  private tryPortal(p: PortalDef): void {
+    const { strings, session, dialogue } = this.s;
+    if (p.sealed) {
+      if (p.gateKey === 'vexGate') dialogue.bark('vex', 'gate', { priority: 2 });
+      else void dialogue.sayText('digger', strings.get('door.sealed'));
+      return;
+    }
+    const need = session.gateCost(p.gateKey ?? '');
+    if (session.fossilCount < need) {
+      this.s.audio.sfx('incorrect');
+      void dialogue.sayText('digger', strings.get('door.locked', { need, have: session.fossilCount }));
+      return;
+    }
+    this.s.audio.sfx('door');
+    this.s.onPortal(p);
+  }
+
+  private buildFossils(): void {
+    for (const f of this.def.fossils ?? []) {
+      if (!f.pos || this.s.session.hasFossil(f.id)) continue;
+      if (f.type === 'task' && f.taskId) continue;   // task fossils materialise on completion (P4)
+      if (f.type === 'arena' || f.type === 'boss' || f.type === 'bonus') continue; // awarded via arenas/banks
+      if (!this.fossilUnlocked(f)) { this.lockedFossils.push(f); continue; }
+      this.spawnFossilPickup(f);
+    }
+    // focus beacon from fossil select
+    if (this.opts.focusFossilId) {
+      const f = (this.def.fossils ?? []).find((x) => x.id === this.opts.focusFossilId);
+      if (f?.pos && !this.s.session.hasFossil(f.id)) {
+        const beam = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.35, 0.55, 40, 10, 1, true),
+          new THREE.MeshBasicMaterial({ color: '#FFE87F', transparent: true, opacity: 0.22, side: THREE.DoubleSide, depthWrite: false }),
+        );
+        beam.position.set(f.pos[0], f.pos[1] + 18, f.pos[2]);
+        this.build.group.add(beam);
+        this.focusBeacon = beam;
+      }
+    }
+  }
+
+  private fossilUnlocked(f: FossilDefC): boolean {
+    if (!f.unlock) return true;
+    if (f.unlock.kind === 'mastery') return this.s.session.masteredTopicCount >= (f.unlock.count ?? 1);
+    if (f.unlock.kind === 'flag') return this.s.session.flag(f.unlock.name ?? '');
+    return true;
+  }
+
+  protected spawnFossilPickup(f: FossilDefC): void {
+    if (!f.pos) return;
+    this.fossilPickups.push(new FossilPickup(this.build.group, f.id, new THREE.Vector3(...f.pos)));
+  }
+
+  /** Award a fossil with full celebration (used by pickups, tasks, arenas, banks). */
+  awardFossil(fossilId: string): void {
+    const { session, strings, hud, dialogue, audio } = this.s;
+    if (session.hasFossil(fossilId)) return;
+    session.addFossil(fossilId, this.def.id);
+    audio.sfx('fossil');
+    hud.banner(strings.get('fossil.get'));
+    const f = (this.def.fossils ?? []).find((x) => x.id === fossilId);
+    if (f) hud.toast(strings.get(f.nameKey), 3.5);
+    this.particles.confetti(this.player.pos.clone().add(new THREE.Vector3(0, 1.5, 0)), 50);
+    this.s.renderer.shake(0.18);
+    const who = this.party.ids();
+    if (who.length) dialogue.bark(who[Math.floor(Math.random() * who.length)], 'fossil_get', { priority: 2 });
+    dialogue.bark('max', 'fossil_get', { priority: 2 });
+    this.refreshDoorLabels();
+  }
+
+  private refreshDoorLabels(): void {
+    for (const d of this.doorLabels) {
+      updateTextSprite(d.sprite, this.doorLabelText(d.portal));
+    }
+  }
+
+  private buildInfoPoints(): void {
+    for (const [i, ip] of (this.def.infoPoints ?? []).entries()) {
+      const pos = new THREE.Vector3(...ip.pos);
+      this.interactables.add({
+        id: `info:${i}`,
+        pos, radius: 2.6,
+        label: ip.label ?? this.s.strings.get('prompt.talk'),
+        onInteract: () => void this.s.dialogue.sayText(ip.speaker, this.s.strings.get(ip.textKey)),
+      });
+    }
+  }
+
+  private buildGarden(): void {
+    if (!this.def.garden) return;
+    this.gardenGroup = new THREE.Group();
+    this.gardenGroup.position.set(...this.def.garden.pos);
+    this.build.group.add(this.gardenGroup);
+    this.renderGarden();
+  }
+
+  protected renderGarden(): void {
+    if (!this.gardenGroup) return;
+    this.gardenGroup.clear();
+    const n = this.s.session.masteredTopicCount;
+    for (let i = 0; i < Math.max(6, n); i++) {
+      const x = (i % 3 - 1) * 1.6;
+      const z = (Math.floor(i / 3) - 0.5) * 1.6;
+      if (i < n) {
+        const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 0.9, 6), toonMat('#4E9A5E'));
+        stem.position.set(x, 0.45, z);
+        const bloom = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 6), toonMat(['#FF8AB0', '#FFD24A', '#7FB2FF', '#C780FA'][i % 4]));
+        bloom.position.set(x, 1.0, z);
+        this.gardenGroup.add(stem, bloom);
+      } else {
+        const mound = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 5), toonMat('#7A5A38'));
+        mound.scale.y = 0.4;
+        mound.position.set(x, 0.05, z);
+        this.gardenGroup.add(mound);
+      }
+    }
+  }
+
   // ---------------- gameplay handlers ----------------
   private findGrabTarget(pos: THREE.Vector3, fwd: THREE.Vector3, range: number): CarryTarget | null {
     let best: CarryTarget | null = null;
@@ -235,8 +424,10 @@ export class PlayScene implements CollisionWorld {
 
   private handleDizzy(): void {
     this.s.audio.sfx('stun');
-    this.onPlayerDizzy?.();
-    setTimeout(() => this.respawn(true), 1600);
+    setTimeout(() => {
+      this.respawn(true);
+      this.s.dialogue.bark('digger', 'revive', { priority: 2 });
+    }, 1600);
   }
 
   protected respawn(fromDizzy: boolean): void {
@@ -246,7 +437,7 @@ export class PlayScene implements CollisionWorld {
 
   private collectChip(): void {
     this.chipsCollected++;
-    this.onChipCollected?.(this.chipsCollected);
+    this.s.session.addChip();
   }
 
   // ---------------- frame ----------------
@@ -318,6 +509,30 @@ export class PlayScene implements CollisionWorld {
     this.party.update(dt, this.player.pos, this.player.facing, this.build.staticWorld,
       this.s.content.config.companions.catchUpTeleport);
 
+    // interaction prompts + presses
+    this.interactables.update(this.player.pos, this.s.isUiBlocked() || this.s.dialogue.cutsceneActive);
+
+    // fossil pickups (platforming/secret types sitting in the world)
+    for (const fp of this.fossilPickups) {
+      if (fp.update(this.time, this.player.pos)) this.awardFossil(fp.fossilId);
+    }
+    // condition-gated fossils appearing live (garden mastery, arena flag)
+    if (this.lockedFossils.length) {
+      const ready = this.lockedFossils.filter((f) => this.fossilUnlocked(f));
+      for (const f of ready) {
+        this.lockedFossils.splice(this.lockedFossils.indexOf(f), 1);
+        this.spawnFossilPickup(f);
+        this.particles.burst(new THREE.Vector3(...(f.pos ?? [0, 0, 0])), '#FFE87F', 20, 4);
+        this.s.audio.sfx('secret');
+      }
+    }
+    if (this.focusBeacon) this.focusBeacon.rotation.y += dt * 0.5;
+
+    // brain power sync into the save
+    if (this.player.brainSegments !== this.s.session.brain) {
+      this.s.session.setBrain(this.player.brainSegments);
+    }
+
     // cutscenes freeze the player and can be advanced with interact/jump
     if (this.s.dialogue.cutsceneActive) {
       if (this.player.state !== 'dizzy') this.player.state = 'locked';
@@ -342,11 +557,50 @@ export class PlayScene implements CollisionWorld {
     this.s.renderer.scene.remove(this.player.rig.root);
     for (const c of this.party.actors) this.s.renderer.scene.remove(c.rig.root);
     this.s.dialogue.setSpeakerHooks({});
+    this.interactables.clear();
+    this.s.hud.hidePrompt();
     this.s.renderer.clearOutlines();
     this.build.staticWorld.dispose();
     this.particles.dispose();
     this.s.audio.stopMusic();
   }
+}
+
+// ---------------- text sprites (door labels etc.) ----------------
+function drawLabel(canvas: HTMLCanvasElement, text: string): void {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.font = `bold ${canvas.width / 9}px 'Segoe UI', system-ui, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const lines = text.split('\n');
+  lines.forEach((line, i) => {
+    const y = canvas.height / 2 + (i - (lines.length - 1) / 2) * canvas.width / 7;
+    ctx.strokeStyle = 'rgba(20,16,30,0.9)';
+    ctx.lineWidth = canvas.width / 42;
+    ctx.strokeText(line, canvas.width / 2, y);
+    ctx.fillStyle = '#FFF3D6';
+    ctx.fillText(line, canvas.width / 2, y);
+  });
+}
+
+function makeTextSprite(text: string, size = 380): THREE.Sprite {
+  const canvas = document.createElement('canvas');
+  canvas.width = size; canvas.height = size / 2;
+  drawLabel(canvas, text);
+  const tex = new THREE.CanvasTexture(canvas);
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+  sprite.scale.set(size / 64, size / 128, 1);
+  (sprite.userData as { canvas: HTMLCanvasElement }).canvas = canvas;
+  return sprite;
+}
+
+function updateTextSprite(sprite: THREE.Sprite, text: string): void {
+  const canvas = (sprite.userData as { canvas?: HTMLCanvasElement }).canvas;
+  if (!canvas) return;
+  drawLabel(canvas, text);
+  (sprite.material.map as THREE.CanvasTexture).needsUpdate = true;
 }
 
 /** AABB vs capsule pushout (breakable blocks). */

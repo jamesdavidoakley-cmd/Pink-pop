@@ -47,7 +47,18 @@ Running log of phase progress, decisions, and gate evidence. Newest entries at t
 **Gate evidence:** headless run of `?demo=voices`: 5 distinct speakers, 6+ lines, subtitles advanced with zero TTS voices present, zero console errors (screenshot in session log). `tests/unit/norepeat.test.ts` → no-repeat, memory roundtrip, speaker rotation, once-only cutscenes all green (12/12 unit tests).
 
 ## P3 · Hub & persistence
-_(pending)_
+
+**Done:**
+- **Dino Plaza**: climbable central monument (platforming fossil on top, gold lift platform), ring of 8 world doors with pillar-arch visuals, glow state (green open / grey locked / dim sealed) and live canvas-sprite labels showing fossil counts, the Fossil Café (empty tables + a sign that gently promises visitors), Kenji's Workshop corner, Marcus's Arena ring, Digger's Dig Site + **Garden** (one plant grows per mastered topic — living progress bar, feeds hub fossil #2), lamps/trees/crates/chips.
+- **Session layer**: 3 save slots wired live — fossils, chips (global pocket + per-world banks), brain power, mastery, flags, freed champions, gadgets, voice memory, playtime. Autosave on events + every 20 s. Title screen with slot summaries + delete; save export/import as JSON files in Settings.
+- **Screen flow**: title → slot → hub → (doors) → fossil-select modal (icons, hints, spoken hint lines, "Just explore!") → world; loading screens teach a fact from the destination's STEM topic (spaced repetition for free); pause menu (map/constellations, Ask Digger context hints spoken, settings, quit); **Grown-Ups' Corner** behind a hold-3-seconds gate with per-topic plain-English summaries, playtime, break-reminder option.
+- **Settings + accessibility v1** (apply live): music/sfx/voice volumes, speech rate, read-menus-aloud, subtitle size (cannot disable), dyslexia-friendly font, colour-safe palette, reduce shake/flash, hold-vs-toggle, invert Y, camera sensitivity, difficulty (Explorer/Hero framed positively), quality auto/low/med/high.
+- Fossil celebration: banner + confetti + fanfare + Max & companion barks; door labels update live. Condition-gated hub fossils (garden mastery ≥3, numeral-drill flag) pop into existence with a sparkle when earned — conditions are **data** (`unlock` on the fossil def).
+- Kid-fair falls: falling off the world costs no hearts, just a checkpoint return; at 0 hearts Digger drags Max back with a warm line (`revive` pool).
+
+**Decisions:** chips respawn per visit (carried pocket is what persists; banking is capped at 100/world) — farming is possible and fine for 7-year-olds; W1/W2 doors ship `sealed` until their worlds land (P4/P6 flip them). Camera spawn moved out of the café awning (props have no colliders for the probe).
+
+**Gate evidence:** headless run — new game → skip intro → collect the monument-top fossil → reload → slot shows "1 fossils", fossil still held, intro not replayed, zero console errors (`scripts/persist-check.mjs` → PERSISTENCE OK).
 
 ## P4 · Education engine + W1
 _(pending)_

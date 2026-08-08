@@ -1,0 +1,14 @@
+{
+  "$schema": "../schemas/music.schema.json",
+  "id": "hub",
+  "tempo": 96,
+  "root": 50,
+  "mode": "major",
+  "swing": 0.12,
+  "layers": [
+    { "wave": "triangle", "pattern": [0, null, 2, 4, null, 4, 2, null, 0, null, 2, 5, 4, null, 2, null], "octave": 1, "gain": 0.13, "decay": 0.35, "role": "melody" },
+    { "wave": "sine", "pattern": [0, null, null, null, 3, null, null, null, 4, null, null, null, 3, null, null, null], "octave": 0, "gain": 0.18, "decay": 0.6, "role": "bass" },
+    { "wave": "triangle", "pattern": [null, 7, null, 7, null, 7, null, 9], "octave": 1, "gain": 0.06, "decay": 0.2, "role": "arp" },
+    { "wave": "noise", "pattern": [null, null, 0, null, null, null, 0, null], "octave": 0, "gain": 0.15, "decay": 0.04, "role": "perc" }
+  ]
+}

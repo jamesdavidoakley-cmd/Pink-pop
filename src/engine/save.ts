@@ -5,17 +5,22 @@ export interface TopicProgress {
   attempts: number; correct: number;
 }
 
+export interface VoiceMemoryData {
+  used: Record<string, number[]>;   // "char:pool" → used line indices
+  rotation: Record<string, number>; // ask-speaker rotation cursors
+  seenScenes: string[];             // one-shot cutscenes played
+}
+
 export interface SaveData {
   version: number;
   createdAt: number;
   playtimeSeconds: number;
   fossils: string[];
-  chipsCarried: Record<string, number>;   // per level id (un-banked)
-  chipsBanked: Record<string, number>;    // per level id
+  chipsCarried: number;               // global pocket (chips respawn per visit)
+  chipsBanked: Record<string, number>; // per world level id
   brainSegments: number;
   mastery: Record<string, TopicProgress>;
-  voiceUsed: Record<string, number[]>;    // pool key → used line indices
-  seenDialogue: string[];                 // one-shot cutscenes played
+  voice: VoiceMemoryData;
   freedChampions: string[];
   gadgets: string[];
   flags: Record<string, boolean>;
@@ -40,8 +45,9 @@ export const SAVE_VERSION = 1;
 export function freshSave(difficulty: 'explorer' | 'hero' = 'explorer'): SaveData {
   return {
     version: SAVE_VERSION, createdAt: Date.now(), playtimeSeconds: 0,
-    fossils: [], chipsCarried: {}, chipsBanked: {}, brainSegments: 0,
-    mastery: {}, voiceUsed: {}, seenDialogue: [], freedChampions: [], gadgets: [],
+    fossils: [], chipsCarried: 0, chipsBanked: {}, brainSegments: 0,
+    mastery: {}, voice: { used: {}, rotation: {}, seenScenes: [] },
+    freedChampions: [], gadgets: [],
     flags: {}, difficulty, lastLevel: 'hub',
   };
 }
