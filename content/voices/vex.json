@@ -1,0 +1,41 @@
+{
+  "$schema": "../schemas/voices.schema.json",
+  "character": "vex",
+  "pools": {
+    "taunt": [
+      "Learning? How… quaint. My Engine already knows everything, little lizard.",
+      "You *worked out* the answer? Yourself? Disgusting.",
+      "All that thinking. You'll wear your brain out, you know.",
+      "My Engine could have told you that in a nanosecond. Sighhh.",
+      "Effort. Ugh. The word alone makes me need to sit down.",
+      "Adorable. The dinosaur believes in homework.",
+      "Do stop discovering things. It's terribly disruptive to my plans.",
+      "Why learn, when my Engine can know it *for* you?"
+    ],
+    "condescend": [
+      "Oh, bravo. A round of very slow applause.",
+      "Yes, yes, very clever. For a reptile.",
+      "I had champions for this sort of thing, you know. Had.",
+      "Please. My Obedience Cogs turn smarter heads than yours.",
+      "You've come far. It would be a shame to think you'd keep coming farther.",
+      "Little rex, the future is pre-calculated. You're rather off-script."
+    ],
+    "low": [
+      "No matter. NO matter. The Engine accounts for everything…",
+      "Stop looking so… determined. It's unsettling.",
+      "You are becoming a genuinely tiresome lizard.",
+      "Impossible. I had that answer PRE-INSTALLED."
+    ],
+    "defeat": [
+      "Fine. FINE. Perhaps… I have some reading to do.",
+      "The Engine says the probability of this was zero. The Engine may need a rethink. As may I.",
+      "You understand things. How do you BEAR it? …Show me?",
+      "Hmph. Save me a seat at that ridiculous café."
+    ],
+    "gate": [
+      "This gate opens for thirty-eight fossils, lizard. You have… fewer. Ha.",
+      "Behind this door, my Know-It-All Engine hums. Do NOT bring your curiosity.",
+      "Come back when you've collected more shiny disappointments."
+    ]
+  }
+}

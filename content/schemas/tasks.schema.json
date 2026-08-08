@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "tasks.schema.json",
+  "title": "Learning task definition (one of the 8 archetypes)",
+  "type": "object",
+  "required": ["id", "type", "title"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string" },
+    "type": { "enum": ["sortit", "measureit", "numberpath", "quickfire", "buildit", "circuitit", "shadowit", "fractionforge"] },
+    "title": { "type": "string" },
+    "topicId": { "type": "string" },
+    "speaker": { "type": "string" },
+    "intro": { "type": "string" },
+    "success": { "type": "string" },
+    "chain": { "type": "array", "items": { "type": "string" } }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "sortit" } } },
+      "then": {
+        "required": ["bins", "items"],
+        "properties": {
+          "uniqueBins": { "type": "boolean" },
+          "bins": {
+            "type": "array", "minItems": 2,
+            "items": { "type": "object", "required": ["id", "label"], "properties": { "id": { "type": "string" }, "label": { "type": "string" } } }
+          },
+          "items": {
+            "type": "array", "minItems": 3,
+            "items": { "type": "object", "required": ["id", "label", "bin"], "properties": { "id": { "type": "string" }, "label": { "type": "string" }, "bin": { "type": "string" }, "shape": { "type": "string" }, "color": { "type": "string" }, "fact": { "type": "string" } } }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "measureit" } } },
+      "then": {
+        "required": ["mode", "unit", "targets", "step"],
+        "properties": {
+          "mode": { "enum": ["jug", "balance", "money"] },
+          "unit": { "type": "string" },
+          "step": { "type": "number" },
+          "max": { "type": "number" },
+          "targets": {
+            "type": "object",
+            "properties": {
+              "1": { "type": "array", "items": { "type": "number" }, "minItems": 2 },
+              "2": { "type": "array", "items": { "type": "number" }, "minItems": 2 },
+              "3": { "type": "array", "items": { "type": "number" }, "minItems": 2 }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "numberpath" } } },
+      "then": {
+        "required": ["rule", "length"],
+        "properties": {
+          "rule": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {
+              "kind": { "enum": ["multiples", "count-by", "digit-in-place", "coordinates"] },
+              "of": { "type": "integer" },
+              "step": { "type": "integer" },
+              "from": { "type": "integer" },
+              "digit": { "type": "integer" },
+              "place": { "enum": ["ones", "tens", "hundreds", "thousands"] }
+            }
+          },
+          "length": { "type": "integer", "minimum": 3, "maximum": 12 },
+          "width": { "type": "integer", "minimum": 2, "maximum": 4 },
+          "tierRules": { "type": "object" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "quickfire" } } },
+      "then": {
+        "required": ["count"],
+        "properties": {
+          "count": { "type": "integer", "minimum": 1, "maximum": 10 },
+          "topics": { "type": "array", "items": { "type": "string" } },
+          "adaptive": { "type": "boolean" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "buildit" } } },
+      "then": {
+        "required": ["variant", "slots", "goal"],
+        "properties": {
+          "variant": { "enum": ["gears", "lever", "spring", "bones", "bracing", "cogpuzzle"] },
+          "slots": {
+            "type": "array", "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["id", "label", "options"],
+              "properties": {
+                "id": { "type": "string" },
+                "label": { "type": "string" },
+                "options": {
+                  "type": "array", "minItems": 2,
+                  "items": { "type": "object", "required": ["id", "label", "value"], "properties": { "id": { "type": "string" }, "label": { "type": "string" }, "value": { "type": "number" } } }
+                }
+              }
+            }
+          },
+          "goal": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {
+              "kind": { "enum": ["gearSpeed", "gearForce", "leverBalance", "springLaunch", "matchSlots"] },
+              "min": { "type": "number" },
+              "max": { "type": "number" },
+              "loadValue": { "type": "number" },
+              "loadArm": { "type": "number" },
+              "solution": { "type": "object", "additionalProperties": { "type": "string" } }
+            }
+          },
+          "goalText": { "type": "string" },
+          "failText": { "type": "string" }
+        }
+      }
+    }
+  ]
+}

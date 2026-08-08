@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "enemies.schema.json",
+  "title": "Enemy archetype",
+  "type": "object",
+  "required": ["id", "name", "hp", "speed", "behavior", "attack"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "hp": { "type": "number", "minimum": 0.5 },
+    "speed": { "type": "number", "minimum": 0 },
+    "behavior": { "enum": ["scout", "brute", "tinkerer", "buzzer"] },
+    "traits": {
+      "type": "object",
+      "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 }
+    },
+    "traitNoise": { "type": "number", "minimum": 0, "maximum": 0.5 },
+    "attack": {
+      "type": "object",
+      "required": ["kind", "damage", "cooldown", "telegraph"],
+      "properties": {
+        "kind": { "enum": ["projectile", "melee", "charge", "repair"] },
+        "damage": { "type": "number", "minimum": 0 },
+        "cooldown": { "type": "number", "minimum": 0.2 },
+        "range": { "type": "number" },
+        "telegraph": { "type": "number", "minimum": 0.6 },
+        "dizzyOnMiss": { "type": "number" }
+      }
+    },
+    "fleeBelowHp": { "type": "number", "minimum": 0, "maximum": 1 },
+    "alertRadius": { "type": "number" },
+    "aggroRadius": { "type": "number" },
+    "scale": { "type": "number" },
+    "colors": { "type": "object", "additionalProperties": { "type": "string" } },
+    "chompable": { "type": "boolean" }
+  }
+}

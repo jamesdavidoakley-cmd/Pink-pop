@@ -1,0 +1,26 @@
+{
+  "$schema": "../schemas/voices.schema.json",
+  "character": "tinkerer_prime",
+  "pools": {
+    "boss_intro": [
+      "Ooh! A test subject! I mean — an INTRUDER!",
+      "Prime directive: fix everything! Starting with your winning streak!"
+    ],
+    "taunt": [
+      "Tinker tinker, patch patch!",
+      "My turrets missed? I'll fix that. I fix EVERYTHING.",
+      "Warranty void! Warranty VOID!"
+    ],
+    "hit_react": [
+      "Ow! That part was NEW!",
+      "Scratches! On my chassis! RUDE!"
+    ],
+    "low_hp": [
+      "Cannot repair… fast enough… need more spanners!"
+    ],
+    "defeat_freed": [
+      "All fixed…? All FREED! Ooh, that's much better.",
+      "You broke me GENTLY. Appreciated. Professional."
+    ]
+  }
+}

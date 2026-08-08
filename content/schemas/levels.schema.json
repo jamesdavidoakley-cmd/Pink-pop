@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "levels.schema.json",
+  "title": "Level manifest — geometry recipe, spawns, tasks, fossils",
+  "type": "object",
+  "required": ["id", "nameKey", "kind", "palette", "music", "spawn", "geometry"],
+  "definitions": {
+    "vec3": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 },
+    "color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+  },
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string" },
+    "nameKey": { "type": "string" },
+    "subKey": { "type": "string" },
+    "kind": { "enum": ["hub", "world", "arena", "playground"] },
+    "world": { "type": "string" },
+    "gateKey": { "type": "string" },
+    "palette": {
+      "type": "object",
+      "required": ["skyTop", "skyBottom", "fog", "sun", "ambient"],
+      "properties": {
+        "skyTop": { "$ref": "#/definitions/color" },
+        "skyBottom": { "$ref": "#/definitions/color" },
+        "fog": { "$ref": "#/definitions/color" },
+        "fogNear": { "type": "number" },
+        "fogFar": { "type": "number" },
+        "sun": { "$ref": "#/definitions/color" },
+        "sunIntensity": { "type": "number" },
+        "ambient": { "$ref": "#/definitions/color" },
+        "ambientIntensity": { "type": "number" }
+      }
+    },
+    "music": { "type": "string" },
+    "spawn": { "$ref": "#/definitions/vec3" },
+    "spawnYaw": { "type": "number" },
+    "geometry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "pos"],
+        "properties": {
+          "type": { "enum": ["box", "cyl", "ramp"] },
+          "pos": { "$ref": "#/definitions/vec3" },
+          "size": { "$ref": "#/definitions/vec3" },
+          "r": { "type": "number" },
+          "r2": { "type": "number" },
+          "h": { "type": "number" },
+          "seg": { "type": "integer" },
+          "rot": { "$ref": "#/definitions/vec3" },
+          "color": { "$ref": "#/definitions/color" },
+          "collide": { "type": "boolean" },
+          "special": { "enum": ["cracked", "roarwall"] },
+          "contains": { "type": "string" }
+        }
+      }
+    },
+    "props": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "pos"],
+        "properties": {
+          "type": { "type": "string" },
+          "pos": { "$ref": "#/definitions/vec3" },
+          "rot": { "type": "number" },
+          "scale": { "type": "number" },
+          "color": { "$ref": "#/definitions/color" }
+        }
+      }
+    },
+    "movers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "pos"],
+        "properties": {
+          "kind": { "enum": ["platform", "rotator", "conveyor"] },
+          "pos": { "$ref": "#/definitions/vec3" },
+          "to": { "$ref": "#/definitions/vec3" },
+          "size": { "$ref": "#/definitions/vec3" },
+          "r": { "type": "number" },
+          "speed": { "type": "number" },
+          "pause": { "type": "number" },
+          "axis": { "enum": ["x", "y", "z"] },
+          "dir": { "$ref": "#/definitions/vec3" },
+          "color": { "$ref": "#/definitions/color" },
+          "teeth": { "type": "boolean" }
+        }
+      }
+    },
+    "hazards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "pos"],
+        "properties": {
+          "kind": { "enum": ["steam", "bumper"] },
+          "pos": { "$ref": "#/definitions/vec3" },
+          "period": { "type": "number" },
+          "onTime": { "type": "number" },
+          "height": { "type": "number" },
+          "damage": { "type": "number" }
+        }
+      }
+    },
+    "chips": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pattern"],
+        "properties": {
+          "pattern": { "enum": ["ring", "line", "cluster", "arc"] },
+          "center": { "$ref": "#/definitions/vec3" },
+          "from": { "$ref": "#/definitions/vec3" },
+          "to": { "$ref": "#/definitions/vec3" },
+          "radius": { "type": "number" },
+          "count": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "fossils": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "nameKey", "type"],
+        "properties": {
+          "id": { "type": "string" },
+          "nameKey": { "type": "string" },
+          "type": { "enum": ["task", "secret", "platforming", "arena", "boss", "bonus"] },
+          "pos": { "$ref": "#/definitions/vec3" },
+          "taskId": { "type": "string" },
+          "arenaId": { "type": "string" },
+          "hint": { "type": "string" },
+          "speaker": { "type": "string" }
+        }
+      }
+    },
+    "enemies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["archetype", "pos"],
+        "properties": {
+          "archetype": { "type": "string" },
+          "pos": { "$ref": "#/definitions/vec3" },
+          "patrolRadius": { "type": "number" }
+        }
+      }
+    },
+    "portals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["to", "pos", "kind"],
+        "properties": {
+          "to": { "type": "string" },
+          "pos": { "$ref": "#/definitions/vec3" },
+          "kind": { "enum": ["door", "exit", "arena", "walk"] },
+          "gateKey": { "type": "string" },
+          "labelKey": { "type": "string" },
+          "yaw": { "type": "number" },
+          "color": { "$ref": "#/definitions/color" },
+          "sealed": { "type": "boolean" }
+        }
+      }
+    },
+    "npcs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["char", "pos"],
+        "properties": {
+          "char": { "type": "string" },
+          "pos": { "$ref": "#/definitions/vec3" },
+          "yaw": { "type": "number" },
+          "cutscene": { "type": "string" },
+          "practiceTask": { "type": "string" },
+          "chatPool": { "type": "string" },
+          "requiresFreed": { "type": "boolean" }
+        }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ref", "pos"],
+        "properties": {
+          "ref": { "type": "string" },
+          "pos": { "$ref": "#/definitions/vec3" },
+          "yaw": { "type": "number" },
+          "area": { "type": "number" }
+        }
+      }
+    },
+    "checkpoints": { "type": "array", "items": { "$ref": "#/definitions/vec3" } },
+    "secrets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "pos"],
+        "properties": {
+          "id": { "type": "string" },
+          "pos": { "$ref": "#/definitions/vec3" },
+          "fossilId": { "type": "string" }
+        }
+      }
+    },
+    "springPads": { "type": "array", "items": { "type": "object", "required": ["pos"], "properties": { "pos": { "$ref": "#/definitions/vec3" }, "power": { "type": "number" } } } },
+    "quizOrbs": { "type": "array", "items": { "$ref": "#/definitions/vec3" } },
+    "boss": { "type": "string" },
+    "bank": { "type": "object", "properties": { "pos": { "$ref": "#/definitions/vec3" } } },
+    "garden": { "type": "object", "properties": { "pos": { "$ref": "#/definitions/vec3" } } },
+    "instancedField": { "type": "object", "properties": { "count": { "type": "integer" }, "center": { "$ref": "#/definitions/vec3" }, "spread": { "type": "number" } } }
+  }
+}

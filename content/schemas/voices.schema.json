@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "voices.schema.json",
+  "title": "Per-character voice delivery pools",
+  "type": "object",
+  "required": ["character", "pools"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "character": { "type": "string" },
+    "pools": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1 },
+        "minItems": 1
+      }
+    }
+  }
+}

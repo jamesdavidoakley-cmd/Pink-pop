@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "config.schema.json",
+  "title": "Game config — every gameplay tunable",
+  "type": "object",
+  "required": ["player", "camera", "combat", "bossAI", "economy", "education", "doors", "voice", "difficulty", "companions", "quality"],
+  "properties": {
+    "player": {
+      "type": "object",
+      "required": ["runSpeed", "gravity", "jumpHeight", "doubleJumpHeight", "coyoteTime", "jumpBuffer", "maxHearts", "iFramesSeconds", "capsuleRadius", "capsuleHeight"],
+      "properties": {
+        "runSpeed": { "type": "number", "minimum": 1 },
+        "gravity": { "type": "number", "minimum": 1 },
+        "jumpHeight": { "type": "number", "minimum": 0.5 },
+        "coyoteTime": { "type": "number", "minimum": 0 },
+        "jumpBuffer": { "type": "number", "minimum": 0 },
+        "maxHearts": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "camera": { "type": "object", "required": ["distanceSteps", "sensitivity"] },
+    "combat": { "type": "object", "required": ["hitPauseSeconds", "telegraphMinSeconds"] },
+    "bossAI": {
+      "type": "object",
+      "required": ["decisionIntervalMin", "decisionIntervalMax", "softmaxBase", "softmaxTrickeryScale", "banRepeatCount", "habitWindow", "threatBudgetPer10s"]
+    },
+    "economy": { "type": "object", "required": ["chipsPerWorld", "bonusFossilChips", "brainSegments"] },
+    "education": { "type": "object", "required": ["promoteStreak", "demoteMisses", "tierMin", "tierMax", "masteryXpThresholds"] },
+    "doors": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "voice": { "type": "object", "required": ["minVariants", "barkCooldownSeconds", "banterIntervalSeconds"] },
+    "difficulty": { "type": "object", "required": ["explorer", "hero"] },
+    "companions": { "type": "object", "required": ["followDistance"] },
+    "quality": { "type": "object" }
+  }
+}

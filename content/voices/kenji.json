@@ -1,0 +1,123 @@
+{
+  "$schema": "../schemas/voices.schema.json",
+  "character": "kenji",
+  "pools": {
+    "ask_intro": [
+      "Yosh! A calibration check, Max-kun. Ready your brain-tools.",
+      "Hm, my instruments need a reading. Help me measure twice, stomp once?",
+      "Botto has flagged a puzzle. Let us solve it step one, step two…",
+      "A good engineer checks the numbers before the machine. So — checking time!",
+      "Sugoi, a design question! These are my favourite. Think with me?",
+      "One moment — before we build further, we must test what we know.",
+      "My sketchbook has a question in it, Max-kun. Shall we?"
+    ],
+    "correct_first_try": [
+      "Sugoi! Precision-perfect!",
+      "Yosh! First try — your brain is well-oiled today, Max-kun.",
+      "Exactly so. I could not have measured it better with Botto's laser.",
+      "Beautiful thinking. Clean as a fresh blueprint.",
+      "Correct! I am adding a gold star to my sketchbook."
+    ],
+    "correct_after_hint": [
+      "There it is! A hint is just a torch — you still walked the tunnel yourself.",
+      "Yosh — you used the clue like a proper engineer uses a spanner. Correct!",
+      "See? Test, adjust, test again. And now — success!",
+      "Correct, Max-kun. The second attempt is where real building happens."
+    ],
+    "incorrect_gentle": [
+      "Mm, close! A good engineer tests again. Want my hint?",
+      "Not quite — but every bridge I ever built wobbled first. Hint time?",
+      "Interesting guess! The data says otherwise. Shall I share a clue?",
+      "Almost, Max-kun. Even Botto misfires sometimes. Let me light the way a little?"
+    ],
+    "teach": [
+      "Let us walk it together, step one, step two: {explain}",
+      "Watch my sketchbook, Max-kun — here is how it works: {explain}",
+      "No trouble at all. The secret is this: {explain} Now the next one is yours!"
+    ],
+    "hint_sortit": [
+      "Look closely at each one — {hint}",
+      "Sort like an engineer sorts bolts, Max-kun: {hint}",
+      "Botto's scanner says: {hint}"
+    ],
+    "hint_measureit": [
+      "Read the scale slowly, like a careful machine: {hint}",
+      "Measure twice, remember! {hint}",
+      "Check the units, Max-kun. {hint}"
+    ],
+    "hint_numberpath": [
+      "Test each stone in your head before your feet. {hint}",
+      "The pattern is a machine — find its rhythm. {hint}",
+      "Count with me before you jump: {hint}"
+    ],
+    "hint_quickfire": [
+      "Think first, stomp second. {hint}",
+      "Take a breath — the answer is hiding in plain sight. {hint}",
+      "Botto whispers: {hint}"
+    ],
+    "hint_buildit": [
+      "Remember the design loop: plan, build, test, improve. {hint}",
+      "Look at where it wobbles — that is where the answer lives. {hint}",
+      "Which part does the most work? {hint}"
+    ],
+    "streak_3": [
+      "Three in a row! Your brain-engine is warmed up, Max-kun.",
+      "A hat-trick of correct! Sugoi!",
+      "Three! Like a perfect gear train — tooth, tooth, tooth."
+    ],
+    "streak_5": [
+      "FIVE in a row! I must recalibrate my instruments — you are off the chart!",
+      "Five straight! Botto is doing a little dance. I am also doing a little dance.",
+      "Incredible. Five! You could run my workshop, Max-kun."
+    ],
+    "fossil_get": [
+      "A Star Fossil! Handle with care… and also with triumph!",
+      "Yosh! One more spark of knowledge back where it belongs.",
+      "Sugoi! That one shines like polished brass.",
+      "Fossil secured! My clipboard is very pleased."
+    ],
+    "secret_found": [
+      "Ohh! A hidden pocket in the level's design. Excellent eyes!",
+      "A secret! Someone engineered this hiding spot with love.",
+      "Sugoi — off the blueprint entirely!",
+      "Digger's nose wins again. Note it in the sketchbook!"
+    ],
+    "boss_intro": [
+      "Watch their stance, Max-kun. Every fighter is a machine with a pattern.",
+      "Steady. First we observe… then we out-think.",
+      "Remember: a battle is a puzzle wearing armour."
+    ],
+    "boss_low_hp": [
+      "The pattern is breaking, Max-kun — they are almost free!",
+      "Nearly there! Keep your rhythm steady!",
+      "One more clever move and the Cog comes loose!"
+    ],
+    "victory": [
+      "Yosh! The Obedience Cog is off — welcome back, friend.",
+      "Victory by observation, patience, and one excellent dinosaur.",
+      "Sugoi! Let us log this win in very large letters."
+    ],
+    "combat_tip": [
+      "Look at the shield arm, Max-kun — it drops after the third swing!",
+      "They telegraph before they strike. Watch for the glow!",
+      "When they miss, they wobble. That is your moment!",
+      "Distance is a tool too — step back and study them."
+    ],
+    "idle_nudge": [
+      "Hm. My compass says the interesting thing is… that way, probably.",
+      "When stuck, I sketch. When you are stuck — perhaps explore a little?",
+      "Botto detects unfinished adventure nearby.",
+      "A rest is good engineering too. Then — onward?",
+      "I wonder what is behind those rocks over there…",
+      "Max-kun, shall we check the fossil list? Press pause any time."
+    ],
+    "banter": [
+      "Marcus, a lever could lift you. A small one. This is simply true.",
+      "I once built a kettle with seventeen safety features. It made… acceptable tea.",
+      "Botto says hello. Botto says many things, mostly in beeps.",
+      "In Osaka, the trains arrive to the second. I measured. Of course I measured.",
+      "A triangle is the strongest shape, Max-kun. It has no way to lean!",
+      "My toolbelt has a pocket for everything. Except crumbs. Digger, please."
+    ]
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "$schema": "./schemas/config.schema.json",
+  "player": {
+    "runSpeed": 7,
+    "accelTime": 0.15,
+    "airControl": 0.65,
+    "gravity": 24,
+    "jumpHeight": 2.3,
+    "doubleJumpHeight": 1.8,
+    "coyoteTime": 0.12,
+    "jumpBuffer": 0.15,
+    "variableJumpCut": 0.45,
+    "spinDuration": 0.5,
+    "spinCooldown": 0.2,
+    "spinRadius": 1.8,
+    "spinDamage": 1,
+    "stompHopTime": 0.25,
+    "stompSpeed": 18,
+    "stompRadius": 2.4,
+    "stompDamage": 2,
+    "chompRange": 1.6,
+    "spitSpeed": 14,
+    "spitDamage": 1,
+    "roarChargeTime": 0.5,
+    "roarRadius": 9,
+    "roarStunSeconds": 3,
+    "maxHearts": 5,
+    "iFramesSeconds": 0.8,
+    "capsuleRadius": 0.42,
+    "capsuleHeight": 1.35,
+    "ledgeGrabEnabled": true,
+    "slopeSlideAngle": 52,
+    "fallRespawnY": -30
+  },
+  "camera": {
+    "distanceSteps": [4.5, 7, 10],
+    "defaultStep": 1,
+    "height": 1.7,
+    "sensitivity": 2.2,
+    "minPitch": -0.85,
+    "maxPitch": 1.25,
+    "collisionRadius": 0.35,
+    "followLerp": 12
+  },
+  "combat": {
+    "hitPauseSeconds": 0.075,
+    "knockback": 8,
+    "telegraphMinSeconds": 0.6,
+    "heartDropChance": 0.35,
+    "lockOnRange": 14
+  },
+  "bossAI": {
+    "decisionIntervalMin": 0.4,
+    "decisionIntervalMax": 0.8,
+    "softmaxBase": 0.35,
+    "softmaxTrickeryScale": 0.3,
+    "topN": 3,
+    "banRepeatCount": 3,
+    "banRepeatAggressionExempt": 0.8,
+    "habitWindow": 12,
+    "threatBudgetPer10s": 12,
+    "explorerThreatScale": 0.7,
+    "rubberBandDamageThreshold": 2,
+    "rubberBandScale": 0.6,
+    "maxPhases": 3
+  },
+  "economy": {
+    "chipsPerWorld": 100,
+    "bonusFossilChips": 80,
+    "brainSegments": 5,
+    "chipMagnetRadius": 2.2
+  },
+  "education": {
+    "promoteStreak": 3,
+    "demoteMisses": 2,
+    "tierMin": 1,
+    "tierMax": 3,
+    "masteryXpThresholds": [10, 25, 50],
+    "xpFirstTry": 3,
+    "xpAfterHint": 2,
+    "xpTaught": 1,
+    "weakTopicWeight": 3
+  },
+  "doors": {
+    "w1": 0,
+    "w2": 4,
+    "w3": 9,
+    "w4": 14,
+    "w5": 20,
+    "w6": 26,
+    "w7": 32,
+    "vexGate": 38
+  },
+  "voice": {
+    "banterIntervalSeconds": 90,
+    "barkCooldownSeconds": 6,
+    "duckDb": -6,
+    "minVariants": {
+      "companion": {
+        "ask_intro": 6,
+        "correct_first_try": 4,
+        "correct_after_hint": 4,
+        "incorrect_gentle": 4,
+        "teach": 3,
+        "hint_sortit": 3,
+        "hint_measureit": 3,
+        "hint_numberpath": 3,
+        "hint_quickfire": 3,
+        "hint_buildit": 3,
+        "streak_3": 3,
+        "streak_5": 3,
+        "fossil_get": 4,
+        "secret_found": 4,
+        "boss_intro": 3,
+        "boss_low_hp": 3,
+        "victory": 3,
+        "combat_tip": 3,
+        "idle_nudge": 6,
+        "banter": 6
+      },
+      "boss": {
+        "boss_intro": 3,
+        "taunt": 4,
+        "hit_react": 4,
+        "low_hp": 3,
+        "defeat_freed": 3
+      }
+    }
+  },
+  "difficulty": {
+    "explorer": {
+      "bonusHearts": 1,
+      "windupScale": 1.5,
+      "phaseCheckpoints": true,
+      "threatScale": 0.7
+    },
+    "hero": {
+      "bonusHearts": 0,
+      "windupScale": 1.0,
+      "phaseCheckpoints": false,
+      "threatScale": 1.0
+    }
+  },
+  "companions": {
+    "followDistance": 3.2,
+    "catchUpTeleport": 26,
+    "sniffRadius": 12
+  },
+  "quality": {
+    "autoProbeSeconds": 3,
+    "lowFpsThreshold": 45
+  }
+}

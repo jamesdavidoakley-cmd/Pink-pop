@@ -1,0 +1,33 @@
+{
+  "$schema": "../schemas/voices.schema.json",
+  "character": "nightshade",
+  "pools": {
+    "boss_intro": [
+      "Mmm. A guest. How lovely. Do try to keep sight of me.",
+      "The lighthouse sleeps. The shadows don't.",
+      "Softly now. This dance goes quickly."
+    ],
+    "taunt": [
+      "Over here. No — here. Keep up, dear.",
+      "You chase beautifully. Uselessly, but beautifully.",
+      "Blink and I'm elsewhere.",
+      "The dark is simply light that's shy."
+    ],
+    "hit_react": [
+      "Ah — sharp eyes!",
+      "Found me. Once.",
+      "A touch! How did you… interesting.",
+      "Mm. That stung. Prettily done."
+    ],
+    "low_hp": [
+      "Fading now… into somewhere safer.",
+      "You've learned the light too well.",
+      "My shadow betrays me… clever, clever beam."
+    ],
+    "defeat_freed": [
+      "Caught. By a straight line of light. Of course. It was always going to be light.",
+      "The Cog slips away… and I am my own shadow again. Thank you, little sun.",
+      "You aimed the beam and read my shadow. That is *seeing*, dear. Rare gift."
+    ]
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "bosses.schema.json",
+  "title": "BossDefinition — personality emerges from traits",
+  "type": "object",
+  "required": ["id", "name", "hp", "phases", "traits", "moveset", "voicePack", "arena"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "world": { "type": "string" },
+    "kind": { "enum": ["boss", "miniboss"] },
+    "hp": { "type": "number", "minimum": 1 },
+    "phases": { "type": "integer", "minimum": 1, "maximum": 3 },
+    "traits": {
+      "type": "object",
+      "required": ["aggression", "caution", "trickery", "patience", "showmanship"],
+      "properties": {
+        "aggression": { "type": "number", "minimum": 0, "maximum": 1 },
+        "caution": { "type": "number", "minimum": 0, "maximum": 1 },
+        "trickery": { "type": "number", "minimum": 0, "maximum": 1 },
+        "patience": { "type": "number", "minimum": 0, "maximum": 1 },
+        "showmanship": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "traitNoise": { "type": "number", "minimum": 0, "maximum": 0.5 },
+    "moveset": { "type": "string" },
+    "abilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "trigger", "effect"],
+        "properties": {
+          "id": { "type": "string" },
+          "trigger": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": { "enum": ["onHpBelow", "onTimer", "onPlayerStreak", "onDistanceHeld", "onPhaseEnter", "onAllyDown"] },
+              "value": { "type": "number" },
+              "range": { "enum": ["near", "mid", "far"] },
+              "seconds": { "type": "number" }
+            }
+          },
+          "effect": { "type": "string" },
+          "counter": { "type": "string" },
+          "repeat": { "type": "boolean" }
+        }
+      }
+    },
+    "gimmick": { "type": "object" },
+    "voicePack": { "type": "string" },
+    "arena": { "type": "string" },
+    "fossil": { "type": "string" }
+  }
+}

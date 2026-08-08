@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "questions.schema.json",
+  "title": "Question pack (parametric or fixed-choice)",
+  "type": "object",
+  "required": ["id", "strand", "topic", "questions"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string" },
+    "strand": { "enum": ["maths", "science", "engineering"] },
+    "topic": { "type": "string" },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "tier", "template", "askStyles", "hint", "explain"],
+        "properties": {
+          "id": { "type": "string" },
+          "tier": { "type": "integer", "minimum": 1, "maximum": 3 },
+          "template": { "type": "string", "minLength": 3 },
+          "params": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["min", "max"],
+              "properties": {
+                "min": { "type": "number" },
+                "max": { "type": "number" },
+                "multipleOf": { "type": "number" }
+              }
+            }
+          },
+          "answerExpr": { "type": "string" },
+          "distractorRules": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
+          "choices": { "type": "array", "items": { "type": ["string", "number"] }, "minItems": 3 },
+          "answerIndex": { "type": "integer", "minimum": 0 },
+          "askStyles": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
+          "hint": { "type": "string", "minLength": 3 },
+          "explain": { "type": "string", "minLength": 3 }
+        },
+        "oneOf": [
+          { "required": ["answerExpr", "distractorRules"] },
+          { "required": ["choices", "answerIndex"] }
+        ]
+      }
+    }
+  }
+}

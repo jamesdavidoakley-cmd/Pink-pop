@@ -1,0 +1,44 @@
+{
+  "$schema": "../schemas/voices.schema.json",
+  "character": "cogwheel",
+  "pools": {
+    "boss_intro": [
+      "Ah. The famous Max. I've read your file. Spelling: atrocious. Spirit: concerning.",
+      "Welcome to my gearworks. Please observe the machinery. It will be observing you.",
+      "A duel, then. I do hope you brought a method. I brought forty-seven."
+    ],
+    "taunt": [
+      "Sloppy footwork. See me after class.",
+      "My turrets have better aim than your enthusiasm.",
+      "Every move you make, I file under 'predictable'.",
+      "Precision, dinosaur. Pre-ci-sion.",
+      "I calculated this fight last Tuesday. You lose in the third act."
+    ],
+    "hit_react": [
+      "Hm. Recalculating.",
+      "A palpable hit. Noted. Filed. Frowned at.",
+      "You scratched the paintwork. The PAINTWORK.",
+      "Unexpected. I dislike unexpected."
+    ],
+    "low_hp": [
+      "My schematics say this isn't happening. My schematics are… revising.",
+      "Structural integrity: annoyed.",
+      "You are ahead of the syllabus, dinosaur."
+    ],
+    "defeat_freed": [
+      "The Cog — detached. Oh. OH. My mind is my OWN again. …It's rather nice in here.",
+      "Beaten by a student who shows their working. Acceptable. Commendable, even.",
+      "I concede. Gracefully. Elegantly. With only minimal sulking.",
+      "That gear puzzle — you solved it under fire. Front of the class. Café later; bring questions."
+    ],
+    "shield": [
+      "My shield generator laughs at your efforts. Solve the gears or bounce off forever, dear.",
+      "Still shielded! The gear puzzle is at the arena's edge — do try to keep up.",
+      "No puzzle, no progress. THAT is engineering."
+    ],
+    "repair": [
+      "Repair swarm — tidy me up.",
+      "Maintenance interval! Do excuse me."
+    ]
+  }
+}

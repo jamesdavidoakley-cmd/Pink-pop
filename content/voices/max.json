@@ -1,0 +1,57 @@
+{
+  "$schema": "../schemas/voices.schema.json",
+  "character": "max",
+  "pools": {
+    "fossil_get": [
+      "STAR FOSSIL! RAAAAAR!",
+      "Got it got it GOT IT!",
+      "Tiny arms, BIG ideas!",
+      "That's going straight in my favourite pile!"
+    ],
+    "secret_found": [
+      "Whoa — a secret! Did you SEE that?!",
+      "Sneaky sneaky! Found you!",
+      "Best. Hiding spot. EVER."
+    ],
+    "correct_first_try": [
+      "YES! Thinking is my second-favourite thing after stomping!",
+      "Nailed it! My brain is doing a happy roar!",
+      "Ha! I KNEW it!"
+    ],
+    "incorrect_gentle": [
+      "Whoops — okay okay, round two!",
+      "Hmm… let me think. Thinking cap ON.",
+      "Nope? Fine, brain — we go AGAIN!"
+    ],
+    "hurt": [
+      "Oof! Rude!",
+      "Hey! I needed that heart!",
+      "Ow-wow-ow! Okay, focus, Max!"
+    ],
+    "roar": [
+      "RAAAAAAAR!",
+      "MEGA ROOOOAR!",
+      "Hear! Me! ROAR!"
+    ],
+    "idle_nudge": [
+      "Wait — HOW do magnets push without touching?! Somebody tell me!",
+      "Do you think fossils dream? I think they dream.",
+      "My arms are small but my JUMP is enormous.",
+      "I'm gonna stomp something. For science."
+    ],
+    "victory": [
+      "We did it! Team hug! Careful of the tail!",
+      "That's ANOTHER one for team brain-power!",
+      "RAAAAR means 'well played' in dinosaur!",
+      "High five! Low five! Tiny-arm five!"
+    ],
+    "banter": [
+      "Kenji, can you build me LONGER ARMS? Asking for me.",
+      "Marcus, teach me the loud shout! I'm already good at it! RAAR — see?",
+      "Digger, I wore blue first. Sixty-six MILLION years ago. Beat that.",
+      "Race you to the next fossil! Ready, set — wait, where is it? Okay, ready, set, FIND OUT!",
+      "When I grow up I want to be a scientist. A STOMPY scientist.",
+      "Vex says learning is boring. Vex has clearly never learned about volcanoes."
+    ]
+  }
+}

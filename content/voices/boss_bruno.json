@@ -1,0 +1,43 @@
+{
+  "$schema": "../schemas/voices.schema.json",
+  "character": "bruno",
+  "pools": {
+    "boss_intro": [
+      "HA! A challenger! Bruno likes challengers. Bruno likes EVERYTHING about this!",
+      "The quarry's closed, little blue! Closed by ME! Ha-ha!",
+      "You hear that rumble? That's not the canyon. That's ME warming up!"
+    ],
+    "taunt": [
+      "Forward! Always forward! It's the only direction I know!",
+      "Ha-HA! Dodge faster, tiny arms!",
+      "I've flattened mountains flatter than you!",
+      "The Landslide never stops, little rex!",
+      "Come closer! I only want to enthusiastically flatten you!"
+    ],
+    "hit_react": [
+      "Ha! A tickle!",
+      "Oof — good one! Do it again, I dare you!",
+      "That the best stomp you've got? …It was pretty good actually!",
+      "HEY! I felt that in my boots!"
+    ],
+    "low_hp": [
+      "Why is… the room… spinning? KEEP FIGHTING ANYWAY!",
+      "The Landslide is… slowing?! Impossible!",
+      "My knees are arguing with my plans!"
+    ],
+    "defeat_freed": [
+      "The Cog! It's off! I can… I can think my OWN thoughts! First thought: SNACKS!",
+      "HA! You fight like a rockslide, tiny rex! Bruno respects that ENORMOUSLY!",
+      "Free! FREE! And a bit dizzy! But mostly FREE!",
+      "Wait — I was doing WHAT for that clockwork weasel? Ugh. Café. Sorting rocks. Come visit."
+    ],
+    "quake": [
+      "FOSSIL QUAKE! Hop hop, little lizard!",
+      "The ground obeys BRUNO!"
+    ],
+    "dizzy": [
+      "Whuh — swung too big — wooooah…",
+      "Note to self: smaller swings… nah! BIGGER swings!"
+    ]
+  }
+}

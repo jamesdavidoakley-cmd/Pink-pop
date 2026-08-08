@@ -1,0 +1,33 @@
+{
+  "$schema": "../schemas/voices.schema.json",
+  "character": "bastion",
+  "pools": {
+    "boss_intro": [
+      "Well met, small knight. I am the wall. Walls are patient.",
+      "Courtesy first: your footwork is promising. Now — try me.",
+      "I hold this bay. I shall hold it politely, and completely."
+    ],
+    "taunt": [
+      "Impatience loses sieges, little one.",
+      "A fine strike. The wall remains.",
+      "Take your time. I have all of mine.",
+      "You cannot rush stone, dear challenger."
+    ],
+    "hit_react": [
+      "Good form. Noted with respect.",
+      "A clean hit! You honour the bout.",
+      "Well struck. The wall adjusts.",
+      "Ah — through my guard. Impressive."
+    ],
+    "low_hp": [
+      "The wall… cracks. Magnificently done.",
+      "My ramparts thin. Your patience bested mine.",
+      "Nearly through. Finish with honour."
+    ],
+    "defeat_freed": [
+      "The Cog falls. And the wall bows, freely, to a worthy foe.",
+      "Defeat, gracefully accepted. My shield is yours, little knight.",
+      "You saw the flaw in my hasty barricades. Braced learning beats rushed walls."
+    ]
+  }
+}

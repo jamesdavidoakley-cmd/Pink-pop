@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "music.schema.json",
+  "title": "Procedural music brief",
+  "type": "object",
+  "required": ["id", "tempo", "root", "mode", "layers"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string" },
+    "tempo": { "type": "number", "minimum": 40, "maximum": 220 },
+    "root": { "type": "integer", "minimum": 24, "maximum": 84 },
+    "mode": { "enum": ["major", "minor", "dorian", "mixolydian", "pentMajor", "pentMinor"] },
+    "swing": { "type": "number", "minimum": 0, "maximum": 0.5 },
+    "layers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["wave", "pattern", "octave", "gain"],
+        "properties": {
+          "wave": { "enum": ["sine", "square", "sawtooth", "triangle", "noise"] },
+          "pattern": { "type": "array", "items": { "type": ["integer", "null"] }, "minItems": 4 },
+          "octave": { "type": "integer", "minimum": -2, "maximum": 3 },
+          "gain": { "type": "number", "minimum": 0, "maximum": 1 },
+          "decay": { "type": "number", "minimum": 0.02, "maximum": 4 },
+          "role": { "enum": ["melody", "bass", "perc", "pad", "arp"] },
+          "combatOnly": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

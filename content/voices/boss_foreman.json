@@ -1,0 +1,26 @@
+{
+  "$schema": "../schemas/voices.schema.json",
+  "character": "foreman",
+  "pools": {
+    "boss_intro": [
+      "QUOTA! You are BEHIND on your flattening quota!",
+      "The Foreman inspects… one unauthorised dinosaur!"
+    ],
+    "taunt": [
+      "Clock in, get bonked, clock out!",
+      "This quarry runs on ORDER!",
+      "Hard hats! Everyone! Except you!"
+    ],
+    "hit_react": [
+      "Denting company property! ME! I'm the property!",
+      "That goes in your file!"
+    ],
+    "low_hp": [
+      "Filing… an incident report… on MYSELF…"
+    ],
+    "defeat_freed": [
+      "Quota… cancelled… forever? …Lovely.",
+      "The Foreman approves this defeat. Well swung."
+    ]
+  }
+}

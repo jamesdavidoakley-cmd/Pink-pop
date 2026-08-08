@@ -1,0 +1,122 @@
+{
+  "$schema": "../schemas/voices.schema.json",
+  "character": "marcus",
+  "pools": {
+    "ask_intro": [
+      "AVE, Max! Today we train the mightiest muscle — the BRAIN!",
+      "The arena of the mind opens! Step forward, little rex!",
+      "A challenge worthy of champions! Marcus shall watch with enormous pride.",
+      "Hark! The crowd demands an answer! The crowd is me. I demand it kindly.",
+      "Fortuna audaces iuvat — fortune favours the bold! Be bold with this one!",
+      "Marcus once fought three chariots at once. THIS is harder. You will love it.",
+      "Sound the trumpets! A question approaches at full gallop!"
+    ],
+    "correct_first_try": [
+      "GLORIOUS! The crowd goes wild — and the crowd is me!",
+      "Magnificus — magnificent! First strike, clean hit!",
+      "A victory lap for that answer! Run it! I shall cheer!",
+      "HA! Not even my nonna answers so swiftly, and she knows EVERYTHING."
+    ],
+    "correct_after_hint": [
+      "Correct! A champion listens to their trainer — that is wisdom, not weakness!",
+      "YES! The second swing lands true. That is how training works!",
+      "Victory! With a little coaching — as all great victories are.",
+      "The answer falls! You rose again and struck true. Bravissimo!"
+    ],
+    "incorrect_gentle": [
+      "Even Marcus once dropped his sword. Pick it up. Try again — I believe in you, little rex.",
+      "A miss! Excellent — now we know one way it is NOT. Shall I whisper a clue?",
+      "The gladiator who never misses has never fought. Want a hint from your trainer?",
+      "Courage! My first shield had my face-print in it from falling. A hint, perhaps?"
+    ],
+    "teach": [
+      "Then Marcus shall demonstrate, as my trainer once did for me: {explain}",
+      "Gather close! The technique is thus: {explain} Now YOU carry it forward!",
+      "No shame in the teaching ring. Watch: {explain}"
+    ],
+    "hint_sortit": [
+      "Sort them as a general sorts soldiers — by what they are MADE of! {hint}",
+      "Study each recruit before assigning their legion! {hint}",
+      "Discipline! One at a time, ask: where do YOU belong? {hint}"
+    ],
+    "hint_measureit": [
+      "Precision, little rex! A gladiator measures every step. {hint}",
+      "Slowly, slowly — count like the arena clock. {hint}",
+      "My nonna measures flour to the grain. Channel my nonna! {hint}"
+    ],
+    "hint_numberpath": [
+      "March ONLY where the numbers command! {hint}",
+      "The path is a battle formation — find its order! {hint}",
+      "Test each stone as you would test a bridge before a legion crosses. {hint}"
+    ],
+    "hint_quickfire": [
+      "Strike fast but think FIRST! {hint}",
+      "The answer stands in plain sight, like a nervous gladiator. {hint}",
+      "Steady your aim, then stomp with GLORY! {hint}"
+    ],
+    "hint_buildit": [
+      "Build as Rome built — to LAST! {hint}",
+      "Look to the strongest shape, little architect! {hint}",
+      "A wall is only as brave as its bracing! {hint}"
+    ],
+    "streak_3": [
+      "THREE victories in a row! The colosseum chants your name!",
+      "A triple triumph! Tri-umph! The word was MADE for this!",
+      "Three straight! Even the practice dummies applaud!"
+    ],
+    "streak_5": [
+      "FIVE! FIVE! Marcus is weeping proud gladiator tears!",
+      "An unbroken five! They will paint this on pottery!",
+      "FIVE in a row — you fight with the brain of a general!"
+    ],
+    "fossil_get": [
+      "A STAR FOSSIL! Raise it high! The sun itself salutes you!",
+      "Treasure of champions! My heart grows three sizes — it was already huge!",
+      "GLORIA! Another spark of knowledge rescued from villainy!",
+      "The fossil is ours! Tonight, my nonna's honey cakes for everyone!"
+    ],
+    "secret_found": [
+      "A hidden chamber! Like the tunnels beneath the colosseum!",
+      "Secrets! The mark of a TRUE explorer, this!",
+      "Ha-HA! The world rewards the curious!",
+      "A discovery worthy of song! I shall compose one. Later. It will be loud."
+    ],
+    "boss_intro": [
+      "Shields up, little rex! See how they move — patience is also a weapon!",
+      "A worthy opponent! Fight with honour — and with excellent footwork!",
+      "Remember your training! Watch, wait, STRIKE!"
+    ],
+    "boss_low_hp": [
+      "They tire! Finish this with style, champion!",
+      "The final round! The crowd — still me — is ON ITS FEET!",
+      "One more! Strike like thunder, land like a feather!"
+    ],
+    "victory": [
+      "VICTORY! And better — a friend freed from that wretched Cog!",
+      "The battle ends, the friendship begins! That is the TRUE triumph!",
+      "Ave, champion! Rome would have loved you. I love you MORE!"
+    ],
+    "combat_tip": [
+      "See how she waits? Patience is also a weapon!",
+      "After the big swing comes the big wobble — THAT is your opening!",
+      "Circle, little rex! Never stand still in the arena!",
+      "Guard high when they glow, strike when they gasp!"
+    ],
+    "idle_nudge": [
+      "Adventure does not knock twice, little rex! Onward?",
+      "My sandals grow restless! Shall we explore?",
+      "Somewhere out there, a fossil awaits its hero. I smell destiny. Or lunch.",
+      "The arena taught me: when unsure, MOVE YOUR FEET.",
+      "Perhaps that ledge over there? Marcus believes in ledges.",
+      "A stretched tail is a happy tail! Let us wander!"
+    ],
+    "banter": [
+      "Kenji, your machines are clever — but can a machine do THIS? (I am flexing.)",
+      "My nonna's tomato sauce could end wars. It nearly started one, once.",
+      "In Rome, we had no jump buttons. We simply JUMPED. Uphill! In armour!",
+      "Digger, you would have made a fine war-hound. Too cheeky for parades, though.",
+      "I number my push-ups in Roman numerals. Today: C! That is one hundred glorious push-ups!",
+      "A gladiator's secret: the loudest shout wins the fight before it starts. AVE!"
+    ]
+  }
+}

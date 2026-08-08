@@ -1,0 +1,122 @@
+{
+  "$schema": "../schemas/voices.schema.json",
+  "character": "digger",
+  "pools": {
+    "ask_intro": [
+      "G'day! Quick brain-scratcher for ya — too easy, I reckon.",
+      "Oi Max, riddle time! Winner gets… the warm glow of being right.",
+      "Sniffed out a question, mate. Have a crack!",
+      "Here's a beauty. Fair dinkum, you'll get this one.",
+      "Pop quiz, mate! No pressure — just fun pressure.",
+      "Reckon you know this one? Course ya do. Off ya go!",
+      "One little puzzle between us and glory, mate!"
+    ],
+    "correct_first_try": [
+      "Too easy! Knew you had it, mate.",
+      "Ripper! First go and everything!",
+      "Bang on! You little beauty!",
+      "That's the stuff! Gold star, no waiting."
+    ],
+    "correct_after_hint": [
+      "There it is! Second sniff always finds the bone.",
+      "Ripper — a nudge and you nailed it!",
+      "See? Told ya it was in there somewhere. Good on ya!",
+      "That's it, mate! Hints are just friendship in word form."
+    ],
+    "incorrect_gentle": [
+      "No wukkas. Even good dogs bury the bone in the wrong yard sometimes. Second sniff?",
+      "Not that one, mate — no drama. Want a whiff of a hint?",
+      "Close but no biscuit! Fancy a clue from ya best mate?",
+      "Aw, nearly! Happens to the best of us. Hint's on the house if ya want it."
+    ],
+    "teach": [
+      "Righto, lean in — here's the trick of it: {explain}",
+      "No stress, mate. Watch old Digger: {explain} Easy as!",
+      "Here's the good oil: {explain} You'll smash the next one."
+    ],
+    "hint_sortit": [
+      "Give each one a good sniff — {hint}",
+      "Sort 'em like I sort me bones: by what they really are. {hint}",
+      "One at a time, mate, no rush. {hint}"
+    ],
+    "hint_measureit": [
+      "Easy does it — nudge it bit by bit. {hint}",
+      "Watch the numbers climb, mate. {hint}",
+      "Not too much, not too little — just right. {hint}"
+    ],
+    "hint_numberpath": [
+      "Only step where the numbers say, mate! {hint}",
+      "Have a squiz at the pattern first. {hint}",
+      "Wrong stones just boing ya — have a go! {hint}"
+    ],
+    "hint_quickfire": [
+      "Trust ya nose — er, brain! {hint}",
+      "Have a think, then stomp it good. {hint}",
+      "Reckon it's starin' right at ya. {hint}"
+    ],
+    "hint_buildit": [
+      "If it wobbles, it's tellin' ya something, mate. {hint}",
+      "Build it sturdy, like a good kennel. {hint}",
+      "Try a part, test it, swap it — no harm done! {hint}"
+    ],
+    "streak_3": [
+      "Three on the trot! You're cookin', mate!",
+      "That's a hat-trick! Do dogs wear hats? This one would.",
+      "Three straight — fair dinkum brilliant!"
+    ],
+    "streak_5": [
+      "FIVE in a row?! Someone fetch me a bigger tail to wag!",
+      "Five straight! You beauty, you absolute legend!",
+      "Five! I'd give ya a medal but I buried it somewhere safe."
+    ],
+    "fossil_get": [
+      "STAR FOSSIL! You little ripper!",
+      "That's the shiny stuff! Good on ya, mate!",
+      "Woohoo! One more for the collection!",
+      "Fossil secured! Happy dance? Happy dance."
+    ],
+    "secret_found": [
+      "Knew it! Me nose is never wrong. Well. Rarely wrong.",
+      "A secret! Smelled it from a mile off, mate!",
+      "Ripper hidey-hole, this! Good sniffin' all round.",
+      "Ha! The sneaky spots always have the best treasure."
+    ],
+    "boss_intro": [
+      "Watch yaself, mate — this one's got tricks up both sleeves.",
+      "I'll keep me eyes on the edges. You watch the middle!",
+      "Big fight, big brain. You've got both covered, mate."
+    ],
+    "boss_low_hp": [
+      "They're wobblin', mate! Nearly done!",
+      "One more good whack with that brain of yours!",
+      "The Cog's comin' loose — I can hear it rattlin'!"
+    ],
+    "victory": [
+      "Too easy! Well — medium easy. Well fought, mate!",
+      "You beauty! Another champion back on the good team!",
+      "That's how it's done! Snags at the café to celebrate!"
+    ],
+    "combat_tip": [
+      "Behind ya, mate — watch the sneaky one!",
+      "They always glow before the big whack. Eyes peeled!",
+      "Off to ya left! No — my left. Er — THAT way!",
+      "Duck and weave, mate, duck and weave!"
+    ],
+    "idle_nudge": [
+      "Reckon we should have a squiz over there?",
+      "Me nose is twitchin'. Somethin's near, mate.",
+      "Not to be a bother, but… adventure's THAT way. Probably.",
+      "Fancy a wander? The fossils won't find themselves!",
+      "I smell chips. The amber kind. Somewhere close…",
+      "Nap or quest, nap or quest… let's quest, then nap!"
+    ],
+    "banter": [
+      "Max, mate, we've gotta talk about who wore blue first. It was me. Dogs came first. Look it up.",
+      "Kenji built me an automatic ball-thrower once. Best day of me entire life.",
+      "Marcus, ya big softie — I saw ya cry at the sunset yesterday. Beautiful, wasn't it?",
+      "A word for Vex, when we find him: BARK. That's it. That's the word.",
+      "Buried a bone in every world so far. Retirement plan, mate.",
+      "They say I talk too much for a dog. I say most dogs talk too little!"
+    ]
+  }
+}
