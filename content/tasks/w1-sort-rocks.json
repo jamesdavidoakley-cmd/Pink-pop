@@ -1,0 +1,23 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "w1-sort-rocks",
+  "type": "sortit",
+  "title": "The Sorting Stones",
+  "topicId": "rocks-soils",
+  "speaker": "kenji",
+  "intro": "Now — the conveyor jammed with mixed-up rocks. Chomp each one and carry it to its family platform. Igneous from volcanoes, sedimentary from squeezed layers, metamorphic from heat and pressure!",
+  "success": "Sugoi! Every stone with its family. The conveyor hums happily again.",
+  "bins": [
+    { "id": "igneous", "label": "IGNEOUS\nfrom cooled lava" },
+    { "id": "sedimentary", "label": "SEDIMENTARY\nsqueezed layers" },
+    { "id": "metamorphic", "label": "METAMORPHIC\nheat + pressure" }
+  ],
+  "items": [
+    { "id": "basalt", "label": "Basalt", "bin": "igneous", "shape": "rock", "color": "#4A4A58", "fact": "Basalt is lava that cooled quickly — a volcano's leftovers." },
+    { "id": "granite", "label": "Granite", "bin": "igneous", "shape": "rock", "color": "#B8A8A0", "fact": "Granite cooled slowly underground, growing sparkly crystals." },
+    { "id": "sandstone", "label": "Sandstone", "bin": "sedimentary", "shape": "box", "color": "#E8C88A", "fact": "Sandstone is layers of sand squeezed together for ages." },
+    { "id": "limestone", "label": "Limestone", "bin": "sedimentary", "shape": "box", "color": "#E8E0C8", "fact": "Limestone is often made from tiny sea shells — fossils love it." },
+    { "id": "slate", "label": "Slate", "bin": "metamorphic", "shape": "gem", "color": "#5A6A78", "fact": "Slate is mudstone changed by squeezing and heat." },
+    { "id": "marble", "label": "Marble", "bin": "metamorphic", "shape": "gem", "color": "#E8E8F0", "fact": "Marble is limestone transformed deep underground by heat." }
+  ]
+}

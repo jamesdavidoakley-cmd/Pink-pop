@@ -1,0 +1,128 @@
+{
+  "$schema": "../schemas/questions.schema.json",
+  "id": "maths-place-value",
+  "strand": "maths",
+  "topic": "place-value",
+  "questions": [
+    {
+      "id": "pv-t1-001", "tier": 1,
+      "template": "What is the tens digit of {n}?",
+      "params": { "n": { "min": 21, "max": 99 } },
+      "answerExpr": "floor(n/10)%10",
+      "distractorRules": ["n%10", "floor(n/10)%10+1"],
+      "askStyles": ["kenji", "digger", "marcus"],
+      "hint": "The tens digit is the one on the LEFT in a two-digit number.",
+      "explain": "In {n}, the left digit counts the tens — so it's {answer}."
+    },
+    {
+      "id": "pv-t1-002", "tier": 1,
+      "template": "What is the ones digit of {n}?",
+      "params": { "n": { "min": 21, "max": 99 } },
+      "answerExpr": "n%10",
+      "distractorRules": ["floor(n/10)%10", "n%10+1"],
+      "askStyles": ["digger", "marcus"],
+      "hint": "The ones digit sits at the very END of the number.",
+      "explain": "In {n}, the last digit counts the ones — that's {answer}."
+    },
+    {
+      "id": "pv-t1-003", "tier": 1,
+      "template": "{a} tens and {b} ones make which number?",
+      "params": { "a": { "min": 2, "max": 9 }, "b": { "min": 1, "max": 9 } },
+      "answerExpr": "a*10+b",
+      "distractorRules": ["a+b", "b*10+a"],
+      "askStyles": ["kenji", "digger"],
+      "hint": "Tens are worth ten each — {a} tens is {a}0.",
+      "explain": "{a} tens is {a}0, plus {b} ones makes {answer}."
+    },
+    {
+      "id": "pv-t1-004", "tier": 1,
+      "template": "What is 10 more than {n}?",
+      "params": { "n": { "min": 15, "max": 89 } },
+      "answerExpr": "n+10",
+      "distractorRules": ["n+1", "n+100"],
+      "askStyles": ["marcus", "digger"],
+      "hint": "Only the tens digit changes when you add ten.",
+      "explain": "{n} plus one more ten is {answer}."
+    },
+    {
+      "id": "pv-t2-001", "tier": 2,
+      "template": "What is the hundreds digit of {n}?",
+      "params": { "n": { "min": 110, "max": 999 } },
+      "answerExpr": "floor(n/100)%10",
+      "distractorRules": ["floor(n/10)%10", "n%10"],
+      "askStyles": ["kenji", "marcus"],
+      "hint": "The hundreds digit is the FIRST of the three digits.",
+      "explain": "In {n}, the first digit counts hundreds — it's {answer}."
+    },
+    {
+      "id": "pv-t2-002", "tier": 2,
+      "template": "What is the VALUE of the hundreds digit in {n}?",
+      "params": { "n": { "min": 110, "max": 999 } },
+      "answerExpr": "floor(n/100)*100",
+      "distractorRules": ["floor(n/100)%10", "floor(n/10)%10*10"],
+      "askStyles": ["kenji", "digger"],
+      "hint": "The digit tells you HOW MANY hundreds — so multiply it by 100.",
+      "explain": "The hundreds digit of {n} is worth that many hundreds: {answer}."
+    },
+    {
+      "id": "pv-t2-003", "tier": 2,
+      "template": "What is 100 more than {n}?",
+      "params": { "n": { "min": 105, "max": 880 } },
+      "answerExpr": "n+100",
+      "distractorRules": ["n+10", "n+1"],
+      "askStyles": ["marcus", "digger"],
+      "hint": "Only the hundreds digit grows.",
+      "explain": "{n} plus one more hundred is {answer}."
+    },
+    {
+      "id": "pv-t2-004", "tier": 2,
+      "template": "{a} hundreds, {b} tens and {c} ones make which number?",
+      "params": { "a": { "min": 1, "max": 9 }, "b": { "min": 1, "max": 9 }, "c": { "min": 1, "max": 9 } },
+      "answerExpr": "a*100+b*10+c",
+      "distractorRules": ["a*100+c*10+b", "a+b+c"],
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Write them in order: hundreds, then tens, then ones.",
+      "explain": "{a} hundreds is {a}00, {b} tens is {b}0, plus {c} — together {answer}."
+    },
+    {
+      "id": "pv-t3-001", "tier": 3,
+      "template": "What is the thousands digit of {n}?",
+      "params": { "n": { "min": 1200, "max": 9899 } },
+      "answerExpr": "floor(n/1000)%10",
+      "distractorRules": ["floor(n/100)%10", "floor(n/10)%10"],
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Four digits: the FIRST one counts thousands.",
+      "explain": "In {n} the first digit counts thousands — it's {answer}."
+    },
+    {
+      "id": "pv-t3-002", "tier": 3,
+      "template": "What is the VALUE of the tens digit in {n}?",
+      "params": { "n": { "min": 1110, "max": 9999 } },
+      "answerExpr": "floor(n/10)%10*10",
+      "distractorRules": ["floor(n/10)%10", "floor(n/100)%10*100"],
+      "askStyles": ["kenji", "digger"],
+      "hint": "Find the tens digit first, then remember each ten is worth 10.",
+      "explain": "The tens digit of {n} is worth {answer}."
+    },
+    {
+      "id": "pv-t3-003", "tier": 3,
+      "template": "What is 1,000 more than {n}?",
+      "params": { "n": { "min": 1050, "max": 8900 } },
+      "answerExpr": "n+1000",
+      "distractorRules": ["n+100", "n+10"],
+      "askStyles": ["marcus", "digger"],
+      "hint": "Only the thousands digit grows by one.",
+      "explain": "{n} plus a whole thousand is {answer}."
+    },
+    {
+      "id": "pv-t3-004", "tier": 3,
+      "template": "Round {n} to the nearest 100.",
+      "params": { "n": { "min": 120, "max": 949 } },
+      "answerExpr": "round(n/100)*100",
+      "distractorRules": ["floor(n/100)*100+200", "round(n/10)*10"],
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Look at the tens digit: 5 or more rounds UP.",
+      "explain": "{n} sits closest to {answer} on the number line."
+    }
+  ]
+}

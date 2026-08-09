@@ -69,6 +69,7 @@ export interface BuildSlot { id: string; label: string; options: BuildSlotOption
 export interface TaskDef {
   id: string; type: 'sortit' | 'measureit' | 'numberpath' | 'quickfire' | 'buildit' | 'circuitit' | 'shadowit' | 'fractionforge';
   title: string; topicId?: string; speaker?: string; intro?: string; success?: string; chain?: string[];
+  flagOnComplete?: string;
   // sortit
   uniqueBins?: boolean; bins?: SortBin[]; items?: SortItem[];
   // measureit

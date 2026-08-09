@@ -1,0 +1,176 @@
+{
+  "$schema": "../schemas/levels.schema.json",
+  "id": "w1",
+  "nameKey": "level.w1",
+  "subKey": "level.w1.sub",
+  "kind": "world",
+  "world": "w1",
+  "gateKey": "w1",
+  "palette": {
+    "skyTop": "#3FBCD8",
+    "skyBottom": "#F8D8A0",
+    "fog": "#E8C098",
+    "fogNear": 45,
+    "fogFar": 170,
+    "sun": "#FFEEC8",
+    "sunIntensity": 1.7,
+    "ambient": "#D8E8F0"
+  },
+  "music": "w1",
+  "spawn": [2, 1, 0],
+  "spawnYaw": -1.5708,
+  "geometry": [
+    { "type": "box", "pos": [16, -0.75, 0], "size": [38, 1.5, 42], "color": "#D8A868" },
+    { "type": "box", "pos": [50, -0.75, 0], "size": [34, 1.5, 46], "color": "#C89858" },
+    { "type": "box", "pos": [84, -0.75, 0], "size": [36, 1.5, 44], "color": "#D8A868" },
+    { "type": "box", "pos": [16, 3.5, -23], "size": [40, 10, 6], "color": "#B8804A" },
+    { "type": "box", "pos": [50, 4.5, -25], "size": [36, 12, 6], "color": "#A87042" },
+    { "type": "box", "pos": [84, 5.5, -24], "size": [40, 14, 6], "color": "#B8804A" },
+    { "type": "box", "pos": [16, 3.5, 23], "size": [40, 10, 6], "color": "#A87042" },
+    { "type": "box", "pos": [50, 4.5, 25], "size": [36, 12, 6], "color": "#B8804A" },
+    { "type": "box", "pos": [84, 5.5, 24], "size": [40, 14, 6], "color": "#A87042" },
+    { "type": "box", "pos": [-4, 3, 0], "size": [4, 9, 42], "color": "#B8804A" },
+    { "type": "box", "pos": [8, 1.0, -8], "size": [6, 2, 6], "color": "#E8B878" },
+    { "type": "box", "pos": [14, 2.0, -12], "size": [5, 4, 5], "color": "#D8A868" },
+    { "type": "box", "pos": [20, 3.0, -8], "size": [4, 6, 4], "color": "#C89858" },
+    { "type": "box", "pos": [12, 0.75, 10], "size": [8, 1.5, 6], "color": "#E8B878" },
+    { "type": "ramp", "pos": [22, 1.2, 12], "size": [8, 0.5, 5], "rot": [0, 0, -0.28], "color": "#D8A868" },
+    { "type": "box", "pos": [28, 2.2, 12], "size": [5, 0.6, 5], "color": "#C8A060" },
+    { "type": "box", "pos": [40, -0.4, 4], "size": [14, 2.2, 16], "color": "#B08858" },
+    { "type": "box", "pos": [52, -0.2, 6], "size": [10, 1.8, 12], "color": "#A88050" },
+    { "type": "box", "pos": [46, 0.4, -10], "size": [18, 0.8, 10], "color": "#C89858" },
+    { "type": "box", "pos": [58, 0.6, -12], "size": [8, 1.2, 8], "color": "#D8A868" },
+    { "type": "box", "pos": [66, 0.3, 8], "size": [10, 0.6, 10], "color": "#C89858" },
+    { "type": "box", "pos": [74, 1.0, -14], "size": [6, 2, 6], "color": "#C8A060" },
+    { "type": "box", "pos": [80, 2.0, -10], "size": [5, 4, 5], "color": "#B89050" },
+    { "type": "box", "pos": [86, 3.2, -6], "size": [4.5, 6.4, 4.5], "color": "#C8A060" },
+    { "type": "box", "pos": [92, 4.6, -2], "size": [4, 9.2, 4], "color": "#B89050" },
+    { "type": "box", "pos": [88, 6.4, 4], "size": [3.6, 12.8, 3.6], "color": "#C8A060" },
+    { "type": "box", "pos": [82, 8.0, 8], "size": [3.4, 16, 3.4], "color": "#B89050" },
+    { "type": "box", "pos": [88, 15.4, -5.2], "size": [5, 0.8, 5], "color": "#E8D8A8" },
+    { "type": "box", "pos": [76, 0.6, 14], "size": [7, 1.2, 7], "color": "#C89858" },
+    { "type": "box", "pos": [79, 1.5, 17.5], "size": [4, 3, 3], "color": "#B8804A", "special": "cracked" },
+    { "type": "box", "pos": [79, 1.2, 21.5], "size": [6, 2.4, 5], "color": "#8A6242" },
+    { "type": "box", "pos": [26, 2.0, -18], "size": [3, 4, 3], "color": "#B89A6A", "special": "cracked", "contains": "chips" },
+    { "type": "box", "pos": [60, 2.2, 18], "size": [6, 4.4, 0.8], "color": "#7A4A8A", "special": "roarwall" },
+    { "type": "box", "pos": [60, 0.4, 21], "size": [6, 0.8, 4], "color": "#C8A060" }
+  ],
+  "props": [
+    { "type": "sign", "pos": [4, 0, -3], "rot": -1.2 },
+    { "type": "cactus", "pos": [10, 0, 4] },
+    { "type": "cactus", "pos": [24, 0, -4], "scale": 1.3 },
+    { "type": "cactus", "pos": [33, 0, 16], "scale": 0.8 },
+    { "type": "rock", "pos": [18, 0, 6] },
+    { "type": "rock", "pos": [30, 0, -14], "scale": 1.4 },
+    { "type": "boneArch", "pos": [34, 0, 0], "rot": 1.5708, "scale": 1.2 },
+    { "type": "fossilSpiral", "pos": [42, 0.75, 10], "scale": 1.5 },
+    { "type": "ribcage", "pos": [50, 0.7, 12], "rot": 0.6 },
+    { "type": "sign", "pos": [38, 0.7, 4], "rot": -0.8 },
+    { "type": "crate", "pos": [44, 0.75, 0] },
+    { "type": "crate", "pos": [56, 0.7, 4] },
+    { "type": "boneArch", "pos": [70, 0, -2], "rot": 1.2, "scale": 1.5 },
+    { "type": "boneArch", "pos": [84, 0, 12], "rot": 0.5, "scale": 1.8 },
+    { "type": "ribcage", "pos": [90, 0, 10], "rot": 2.2, "scale": 1.3 },
+    { "type": "cactus", "pos": [66, 0, 16] },
+    { "type": "rock", "pos": [94, 0, 8], "scale": 1.2 },
+    { "type": "sign", "pos": [72, 0, -8], "rot": 0.4 },
+    { "type": "lamp", "pos": [46, 0.8, -6] }
+  ],
+  "movers": [
+    { "kind": "platform", "pos": [96, 2.0, 2], "to": [90, 10.0, -5], "size": [2.6, 0.4, 2.6], "speed": 2.2, "pause": 0.7, "color": "#E8C878" },
+    { "kind": "platform", "pos": [30, 1.2, 4], "to": [36, 1.2, 4], "size": [2.4, 0.4, 2.4], "speed": 1.8, "color": "#D8B868" }
+  ],
+  "hazards": [],
+  "chips": [
+    { "pattern": "ring", "center": [8, 2.3, -8], "radius": 2.2, "count": 8 },
+    { "pattern": "line", "from": [10, 0.4, 0], "to": [26, 0.4, 0], "count": 8 },
+    { "pattern": "arc", "center": [28, 3.0, 12], "radius": 2, "count": 6 },
+    { "pattern": "cluster", "center": [20, 6.4, -8], "count": 5 },
+    { "pattern": "ring", "center": [40, 0.8, 4], "radius": 4, "count": 10 },
+    { "pattern": "line", "from": [44, 1.2, -10], "to": [56, 1.2, -10], "count": 7 },
+    { "pattern": "cluster", "center": [58, 1.6, -12], "count": 5 },
+    { "pattern": "ring", "center": [66, 0.9, 8], "radius": 3, "count": 8 },
+    { "pattern": "line", "from": [74, 2.4, -14], "to": [86, 4.4, -6], "count": 8 },
+    { "pattern": "arc", "center": [88, 16.4, -5], "radius": 1.6, "count": 6 },
+    { "pattern": "cluster", "center": [79, 1.2, 21.5], "count": 6 },
+    { "pattern": "line", "from": [60, 0.9, 19], "to": [60, 0.9, 23], "count": 5 },
+    { "pattern": "ring", "center": [84, 9.0, 8], "radius": 1.4, "count": 6 },
+    { "pattern": "cluster", "center": [12, 1.8, 10], "count": 6 },
+    { "pattern": "line", "from": [92, 1.2, 6], "to": [96, 1.2, 12], "count": 6 }
+  ],
+  "fossils": [
+    {
+      "id": "w1-f1",
+      "nameKey": "fossil.w1.f1",
+      "type": "task",
+      "taskId": "w1-path",
+      "hint": "Kenji's conveyor needs a hand at the Great Dig — cross the Counting Causeway, then sort the stones!",
+      "speaker": "kenji"
+    },
+    {
+      "id": "w1-f2",
+      "nameKey": "fossil.w1.f2",
+      "type": "task",
+      "taskId": "w1-plaster",
+      "hint": "Mix the plaster just right, then build a whole dinosaur from its bones. Support, protection, movement!",
+      "speaker": "kenji"
+    },
+    {
+      "id": "w1-f3",
+      "nameKey": "fossil.w1.f3",
+      "type": "secret",
+      "pos": [79, 1.2, 21.2],
+      "hint": "Me nose says there's a bone-cave behind a cracked wall in Bonehenge. STOMP first, sniff later!",
+      "speaker": "digger"
+    },
+    {
+      "id": "w1-f4",
+      "nameKey": "fossil.w1.f4",
+      "type": "platforming",
+      "pos": [88, 16.6, -5.2],
+      "hint": "Climb the wind towers of Bonehenge and ride the gold platform to the very top of the rim!",
+      "speaker": "marcus"
+    },
+    {
+      "id": "w1-f5",
+      "nameKey": "fossil.w1.f5",
+      "type": "arena",
+      "arenaId": "w1_arena_mini",
+      "hint": "The Quarry Ring rattles with cogs. Bring your bravest stomp!",
+      "speaker": "marcus"
+    },
+    {
+      "id": "w1-f6",
+      "nameKey": "fossil.w1.f6",
+      "type": "boss",
+      "arenaId": "w1_arena_boss",
+      "hint": "Bruno Ironhide guards the big dig. He only knows one direction — watch what happens after his third swing!",
+      "speaker": "kenji"
+    },
+    {
+      "id": "w1-f7",
+      "nameKey": "fossil.w1.f7",
+      "type": "bonus",
+      "hint": "Bank 80 Amber Chips at the canyon bank and something wonderful pops out.",
+      "speaker": "digger"
+    }
+  ],
+  "enemies": [],
+  "portals": [
+    { "to": "hub", "pos": [0, 0, 0], "kind": "exit", "labelKey": "level.hub", "yaw": -1.5708, "color": "#C8945A" },
+    { "to": "w1_arena_mini", "pos": [74, 0, -19], "kind": "arena", "labelKey": "level.w1_arena_mini", "yaw": 0.3, "color": "#B87A3A", "sealed": true },
+    { "to": "w1_arena_boss", "pos": [100, 0, 0], "kind": "arena", "labelKey": "level.w1_arena_boss", "yaw": -1.5708, "color": "#A05A2E", "sealed": true }
+  ],
+  "infoPoints": [
+    { "pos": [4, 0.4, -3], "textKey": "w1.sign.gulch", "speaker": "digger", "label": "Dust Gulch" },
+    { "pos": [38, 1.1, 4], "textKey": "w1.sign.dig", "speaker": "kenji", "label": "The Great Dig" },
+    { "pos": [72, 0.4, -8], "textKey": "w1.sign.henge", "speaker": "marcus", "label": "Bonehenge" }
+  ],
+  "tasks": [
+    { "ref": "w1-path", "pos": [40, 0.75, 8], "yaw": 1.5708 },
+    { "ref": "w1-plaster", "pos": [56, 1.25, -12], "yaw": 3.14159 }
+  ],
+  "checkpoints": [[2, 1, 0], [40, 0.8, 4], [74, 2.1, -14]],
+  "bank": { "pos": [62, 0.6, 8] },
+  "springPads": [{ "pos": [76, 1.3, 14], "power": 18 }]
+}

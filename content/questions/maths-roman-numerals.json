@@ -1,0 +1,134 @@
+{
+  "$schema": "../schemas/questions.schema.json",
+  "id": "maths-roman-numerals",
+  "strand": "maths",
+  "topic": "roman-numerals",
+  "questions": [
+    {
+      "id": "rn-t1-001", "tier": 1,
+      "template": "What number is the Roman numeral III?",
+      "choices": ["3", "2", "4"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "digger"],
+      "hint": "Count the strokes!",
+      "explain": "Three I's in a row: I + I + I = 3."
+    },
+    {
+      "id": "rn-t1-002", "tier": 1,
+      "template": "What number is the Roman numeral V?",
+      "choices": ["5", "10", "2"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "kenji"],
+      "hint": "Hold up one hand and spread your fingers into a V!",
+      "explain": "V is 5 — like the shape between your thumb and fingers."
+    },
+    {
+      "id": "rn-t1-003", "tier": 1,
+      "template": "What number is the Roman numeral X?",
+      "choices": ["10", "5", "100"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "digger"],
+      "hint": "Two V's — one upside down on the other.",
+      "explain": "X is 10: picture two fives stacked into a cross."
+    },
+    {
+      "id": "rn-t1-004", "tier": 1,
+      "template": "What number is IV?",
+      "choices": ["4", "6", "9"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "kenji"],
+      "hint": "A small I BEFORE the V takes one away.",
+      "explain": "I before V means one-less-than-five: 4."
+    },
+    {
+      "id": "rn-t1-005", "tier": 1,
+      "template": "What number is VII?",
+      "choices": ["7", "6", "12"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "digger"],
+      "hint": "Five… then keep counting the strokes.",
+      "explain": "V is 5, plus II makes 7."
+    },
+    {
+      "id": "rn-t1-006", "tier": 1,
+      "template": "What number is XII — like on a clock face?",
+      "choices": ["12", "11", "20"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "kenji"],
+      "hint": "It sits at the very top of the clock.",
+      "explain": "X is 10 plus II — 12, the top of every proper clock."
+    },
+    {
+      "id": "rn-t2-001", "tier": 2,
+      "template": "What number is IX?",
+      "choices": ["9", "11", "10"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "kenji"],
+      "hint": "I BEFORE X takes one away from ten.",
+      "explain": "I before X is one-less-than-ten: 9."
+    },
+    {
+      "id": "rn-t2-002", "tier": 2,
+      "template": "What number is XVI?",
+      "choices": ["16", "14", "21"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "digger"],
+      "hint": "Ten, then five, then one — all adding up.",
+      "explain": "X + V + I = 10 + 5 + 1 = 16."
+    },
+    {
+      "id": "rn-t2-003", "tier": 2,
+      "template": "What number is XXIV?",
+      "choices": ["24", "26", "34"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "kenji"],
+      "hint": "Two tens… then a tricky IV.",
+      "explain": "XX is 20 and IV is 4 — together 24."
+    },
+    {
+      "id": "rn-t2-004", "tier": 2,
+      "template": "What number is XXX?",
+      "choices": ["30", "13", "33"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "digger"],
+      "hint": "Three tens marching in a row.",
+      "explain": "Three X's: 10 + 10 + 10 = 30."
+    },
+    {
+      "id": "rn-t3-001", "tier": 3,
+      "template": "What number is XL?",
+      "choices": ["40", "60", "90"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "kenji"],
+      "hint": "X BEFORE L takes ten away from fifty.",
+      "explain": "L is 50; X before it takes ten away: 40."
+    },
+    {
+      "id": "rn-t3-002", "tier": 3,
+      "template": "What number is XC?",
+      "choices": ["90", "110", "40"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "kenji"],
+      "hint": "X BEFORE C takes ten from one hundred.",
+      "explain": "C is 100; X before it makes 90."
+    },
+    {
+      "id": "rn-t3-003", "tier": 3,
+      "template": "What number is C — as in Marcus's C push-ups?",
+      "choices": ["100", "50", "1000"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "digger"],
+      "hint": "C for CENTUM — a Roman century!",
+      "explain": "C is 100 — one glorious century of push-ups."
+    },
+    {
+      "id": "rn-t3-004", "tier": 3,
+      "template": "What number is LXV?",
+      "choices": ["65", "45", "115"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "kenji"],
+      "hint": "Fifty, then ten, then five — all adding.",
+      "explain": "L + X + V = 50 + 10 + 5 = 65."
+    }
+  ]
+}

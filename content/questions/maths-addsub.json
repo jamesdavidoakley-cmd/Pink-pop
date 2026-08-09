@@ -1,0 +1,88 @@
+{
+  "$schema": "../schemas/questions.schema.json",
+  "id": "maths-addsub",
+  "strand": "maths",
+  "topic": "addsub",
+  "questions": [
+    {
+      "id": "as-t1-001", "tier": 1,
+      "template": "What is {a} + {b}?",
+      "params": { "a": { "min": 12, "max": 48 }, "b": { "min": 11, "max": 39 } },
+      "answerExpr": "a+b",
+      "distractorRules": ["a+b+10", "a+b-1"],
+      "askStyles": ["digger", "marcus", "kenji"],
+      "hint": "Add the tens first, then the ones.",
+      "explain": "{a} plus {b}: tens together, ones together — {answer}."
+    },
+    {
+      "id": "as-t1-002", "tier": 1,
+      "template": "What is {a} − {b}?",
+      "params": { "a": { "min": 40, "max": 99 }, "b": { "min": 11, "max": 35 } },
+      "answerExpr": "a-b",
+      "distractorRules": ["a-b+10", "a-b-2"],
+      "askStyles": ["digger", "kenji"],
+      "hint": "Count back the tens first, then the ones.",
+      "explain": "{a} take away {b} leaves {answer}."
+    },
+    {
+      "id": "as-t2-001", "tier": 2,
+      "template": "What is {a} + {b}?",
+      "params": { "a": { "min": 120, "max": 480, "multipleOf": 10 }, "b": { "min": 110, "max": 390, "multipleOf": 10 } },
+      "answerExpr": "a+b",
+      "distractorRules": ["a+b+100", "a+b-10"],
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Hundreds with hundreds, tens with tens.",
+      "explain": "{a} + {b} = {answer} — piece by piece, place by place."
+    },
+    {
+      "id": "as-t2-002", "tier": 2,
+      "template": "What is {a} − {b}?",
+      "params": { "a": { "min": 300, "max": 900, "multipleOf": 10 }, "b": { "min": 110, "max": 280, "multipleOf": 10 } },
+      "answerExpr": "a-b",
+      "distractorRules": ["a-b+100", "a-b-10"],
+      "askStyles": ["marcus", "digger"],
+      "hint": "Take the hundreds first, then the tens.",
+      "explain": "{a} minus {b} is {answer}."
+    },
+    {
+      "id": "as-t2-003", "tier": 2,
+      "template": "The chandler wants {a} planks and {b} more arrive. How many planks?",
+      "params": { "a": { "min": 125, "max": 460 }, "b": { "min": 120, "max": 330 } },
+      "answerExpr": "a+b",
+      "distractorRules": ["a+b-100", "a+b+11"],
+      "askStyles": ["marcus", "kenji"],
+      "hint": "It's just a big friendly addition wearing a story.",
+      "explain": "{a} planks plus {b} more makes {answer} planks."
+    },
+    {
+      "id": "as-t3-001", "tier": 3,
+      "template": "What is {a} + {b}?",
+      "params": { "a": { "min": 256, "max": 787 }, "b": { "min": 145, "max": 199 } },
+      "answerExpr": "a+b",
+      "distractorRules": ["a+b-100", "a+b+10"],
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Watch for the ones adding past ten — carry it over!",
+      "explain": "With carrying, {a} + {b} = {answer}."
+    },
+    {
+      "id": "as-t3-002", "tier": 3,
+      "template": "What is {a} − {b}?",
+      "params": { "a": { "min": 512, "max": 943 }, "b": { "min": 167, "max": 289 } },
+      "answerExpr": "a-b",
+      "distractorRules": ["a-b+100", "a-b-10"],
+      "askStyles": ["kenji", "digger"],
+      "hint": "You may need to borrow from the next column.",
+      "explain": "Borrowing carefully, {a} − {b} = {answer}."
+    },
+    {
+      "id": "as-t3-003", "tier": 3,
+      "template": "Max banked {a} chips, then {b} more. How close to 1,000 is he? (Total, please!)",
+      "params": { "a": { "min": 310, "max": 480 }, "b": { "min": 210, "max": 460 } },
+      "answerExpr": "a+b",
+      "distractorRules": ["a+b+100", "1000-(a+b)"],
+      "askStyles": ["digger", "marcus"],
+      "hint": "First find the total — add the two amounts.",
+      "explain": "{a} + {b} = {answer} chips. A dragon's hoard!"
+    }
+  ]
+}

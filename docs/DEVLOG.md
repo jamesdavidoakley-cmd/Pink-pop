@@ -61,7 +61,16 @@ Running log of phase progress, decisions, and gate evidence. Newest entries at t
 **Gate evidence:** headless run — new game → skip intro → collect the monument-top fossil → reload → slot shows "1 fossils", fossil still held, intro not replayed, zero console errors (`scripts/persist-check.mjs` → PERSISTENCE OK).
 
 ## P4 · Education engine + W1
-_(pending)_
+
+**Done:**
+- **EducationEngine**: parametric question instancing (safe hand-rolled expression parser — no eval; floor/abs/max/min/round), distractor rules with collision top-up, adaptive tiers (promote on 3-streak, soft invisible demote after 2 recent misses, floor/cap), mastery XP → 0–3 stars, weakest-topic-weighted selection, **the full spoken ask flow**: rotating companion intro → spoken question → answer pads → warm failure loop (miss 1: gentle line + hint wrapper · miss 2: companion *teaches* with `{explain}`, then fresh parametric values so it's re-earnable immediately — never a dead end). Brain Power charges on correct answers.
+- **Five task archetypes** as self-registered modules (§5.3): QUICK-FIRE (3 physical answer pads), SORT-IT (chomp-and-carry to labelled platforms, facts as hints, boing-home on wrong), NUMBER-PATH (tile bridge, tier-scaled rules — count-by-100s → digit-in-place tens → hundreds; wrong tiles harmlessly boing), MEASURE-IT (jug with +/−/✓ pads, tier target lists, teach shows the exact amount then re-rolls), BUILD-IT (part pedestals + TEST pad; goal kinds gearSpeed/gearForce/leverBalance/springLaunch/matchSlots; the design loop spoken out loud). TaskRunner handles chains (fossil awarded at chain end), practice mode, `flagOnComplete`.
+- **Fossil Canyon (W1)** complete except its two arenas (P5): Dust Gulch → the Great Dig → Bonehenge; quest chains *Counting Causeway → Sorting Stones* and *Plaster → Skeleton Assembly*; Digger secret bone-cave behind a cracked wall (passive sniff barks + T-key sparkle trail); Canyon Rim Run climb; amber bank (80 banked → bonus fossil pops); exactly 100 chips (validator-enforced); arena/boss portals present (sealed until P5, defs + arenas + movesets already authored and validated).
+- Question packs: place value (12 parametric), rocks & soils (10), skeletons (9), add/subtract (8 parametric), Roman numerals (14), measurement (7) — every question with hint + explain + ≥2 askStyles (schema-enforced).
+- Hub: Marcus's Numeral Drill live at the arena (3 quick-fire → scoreboard flag → hub fossil #3 pops); garden fossil now earnable through real mastery; W1 door unsealed.
+- Spring pads now gated behind Kenji's Spring Boots gadget (playground keeps them free).
+
+**Gate evidence** (`scripts/playtest-w1.mjs`, headless): spoken intro + question subtitles (13 lines, Marcus & Kenji rotating) → wrong answer → gentle line + hint → correct-after-hint ✓ → double-wrong → **teach + regenerated fresh values** ✓ → drill completes, scoreboard flag set, mastery recorded (6 attempts / 3 correct) → W1 boots with 2 task stations + 7 fossils, zero console errors. Unit suite: 20/20 (expression evaluator, instancing, adaptive promote/demote, mastery stars, weak-topic weighting).
 
 ## P5 · Combat & AI framework
 _(pending)_

@@ -13,7 +13,8 @@
     "speaker": { "type": "string" },
     "intro": { "type": "string" },
     "success": { "type": "string" },
-    "chain": { "type": "array", "items": { "type": "string" } }
+    "chain": { "type": "array", "items": { "type": "string" } },
+    "flagOnComplete": { "type": "string" }
   },
   "allOf": [
     {

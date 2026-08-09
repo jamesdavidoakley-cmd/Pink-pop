@@ -1,0 +1,19 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "w1-path",
+  "type": "numberpath",
+  "title": "The Counting Causeway",
+  "topicId": "place-value",
+  "speaker": "kenji",
+  "intro": "Yosh! The dig pit is deep, Max-kun — cross it on the counting stones. Only the TRUE numbers hold firm!",
+  "success": "Across! Place value is a strong bridge indeed.",
+  "chain": ["w1-sort-rocks"],
+  "rule": { "kind": "count-by", "step": 100, "from": 0 },
+  "tierRules": {
+    "1": { "kind": "count-by", "step": 100, "from": 0 },
+    "2": { "kind": "digit-in-place", "digit": 4, "place": "tens" },
+    "3": { "kind": "digit-in-place", "digit": 7, "place": "hundreds" }
+  },
+  "length": 5,
+  "width": 3
+}

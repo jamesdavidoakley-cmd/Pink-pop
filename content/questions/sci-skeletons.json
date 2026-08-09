@@ -1,0 +1,89 @@
+{
+  "$schema": "../schemas/questions.schema.json",
+  "id": "sci-skeletons",
+  "strand": "science",
+  "topic": "skeletons",
+  "questions": [
+    {
+      "id": "sk-t1-001", "tier": 1,
+      "template": "Skeletons do three jobs. Which one is a skeleton job?",
+      "choices": ["Support", "Singing", "Cooking"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Without it you'd be a puddle of wobble.",
+      "explain": "Skeletons give support, protection, and movement — support keeps you standing tall."
+    },
+    {
+      "id": "sk-t1-002", "tier": 1,
+      "template": "What does the skull protect?",
+      "choices": ["The brain", "The toes", "The tummy"],
+      "answerIndex": 0,
+      "askStyles": ["digger", "kenji"],
+      "hint": "It's a bony helmet you were born wearing.",
+      "explain": "The skull is a built-in helmet protecting your brilliant brain."
+    },
+    {
+      "id": "sk-t1-003", "tier": 1,
+      "template": "What do the ribs protect?",
+      "choices": ["Heart and lungs", "Knees", "Ears"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "digger"],
+      "hint": "It's a bony cage around your chest.",
+      "explain": "The ribcage guards your heart and lungs like a fence of bone."
+    },
+    {
+      "id": "sk-t1-004", "tier": 1,
+      "template": "What is another name for your backbone?",
+      "choices": ["Spine", "Splint", "Spoon"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "It starts with S-P-I…",
+      "explain": "The spine is the chain of bones down your back — it holds you up!"
+    },
+    {
+      "id": "sk-t2-001", "tier": 2,
+      "template": "Muscles work in pairs. When one muscle pulls, what does its partner do?",
+      "choices": ["Relaxes", "Also pulls", "Falls asleep forever"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "kenji"],
+      "hint": "Like a see-saw: one side works, one side rests.",
+      "explain": "Muscle pairs take turns: one contracts (pulls) while the other relaxes."
+    },
+    {
+      "id": "sk-t2-002", "tier": 2,
+      "template": "Can muscles push your bones?",
+      "choices": ["No — they can only pull", "Yes — pushing is all they do", "Only on Tuesdays"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "digger"],
+      "hint": "That's WHY they need a partner!",
+      "explain": "Muscles only pull — that's exactly why they work in pairs, one on each side."
+    },
+    {
+      "id": "sk-t2-003", "tier": 2,
+      "template": "Animals with a skeleton INSIDE their body are called…?",
+      "choices": ["Vertebrates", "Invertebrates", "Marshmallows"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "It comes from the word for backbone: vertebra.",
+      "explain": "Vertebrates have backbones inside — like Max, Digger, and you!"
+    },
+    {
+      "id": "sk-t3-001", "tier": 3,
+      "template": "A snail has a shell. What kind of skeleton is that?",
+      "choices": ["An exoskeleton — outside the body", "An endoskeleton — inside the body", "No skeleton at all"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "'Exo' means OUTSIDE.",
+      "explain": "Shells and insect armour are exoskeletons — support and protection worn on the outside."
+    },
+    {
+      "id": "sk-t3-002", "tier": 3,
+      "template": "Why do bigger animals usually need thicker leg bones?",
+      "choices": ["More weight needs more support", "Thick bones look fashionable", "Thin bones are too shiny"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Think of table legs holding a heavy table.",
+      "explain": "Support scales with weight — heavy bodies need strong, thick columns of bone."
+    }
+  ]
+}

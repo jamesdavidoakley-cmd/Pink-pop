@@ -1,0 +1,13 @@
+{
+  "$schema": "../schemas/movesets.schema.json",
+  "id": "heavy_hammer",
+  "moves": [
+    { "id": "stomp_forward", "label": "Clanking Advance", "tags": ["advance"], "baseWeight": 1.0, "duration": 1.0, "range": "far", "motion": { "kind": "approach", "speed": 3.4 }, "threat": 0 },
+    { "id": "hammer_slam", "label": "Hammer Slam", "tags": ["strike"], "baseWeight": 1.1, "duration": 1.8, "telegraph": 0.9, "recovery": 1.1, "cooldown": 2.6, "threat": 3, "range": "near", "damage": 1, "hit": { "shape": "ring", "radius": 2.6, "from": 0.9, "to": 1.15 }, "bark": "taunt" },
+    { "id": "wide_sweep", "label": "Wide Sweep", "tags": ["strike"], "baseWeight": 0.9, "duration": 1.6, "telegraph": 0.75, "recovery": 0.8, "cooldown": 3.2, "threat": 2, "range": "near", "damage": 1, "motion": { "kind": "lunge", "speed": 4 }, "hit": { "shape": "arc", "radius": 2.4, "arc": 3.0, "from": 0.75, "to": 1.2 } },
+    { "id": "bolt_toss", "label": "Bolt Toss", "tags": ["ranged", "strike"], "baseWeight": 0.7, "duration": 1.3, "telegraph": 0.65, "recovery": 0.5, "cooldown": 3.5, "threat": 2, "range": "mid", "damage": 0.5, "projectile": { "speed": 9, "damage": 0.5, "count": 1 } },
+    { "id": "brace", "label": "Brace", "tags": ["block"], "baseWeight": 0.7, "duration": 1.2, "cooldown": 2, "range": "any", "stance": "block", "threat": 0 },
+    { "id": "lumber_around", "label": "Lumber Around", "tags": ["reposition"], "baseWeight": 0.8, "duration": 1.2, "range": "mid", "motion": { "kind": "strafe", "speed": 2.6 }, "threat": 0 },
+    { "id": "quota_shout", "label": "Quota Shout", "tags": ["taunt"], "baseWeight": 0.5, "duration": 1.0, "cooldown": 5, "range": "any", "threat": 0, "bark": "taunt" }
+  ]
+}

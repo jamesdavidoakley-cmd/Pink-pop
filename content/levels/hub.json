@@ -122,7 +122,7 @@
     { "pos": [-8.4, 1.3, 15.6], "textKey": "digsite.hubSign", "speaker": "digger", "label": "Digger's Dig Site" }
   ],
   "portals": [
-    { "to": "w1", "pos": [-21.3, 0, -5.7], "kind": "door", "gateKey": "w1", "labelKey": "level.w1", "yaw": 1.31, "color": "#C8945A", "sealed": true },
+    { "to": "w1", "pos": [-21.3, 0, -5.7], "kind": "door", "gateKey": "w1", "labelKey": "level.w1", "yaw": 1.31, "color": "#C8945A" },
     { "to": "w2", "pos": [-16.9, 0, -14.1], "kind": "door", "gateKey": "w2", "labelKey": "level.w2", "yaw": 0.873, "color": "#B8863B", "sealed": true },
     { "to": "w3", "pos": [-9.3, 0, -19.9], "kind": "door", "gateKey": "w3", "labelKey": "level.w3", "yaw": 0.436, "color": "#8A6ABF", "sealed": true },
     { "to": "w4", "pos": [9.3, 0, -19.9], "kind": "door", "gateKey": "w4", "labelKey": "level.w4", "yaw": -0.436, "color": "#5AA86A", "sealed": true },
@@ -133,6 +133,9 @@
   ],
   "npcs": [
     { "char": "botto", "pos": [17, 1.6, 7], "yaw": -1.4, "chatPool": "idle_nudge" }
+  ],
+  "tasks": [
+    { "ref": "hub-numeral-drill", "pos": [-18, 0.7, 8], "yaw": 2.4 }
   ],
   "checkpoints": [[0, 1, 6], [0, 0.5, -16]],
   "garden": { "pos": [12.5, 0.6, 18] }

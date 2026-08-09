@@ -1,0 +1,98 @@
+{
+  "$schema": "../schemas/questions.schema.json",
+  "id": "sci-rocks-soils",
+  "strand": "science",
+  "topic": "rocks-soils",
+  "questions": [
+    {
+      "id": "rk-t1-001", "tier": 1,
+      "template": "Which rock is made from cooled melted rock?",
+      "choices": ["Igneous", "Sedimentary", "Metamorphic"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "Think volcanoes!",
+      "explain": "Igneous rock forms when melted rock cools and hardens — like basalt from lava."
+    },
+    {
+      "id": "rk-t1-002", "tier": 1,
+      "template": "Which rock is made from squashed layers of sand and mud?",
+      "choices": ["Sedimentary", "Igneous", "Metamorphic"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Layers, layers, layers — squeezed for a very long time.",
+      "explain": "Sedimentary rock is layers of sand, mud and shells pressed together — like sandstone."
+    },
+    {
+      "id": "rk-t1-003", "tier": 1,
+      "template": "Soil is mostly a mix of tiny rock bits and…?",
+      "choices": ["Old plant material", "Metal filings", "Pure water"],
+      "answerIndex": 0,
+      "askStyles": ["digger", "kenji"],
+      "hint": "What do leaves become when they rot into the ground?",
+      "explain": "Soil is tiny rock pieces mixed with rotted plant material called humus."
+    },
+    {
+      "id": "rk-t1-004", "tier": 1,
+      "template": "Where are fossils usually found?",
+      "choices": ["Sedimentary rock", "Igneous rock", "Rain clouds"],
+      "answerIndex": 0,
+      "askStyles": ["digger", "marcus"],
+      "hint": "Fossils need gentle layers to rest in, not boiling lava.",
+      "explain": "Fossils form in sedimentary rock, where layers gently bury and protect them."
+    },
+    {
+      "id": "rk-t2-001", "tier": 2,
+      "template": "Marble is limestone changed by heat and pressure. What kind of rock is marble?",
+      "choices": ["Metamorphic", "Igneous", "Sedimentary"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "'Meta' means CHANGE.",
+      "explain": "Rocks changed by heat and squeezing are metamorphic — marble is transformed limestone."
+    },
+    {
+      "id": "rk-t2-002", "tier": 2,
+      "template": "Granite has big sparkly crystals. What does that tell us?",
+      "choices": ["It cooled slowly underground", "It cooled instantly in the sea", "It's made of sugar"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "Crystals need TIME to grow.",
+      "explain": "Slow cooling deep underground gives crystals time to grow big — that's granite."
+    },
+    {
+      "id": "rk-t2-003", "tier": 2,
+      "template": "Which rock would soak up water: permeable sandstone or hard slate?",
+      "choices": ["Sandstone", "Slate", "Neither — rocks hate water"],
+      "answerIndex": 0,
+      "askStyles": ["digger", "kenji"],
+      "hint": "Which one has tiny gaps between its grains?",
+      "explain": "Sandstone is permeable — water sneaks between its sandy grains. Slate keeps water out."
+    },
+    {
+      "id": "rk-t2-004", "tier": 2,
+      "template": "A fossil forms when an animal is buried and its bones slowly turn to…?",
+      "choices": ["Stone", "Wood", "Bubbles"],
+      "answerIndex": 0,
+      "askStyles": ["digger", "marcus"],
+      "hint": "Fossil hunters use chisels, not saws.",
+      "explain": "Over millions of years, minerals replace the bone until it becomes stone — a fossil!"
+    },
+    {
+      "id": "rk-t3-001", "tier": 3,
+      "template": "Lava cools quickly into basalt. Magma cools slowly into granite. What's the difference?",
+      "choices": ["Where it cools: above or below ground", "One is not a real rock", "Basalt is a plant"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Lava is OUTSIDE the volcano; magma stays inside.",
+      "explain": "Above ground, lava cools fast (small crystals — basalt); underground, magma cools slowly (big crystals — granite)."
+    },
+    {
+      "id": "rk-t3-002", "tier": 3,
+      "template": "Put fossil formation in order: what happens FIRST?",
+      "choices": ["The animal is buried by sediment", "The fossil is dug up", "The bones turn to stone"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "No burying, no fossil!",
+      "explain": "First burial by layers of sediment, then slow turning to stone, and only much later — discovery!"
+    }
+  ]
+}

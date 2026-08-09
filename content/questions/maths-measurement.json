@@ -1,0 +1,74 @@
+{
+  "$schema": "../schemas/questions.schema.json",
+  "id": "maths-measurement",
+  "strand": "maths",
+  "topic": "measurement",
+  "questions": [
+    {
+      "id": "me-t1-001", "tier": 1,
+      "template": "How many millilitres make 1 litre?",
+      "choices": ["1,000", "100", "10"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "Milli means a THOUSANDTH.",
+      "explain": "1 litre = 1,000 ml — a big bottle of water."
+    },
+    {
+      "id": "me-t1-002", "tier": 1,
+      "template": "How many centimetres make 1 metre?",
+      "choices": ["100", "10", "1,000"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Centi means a HUNDREDTH — like 100 pennies in a pound.",
+      "explain": "1 metre = 100 cm, about one big step."
+    },
+    {
+      "id": "me-t1-003", "tier": 1,
+      "template": "Kenji pours {a} ml, then {b} ml more. How much plaster?",
+      "params": { "a": { "min": 100, "max": 400, "multipleOf": 50 }, "b": { "min": 50, "max": 300, "multipleOf": 50 } },
+      "answerExpr": "a+b",
+      "distractorRules": ["a+b+50", "a+b-50"],
+      "askStyles": ["kenji", "digger"],
+      "hint": "Add the two pours together.",
+      "explain": "{a} ml + {b} ml = {answer} ml."
+    },
+    {
+      "id": "me-t2-001", "tier": 2,
+      "template": "A jug holds {a} ml. Max drinks {b} ml. How much is left?",
+      "params": { "a": { "min": 400, "max": 900, "multipleOf": 50 }, "b": { "min": 150, "max": 350, "multipleOf": 50 } },
+      "answerExpr": "a-b",
+      "distractorRules": ["a-b+100", "a-b-50"],
+      "askStyles": ["digger", "kenji"],
+      "hint": "Take the drink away from the jug.",
+      "explain": "{a} ml minus {b} ml leaves {answer} ml."
+    },
+    {
+      "id": "me-t2-002", "tier": 2,
+      "template": "Which is longer: 1 metre or 90 centimetres?",
+      "choices": ["1 metre", "90 centimetres", "They're equal"],
+      "answerIndex": 0,
+      "askStyles": ["marcus", "kenji"],
+      "hint": "Turn the metre into centimetres first.",
+      "explain": "1 metre is 100 cm — ten more than 90 cm."
+    },
+    {
+      "id": "me-t3-001", "tier": 3,
+      "template": "Half a litre is how many millilitres?",
+      "choices": ["500", "50", "5,000"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "Half of 1,000…",
+      "explain": "Half of 1,000 ml is 500 ml."
+    },
+    {
+      "id": "me-t3-002", "tier": 3,
+      "template": "A plank is {a} cm. Marcus saws off {b} cm. How long now?",
+      "params": { "a": { "min": 120, "max": 300 }, "b": { "min": 35, "max": 95 } },
+      "answerExpr": "a-b",
+      "distractorRules": ["a-b+10", "a+b"],
+      "askStyles": ["marcus", "kenji"],
+      "hint": "Sawing off means subtracting.",
+      "explain": "{a} cm − {b} cm = {answer} cm."
+    }
+  ]
+}

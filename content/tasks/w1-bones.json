@@ -1,0 +1,55 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "w1-bones",
+  "type": "buildit",
+  "title": "Skeleton Assembly",
+  "topicId": "skeletons",
+  "speaker": "kenji",
+  "intro": "A whole dinosaur, in pieces! Place the right bone at each station. Remember what a skeleton does: support, protection, movement!",
+  "success": "It stands! Support from the legs, protection from the ribs, movement from every joint. A masterpiece, Max-kun!",
+  "variant": "bones",
+  "goalText": "Put each bone where it belongs: skull up front, ribs in the middle, legs below, tail behind!",
+  "failText": "Hm — a dinosaur with a leg for a head would bump into everything. Swap and test again!",
+  "slots": [
+    {
+      "id": "head",
+      "label": "Head end",
+      "options": [
+        { "id": "skull", "label": "Skull", "value": 1 },
+        { "id": "legbone_a", "label": "Leg bone", "value": 2 },
+        { "id": "tailbones_a", "label": "Tail bones", "value": 3 }
+      ]
+    },
+    {
+      "id": "body",
+      "label": "Middle",
+      "options": [
+        { "id": "ribs", "label": "Ribcage", "value": 1 },
+        { "id": "skull_b", "label": "Skull", "value": 2 },
+        { "id": "legbone_b", "label": "Leg bone", "value": 3 }
+      ]
+    },
+    {
+      "id": "legs",
+      "label": "Underneath",
+      "options": [
+        { "id": "legbone", "label": "Strong leg bones", "value": 1 },
+        { "id": "tailbones_b", "label": "Tail bones", "value": 2 },
+        { "id": "ribs_b", "label": "Ribcage", "value": 3 }
+      ]
+    },
+    {
+      "id": "tail",
+      "label": "Back end",
+      "options": [
+        { "id": "tailbones", "label": "Tail bones", "value": 1 },
+        { "id": "skull_c", "label": "Skull", "value": 2 },
+        { "id": "legbone_c", "label": "Leg bone", "value": 3 }
+      ]
+    }
+  ],
+  "goal": {
+    "kind": "matchSlots",
+    "solution": { "head": "skull", "body": "ribs", "legs": "legbone", "tail": "tailbones" }
+  }
+}

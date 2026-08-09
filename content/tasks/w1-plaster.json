@@ -1,0 +1,20 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "w1-plaster",
+  "type": "measureit",
+  "title": "Plaster for the Bones",
+  "topicId": "measurement",
+  "speaker": "kenji",
+  "intro": "Before we lift ancient bones, we protect them with plaster. Measure twice, pour once, Max-kun!",
+  "success": "Perfect plaster! Now, to the bones themselves…",
+  "chain": ["w1-bones"],
+  "mode": "jug",
+  "unit": "ml",
+  "step": 25,
+  "max": 600,
+  "targets": {
+    "1": [200, 300, 400, 500],
+    "2": [250, 350, 450, 550],
+    "3": [225, 375, 425, 575]
+  }
+}

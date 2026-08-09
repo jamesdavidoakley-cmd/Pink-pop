@@ -110,6 +110,11 @@
       "I smell chips. The amber kind. Somewhere close…",
       "Nap or quest, nap or quest… let's quest, then nap!"
     ],
+    "sniff": [
+      "G'day! Smells like a secret 'round here… this-a-way!",
+      "Ooh, me nose is going bonkers — something's hidden real close!",
+      "Sniff sniff… yep! Treasure nearby, mate. Keep lookin'!"
+    ],
     "revive": [
       "Gotcha, mate! Back to the flag with ya. Deep breath — you're right as rain.",
       "Whoopsie-daisy! Dragged ya back meself. No harm done, hey?",

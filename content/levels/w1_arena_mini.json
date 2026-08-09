@@ -1,0 +1,38 @@
+{
+  "$schema": "../schemas/levels.schema.json",
+  "id": "w1_arena_mini",
+  "nameKey": "level.w1_arena_mini",
+  "kind": "arena",
+  "world": "w1",
+  "palette": {
+    "skyTop": "#3E8CC8",
+    "skyBottom": "#E8B878",
+    "fog": "#D8A878",
+    "fogNear": 30,
+    "fogFar": 110,
+    "sun": "#FFE8B8",
+    "ambient": "#C8D8E8"
+  },
+  "music": "w1",
+  "spawn": [0, 1, 14],
+  "spawnYaw": 3.14159,
+  "geometry": [
+    { "type": "cyl", "pos": [0, -0.6, 0], "r": 17, "r2": 18, "h": 1.2, "seg": 28, "color": "#B8905A" },
+    { "type": "cyl", "pos": [0, 0.6, 0], "r": 18.5, "r2": 19, "h": 2.4, "seg": 28, "color": "#8A6A42" },
+    { "type": "cyl", "pos": [0, 1.8, 0], "r": 19.5, "r2": 19.8, "h": 1.6, "seg": 28, "color": "#7A5A38" },
+    { "type": "box", "pos": [0, 0.15, 9], "size": [5, 0.3, 5], "color": "#C8A060" }
+  ],
+  "props": [
+    { "type": "flag", "pos": [-6, 0.1, -8], "color": "#C8952B" },
+    { "type": "flag", "pos": [6, 0.1, -8], "color": "#C8952B" },
+    { "type": "rock", "pos": [-9, 0.1, 4] },
+    { "type": "rock", "pos": [9.4, 0.1, 2.4], "scale": 0.8 },
+    { "type": "crate", "pos": [-8, 0.1, 8] }
+  ],
+  "portals": [
+    { "to": "w1", "pos": [0, 0.4, 15.5], "kind": "exit", "labelKey": "level.w1", "yaw": 3.14159 }
+  ],
+  "quizOrbs": [[-6, 2.2, 0], [6, 2.2, -3]],
+  "checkpoints": [[0, 1, 14]],
+  "boss": "foreman"
+}

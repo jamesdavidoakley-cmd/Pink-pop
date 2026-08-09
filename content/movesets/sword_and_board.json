@@ -1,0 +1,15 @@
+{
+  "$schema": "../schemas/movesets.schema.json",
+  "id": "sword_and_board",
+  "moves": [
+    { "id": "advance", "label": "Close in", "tags": ["advance"], "baseWeight": 1.0, "duration": 0.9, "range": "far", "motion": { "kind": "approach", "speed": 4.5 }, "threat": 0 },
+    { "id": "slash_combo", "label": "Triple Slash", "tags": ["strike", "advance"], "baseWeight": 1.1, "duration": 1.7, "telegraph": 0.7, "recovery": 0.7, "cooldown": 2.2, "threat": 3, "range": "near", "damage": 1, "motion": { "kind": "lunge", "speed": 5.5 }, "hit": { "shape": "arc", "radius": 2.2, "arc": 2.4, "from": 0.7, "to": 1.4 }, "bark": "taunt" },
+    { "id": "shield_bash", "label": "Shield Bash", "tags": ["strike"], "baseWeight": 0.9, "duration": 1.2, "telegraph": 0.62, "recovery": 0.5, "cooldown": 3.0, "threat": 2, "range": "near", "damage": 0.5, "motion": { "kind": "lunge", "speed": 7 }, "hit": { "shape": "arc", "radius": 1.8, "arc": 1.6, "from": 0.62, "to": 0.95 } },
+    { "id": "leap_strike", "label": "Leaping Strike", "tags": ["strike", "advance"], "baseWeight": 0.8, "duration": 1.6, "telegraph": 0.8, "recovery": 0.9, "cooldown": 4.5, "threat": 3, "range": "mid", "damage": 1, "motion": { "kind": "leap", "speed": 9 }, "hit": { "shape": "ring", "radius": 2.4, "from": 0.95, "to": 1.2 } },
+    { "id": "shield_block", "label": "Shield Up", "tags": ["block"], "baseWeight": 0.9, "duration": 1.4, "cooldown": 1.5, "range": "any", "stance": "block", "threat": 0 },
+    { "id": "circle_step", "label": "Circling Step", "tags": ["reposition"], "baseWeight": 0.8, "duration": 1.1, "range": "near", "motion": { "kind": "strafe", "speed": 3.2 }, "threat": 0 },
+    { "id": "measured_retreat", "label": "Measured Retreat", "tags": ["retreat", "block"], "baseWeight": 0.7, "duration": 1.0, "range": "near", "motion": { "kind": "retreat", "speed": 3.6 }, "stance": "block", "threat": 0 },
+    { "id": "patient_guard", "label": "Patient Guard", "tags": ["wait", "block"], "baseWeight": 0.6, "duration": 1.2, "range": "any", "stance": "block", "threat": 0 },
+    { "id": "war_cry", "label": "War Cry", "tags": ["taunt"], "baseWeight": 0.5, "duration": 1.1, "cooldown": 6, "range": "any", "threat": 0, "bark": "taunt" }
+  ]
+}

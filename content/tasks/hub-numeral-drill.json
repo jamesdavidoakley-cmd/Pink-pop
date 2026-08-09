@@ -1,0 +1,14 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "hub-numeral-drill",
+  "type": "quickfire",
+  "title": "Marcus's Numeral Drill",
+  "topicId": "roman-numerals",
+  "speaker": "marcus",
+  "intro": "AVE! The scoreboard counts as Rome counted! Answer three numeral challenges and GLORY — plus a certain scoreboard payout — shall be yours!",
+  "success": "The scoreboard ROARS with approval!",
+  "count": 3,
+  "topics": ["roman-numerals"],
+  "adaptive": true,
+  "flagOnComplete": "hub_numeral_drill"
+}

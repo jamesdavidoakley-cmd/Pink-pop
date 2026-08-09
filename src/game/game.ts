@@ -11,6 +11,7 @@ import { PlayScene, type SceneServices } from './world/playScene';
 import { Session } from './session';
 import { Hud } from './ui/hud';
 import { MenuHost } from './ui/menus';
+import { QuestionPanel } from './education/panel';
 import type { PortalDef } from '../engine/types';
 
 /**
@@ -28,6 +29,7 @@ export class Game {
   private hud: Hud;
   private menus: MenuHost;
   private dialogue: DialogueEngine;
+  private panel!: QuestionPanel;
   private uiRoot: HTMLDivElement;
   private state: 'title' | 'playing' = 'title';
   private fpsSamples: number[] = [];
@@ -48,6 +50,7 @@ export class Game {
     this.dialogue = new DialogueEngine(content, this.strings, tts, audio, this.uiRoot);
     this.hud = new Hud(this.uiRoot, this.strings);
     this.hud.setVisible(false);
+    this.panel = new QuestionPanel(this.uiRoot);
     this.menus = new MenuHost(this.uiRoot, content, this.strings);
     this.menus.speakUi = (text) => {
       if (this.settings.readMenus) void tts.speak(this.content.characters.kenji, text);
@@ -134,6 +137,7 @@ export class Game {
       dialogue: this.dialogue,
       session: this.session!,
       hud: this.hud,
+      panel: this.panel,
       onPortal: (p) => this.handlePortal(p),
       isUiBlocked: () => this.menus.open,
     };

@@ -1,0 +1,16 @@
+{
+  "$schema": "../schemas/bosses.schema.json",
+  "id": "foreman",
+  "name": "The Quarry Foreman",
+  "world": "w1",
+  "kind": "miniboss",
+  "hp": 6,
+  "phases": 1,
+  "traits": { "aggression": 0.65, "caution": 0.3, "trickery": 0.25, "patience": 0.3, "showmanship": 0.5 },
+  "traitNoise": 0.15,
+  "moveset": "heavy_hammer",
+  "abilities": [],
+  "voicePack": "boss_foreman",
+  "arena": "w1_arena_mini",
+  "fossil": "w1-f5"
+}

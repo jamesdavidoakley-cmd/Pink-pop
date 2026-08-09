@@ -1,0 +1,18 @@
+{
+  "$schema": "../schemas/bosses.schema.json",
+  "id": "bruno",
+  "name": "Bruno Ironhide — The Landslide",
+  "world": "w1",
+  "kind": "boss",
+  "hp": 12,
+  "phases": 2,
+  "traits": { "aggression": 0.9, "caution": 0.15, "trickery": 0.2, "patience": 0.1, "showmanship": 0.6 },
+  "moveset": "sword_and_board",
+  "abilities": [
+    { "id": "fossil_quake", "trigger": { "type": "onTimer", "value": 20 }, "effect": "quake", "repeat": true }
+  ],
+  "gimmick": { "tell": "overextends after his 3-swing combo — dizzy stomp window", "dizzyAfterCombo": 1.6 },
+  "voicePack": "boss_bruno",
+  "arena": "w1_arena_boss",
+  "fossil": "w1-f6"
+}

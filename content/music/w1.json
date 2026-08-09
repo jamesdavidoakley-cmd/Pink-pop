@@ -1,0 +1,16 @@
+{
+  "$schema": "../schemas/music.schema.json",
+  "id": "w1",
+  "tempo": 116,
+  "root": 50,
+  "mode": "mixolydian",
+  "swing": 0.08,
+  "layers": [
+    { "wave": "triangle", "pattern": [0, null, 4, null, 5, 4, 2, null, 0, null, 4, 7, 5, 4, 2, 0], "octave": 1, "gain": 0.14, "decay": 0.22, "role": "melody" },
+    { "wave": "sine", "pattern": [0, null, 0, null, -3, null, -3, null, 2, null, 2, null, -3, null, 0, null], "octave": 0, "gain": 0.2, "decay": 0.4, "role": "bass" },
+    { "wave": "triangle", "pattern": [null, 9, null, null, null, 9, 7, null], "octave": 1, "gain": 0.05, "decay": 0.15, "role": "arp" },
+    { "wave": "noise", "pattern": [0, null, null, 0, null, null, 0, null], "octave": 0, "gain": 0.18, "decay": 0.05, "role": "perc" },
+    { "wave": "noise", "pattern": [null, null, 0, null], "octave": 0, "gain": 0.3, "decay": 0.09, "role": "perc", "combatOnly": true },
+    { "wave": "sawtooth", "pattern": [0, 0, null, 0, -3, -3, null, -3], "octave": -1, "gain": 0.08, "decay": 0.12, "role": "bass", "combatOnly": true }
+  ]
+}
