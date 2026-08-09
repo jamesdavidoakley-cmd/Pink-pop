@@ -101,3 +101,10 @@ Running log of phase progress, decisions, and gate evidence. Newest entries at t
 **Gate evidence:** `scripts/cogwheel-check.mjs` headless — 4 spins bounce off the shield (hp untouched) → puzzle solved via slot-cycling + TEST stomp → `shielded=false`, staggered → beaten in 24 s by the cautious-masher bot → **freed champion + fossil + both champions seated at the café** → zero console errors. `playtest-w1.mjs` re-verified green after the pad rework; full suite 25/25; validate ✔ (8 levels, 6 bosses, 4 movesets, 13 tasks, 10 packs).
 
 **Stop point note:** Worlds 3–4 (and P7/P8) are future sessions per the phase plan; the build ships playable start → end of World 2 with every core system live.
+
+## Build status at the "end of World 2" stop point
+
+- **Playable now:** title → Dino Plaza (3 fossils, workshop, arena drill, garden, café) → Fossil Canyon (7 fossils incl. Foreman + Bruno) → Gearworks Gorge (7 fossils incl. Tinkerer Prime + Cogwheel) — **17 Star Fossils**, both champions freeable to the café, Spring Boots buildable.
+- **Gates:** `npm run ci` (typecheck + validate + 25 unit/AI tests + build, 329 KB gzip) ✔ · `npm run test:ai` (all four §6.6 proofs) ✔ · `npm run test:smoke` (Playwright: boot → new game → hub → W1 → spoken question → save/reload; playground movement — zero console errors, serialized workers for software-GL) ✔ · production `vite preview` boots clean ✔.
+- **Deferred to their phases per the plan:** swim (W4), CIRCUIT-IT/SHADOW-IT/FRACTION-FORGE archetypes (W3–W5 per §10 P6–P7), Magno-Mitt + Lantern Buddy gadgets, Buzzer/Shadowmite in the field (data shipped), day–night cycle, Bastion/Nightshade fights (data + AI proofs shipped; `active: false` until W5/W6), Vex finale.
+- Content counts: 8 levels · 6 bosses (4 fightable) · 4 shared movesets · 13 tasks · 10 question packs (~70 questions, parametric-heavy) · 13 voice packs (~430 authored lines) · 4 dialogue scenes · 4 music briefs.

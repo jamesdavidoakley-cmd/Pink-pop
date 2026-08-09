@@ -31,4 +31,16 @@ npm run dev        # → http://localhost:5173
 - `docs/AUTHORING.md` — add worlds/bosses/questions with zero engine changes
 - `docs/CONTROLS.md` — keyboard & gamepad controls
 
-Dev conveniences: `?level=<id>` boots straight into a level (e.g. `?level=playground`), `?slot=<0-2>` picks a save slot.
+Dev conveniences: `?level=<id>` boots straight into a level (e.g. `?level=playground`), `?slot=<0-2>` picks a save slot, `window.__game` exposes scene/player/session/goto for tooling.
+
+### Headless sanity scripts (used as phase gates — see DEVLOG)
+
+| Script | Proves |
+|---|---|
+| `node scripts/boot-check.mjs <url> [shot.png]` | boots clean, zero console errors, screenshot |
+| `node scripts/drive-check.mjs <url>` | run/jump/double-jump work end to end |
+| `node scripts/voice-check.mjs <url>` | all four heroes converse; TTS degrades gracefully |
+| `node scripts/persist-check.mjs <url>` | collect fossil → reload → everything persists |
+| `node scripts/playtest-w1.mjs <url>` | the spoken warm failure loop (wrong → hint → teach → fresh values) |
+| `node scripts/bruno-check.mjs <url>` | Bruno beatable on Explorer by a cautious button-masher |
+| `node scripts/cogwheel-check.mjs <url>` | shield gimmick → gear puzzle → victory → café fills |

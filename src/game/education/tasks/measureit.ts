@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { toonMat } from '../../../engine/renderer';
+import { updateTextSprite } from '../../world/textSprite';
 import type { TaskContext, TaskInstance } from '../runner';
 
 /**
@@ -53,8 +54,7 @@ export function measureit(ctx: TaskContext): TaskInstance {
     const frac = current / max;
     fill.scale.y = Math.max(0.01, frac * 2.0);
     fill.position.y = 0.2 + frac;
-    (readout as THREE.Sprite & { userData: { canvas?: HTMLCanvasElement } }); // sprite update below
-    import('../../world/textSprite').then(({ updateTextSprite }) => updateTextSprite(readout, `${current} ${unit}`));
+    updateTextSprite(readout, `${current} ${unit}`);
   };
 
   return {
