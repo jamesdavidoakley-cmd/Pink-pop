@@ -87,4 +87,17 @@ Running log of phase progress, decisions, and gate evidence. Newest entries at t
 **Gate evidence:** `npm run test:ai` → 5/5 (metrics above logged in output). `scripts/bruno-check.mjs` headless: a cautious button-masher bot (retreat on glow, waddle in and spin otherwise) beats Bruno on Explorer in **36 s**, phase 2 reached, zero wipes, zero console errors; champion freed + fossil banked. Full suite 25/25.
 
 ## P6 · Worlds 2–4 (this build: W2 complete — stop point for "end of World 2")
-_(pending)_
+
+**Done (the W2 slice — this build's contracted stop point):**
+- **Gearworks Gorge** complete: brass canyon-factory in 3 zones (entry gorge → Factory Floor → the Heights) with opinionated conveyors, three rideable rotating gear platforms as a high line, scheduled steam vents (lift Max — and hide the Digger secret above them), cracked block, roar wall, exactly 100 chips, scouts/brutes/**tinkerers** (the priority-target lesson), gorge bank, spring pad.
+- W2's seven fossils: ① *Cogs of Symmetry → the Great Gear Train* chain (symmetry SORT-IT into a gear-ratio BUILD-IT — "a 24-tooth driver on an 8-tooth output spins it three times: feel the maths") ② *Counterweight Lift* (lever-law BUILD-IT: weight × arm = 60 × 2) ③ steam-vent secret ④ *Conveyor Gauntlet* + gear-ride platforming ⑤ **Tinkerer Prime** (spanner_turrets moveset: repairs itself below half, deploys turret coglings on a timer) ⑥ **Baroness Cogwheel** ⑦ bonus.
+- **Cogwheel's fight is the education-inside-a-boss-fight proof (§6.7)**: she opens *invulnerable* behind a shield generator (every hit deflects with her crisp disappointed-teacher lines); the **3-cog gear puzzle at the arena's edge** (make the generator gear turn at half speed — small driver, big output) is the only way through; solving it drops the bubble and staggers her for an earned opening. Repair swarm below 50%, turret deploys on a timer, phases with Explorer checkpoints.
+- **Kenji's Workshop live in the hub**: the *Spring Boots* BUILD-IT (spring × lever in the 20–30 bounce band) → real gadget → **spring pads wake up across Terra Nova**; Magno-Mitt blueprint teases W3.
+- **The Fossil Café fills**: freed champions appear as living NPCs at their tables — Bruno hosts *Rock Sorter*, the Baroness hosts *Gear Ratio Workshop* — both quick-fire practice drawing from the player's **weakest** topics (spaced repetition, §5.1.5). Café greeting pools added; Botto chats in the workshop.
+- New packs: times tables (×3/×4/×8→12×12, gear-ratio flavoured), circuits intro, symmetry, gears & levers. W2 door open at 4 fossils; totals now 17 fossils across hub + W1 + W2.
+
+**Found & fixed (kid-UX class):** standing on a BUILD-IT TEST pad when a task started machine-gunned failed tests and swallowed part-swaps. All task pads are now **edge-triggered** (step off, then on) with arming delays — quick-fire answers, MEASURE-IT ✓, and TEST alike; fail-speech no longer blocks part-swapping. Both world spawns turned to face into the world. Question instances now carry a monotonic `askSeq` (drives tests + tools).
+
+**Gate evidence:** `scripts/cogwheel-check.mjs` headless — 4 spins bounce off the shield (hp untouched) → puzzle solved via slot-cycling + TEST stomp → `shielded=false`, staggered → beaten in 24 s by the cautious-masher bot → **freed champion + fossil + both champions seated at the café** → zero console errors. `playtest-w1.mjs` re-verified green after the pad rework; full suite 25/25; validate ✔ (8 levels, 6 bosses, 4 movesets, 13 tasks, 10 packs).
+
+**Stop point note:** Worlds 3–4 (and P7/P8) are future sessions per the phase plan; the build ships playable start → end of World 2 with every core system live.

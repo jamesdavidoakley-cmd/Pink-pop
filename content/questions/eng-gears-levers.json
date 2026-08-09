@@ -1,0 +1,62 @@
+{
+  "$schema": "../schemas/questions.schema.json",
+  "id": "eng-gears-levers",
+  "strand": "engineering",
+  "topic": "gears-levers",
+  "questions": [
+    {
+      "id": "gl-t1-001", "tier": 1,
+      "template": "A small gear driving a big gear makes the big gear turn…?",
+      "choices": ["Slower but stronger", "Faster but weaker", "Backwards in time"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Big gears are heavy movers.",
+      "explain": "Small-driving-big trades speed for turning force."
+    },
+    {
+      "id": "gl-t1-002", "tier": 1,
+      "template": "A lever helps you lift because…?",
+      "choices": ["A long arm multiplies your push", "It shouts encouragement", "It makes things lighter forever"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "The longer the arm, the easier the lift.",
+      "explain": "Force × distance: a long arm turns a small push into a big lift."
+    },
+    {
+      "id": "gl-t2-001", "tier": 2,
+      "template": "A 24-tooth gear drives an 8-tooth gear. The small gear spins…?",
+      "choices": ["3× as fast", "3× slower", "The same"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "24 ÷ 8…",
+      "explain": "Each big turn pushes 24 teeth past; the 8-tooth gear must spin 3 times."
+    },
+    {
+      "id": "gl-t2-002", "tier": 2,
+      "template": "Which shape makes a structure strongest?",
+      "choices": ["Triangle", "Circle drawn badly", "Wobbly rectangle"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "It has no way to lean!",
+      "explain": "Triangles can't change shape without changing side lengths — that's rigidity."
+    },
+    {
+      "id": "gl-t3-001", "tier": 3,
+      "template": "To balance 60 blocks at 2 arms, you could use…?",
+      "choices": ["40 blocks at 3 arms", "20 blocks at 2 arms", "60 blocks at 1 arm"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Multiply weight × arms on each side — they must match: 60 × 2 = 120.",
+      "explain": "40 × 3 = 120 = 60 × 2 — balanced! The lever law in action."
+    },
+    {
+      "id": "gl-t3-002", "tier": 3,
+      "template": "The middle gear in a three-gear train changes…?",
+      "choices": ["Only the spin direction", "The speed hugely", "The colour"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "They call it an idler — it just passes the motion along.",
+      "explain": "An idler flips direction; speed depends only on the first and last gears."
+    }
+  ]
+}

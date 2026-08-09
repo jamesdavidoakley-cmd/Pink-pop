@@ -1,0 +1,13 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "cafe-gear-ratio",
+  "type": "quickfire",
+  "title": "Gear Ratio Workshop",
+  "topicId": "times-tables",
+  "speaker": "kenji",
+  "intro": "The Baroness's practice bench! Ratios, tables, precision. She grades kindly now. Mostly.",
+  "success": "The Baroness allows herself a small, proud nod.",
+  "count": 3,
+  "topics": ["times-tables", "gears-levers", "symmetry"],
+  "adaptive": true
+}

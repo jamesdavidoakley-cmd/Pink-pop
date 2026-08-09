@@ -1,0 +1,19 @@
+{
+  "$schema": "../schemas/bosses.schema.json",
+  "id": "cogwheel",
+  "name": "Baroness Cogwheel — The Method",
+  "world": "w2",
+  "kind": "boss",
+  "hp": 14,
+  "phases": 2,
+  "traits": { "aggression": 0.3, "caution": 0.85, "trickery": 0.5, "patience": 0.8, "showmanship": 0.55 },
+  "moveset": "spanner_turrets",
+  "abilities": [
+    { "id": "repair_swarm", "trigger": { "type": "onHpBelow", "value": 0.5 }, "effect": "repair" },
+    { "id": "turret_deploy", "trigger": { "type": "onTimer", "value": 18 }, "effect": "turrets", "repeat": true }
+  ],
+  "gimmick": { "shieldTask": "w2-cogpuzzle", "note": "invulnerable behind her shield generator until the 3-cog gear puzzle at the arena edge is solved" },
+  "voicePack": "boss_cogwheel",
+  "arena": "w2_arena_boss",
+  "fossil": "w2-f6"
+}

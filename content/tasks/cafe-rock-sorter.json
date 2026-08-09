@@ -1,0 +1,13 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "cafe-rock-sorter",
+  "type": "quickfire",
+  "title": "Bruno's Rock Sorter",
+  "topicId": "rocks-soils",
+  "speaker": "marcus",
+  "intro": "Bruno's favourite game: ROCKS! Answer like a quarry-master!",
+  "success": "Bruno pounds the table with joy! (The table forgives him.)",
+  "count": 3,
+  "topics": ["rocks-soils", "skeletons"],
+  "adaptive": true
+}

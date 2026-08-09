@@ -1,0 +1,116 @@
+{
+  "$schema": "../schemas/questions.schema.json",
+  "id": "maths-times-tables",
+  "strand": "maths",
+  "topic": "times-tables",
+  "questions": [
+    {
+      "id": "tt-t1-001", "tier": 1,
+      "template": "What is {a} × 3?",
+      "params": { "a": { "min": 2, "max": 10 } },
+      "answerExpr": "a*3",
+      "distractorRules": ["a*3+3", "a*3-3", "a*2"],
+      "askStyles": ["kenji", "marcus", "digger"],
+      "hint": "Double it, then add one more {a}.",
+      "explain": "{a} × 3 is {a} + {a} + {a} = {answer}."
+    },
+    {
+      "id": "tt-t1-002", "tier": 1,
+      "template": "What is {a} × 4?",
+      "params": { "a": { "min": 2, "max": 10 } },
+      "answerExpr": "a*4",
+      "distractorRules": ["a*4+4", "a*4-4", "a*3"],
+      "askStyles": ["kenji", "marcus", "digger"],
+      "hint": "Double it — then double it again!",
+      "explain": "{a} × 4 is {a} doubled twice: {a} → {a2} → {answer}."
+    },
+    {
+      "id": "tt-t1-003", "tier": 1,
+      "template": "A cog turns {a} times a second. In 2 seconds, how many turns?",
+      "params": { "a": { "min": 3, "max": 12 } },
+      "answerExpr": "a*2",
+      "distractorRules": ["a+2", "a*3"],
+      "askStyles": ["kenji", "digger"],
+      "hint": "Two seconds means two lots of {a}.",
+      "explain": "{a} turns twice over is {a} × 2 = {answer}."
+    },
+    {
+      "id": "tt-t2-001", "tier": 2,
+      "template": "What is {a} × 8?",
+      "params": { "a": { "min": 2, "max": 12 } },
+      "answerExpr": "a*8",
+      "distractorRules": ["a*8+8", "a*8-8", "a*4"],
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Double it three times: ×2, ×2, ×2.",
+      "explain": "{a} × 8 is {a} doubled three times — {answer}."
+    },
+    {
+      "id": "tt-t2-002", "tier": 2,
+      "template": "A 4-tooth gear drives a 12-tooth gear. How many times must the small one spin to turn the big one once?",
+      "choices": ["3", "4", "12"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "How many 4s make 12?",
+      "explain": "12 ÷ 4 = 3 — three small spins per big turn. Feel the maths!"
+    },
+    {
+      "id": "tt-t2-003", "tier": 2,
+      "template": "What is {a} × 6?",
+      "params": { "a": { "min": 3, "max": 12 } },
+      "answerExpr": "a*6",
+      "distractorRules": ["a*6+6", "a*5"],
+      "askStyles": ["marcus", "digger"],
+      "hint": "It's {a} × 3, doubled.",
+      "explain": "{a} × 6 = {answer} — three lots, twice over."
+    },
+    {
+      "id": "tt-t2-004", "tier": 2,
+      "template": "Marcus does {a} push-ups every morning for 7 days. How many push-ups?",
+      "params": { "a": { "min": 3, "max": 9 } },
+      "answerExpr": "a*7",
+      "distractorRules": ["a*7+7", "a*6"],
+      "askStyles": ["marcus", "digger"],
+      "hint": "Seven days, {a} each day…",
+      "explain": "{a} × 7 = {answer} glorious push-ups."
+    },
+    {
+      "id": "tt-t3-001", "tier": 3,
+      "template": "What is {a} × 12?",
+      "params": { "a": { "min": 3, "max": 12 } },
+      "answerExpr": "a*12",
+      "distractorRules": ["a*12+12", "a*11", "a*10"],
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Ten lots plus two lots.",
+      "explain": "{a} × 12 = {a} × 10 + {a} × 2 = {answer}."
+    },
+    {
+      "id": "tt-t3-002", "tier": 3,
+      "template": "What is {a} × 9?",
+      "params": { "a": { "min": 3, "max": 12 } },
+      "answerExpr": "a*9",
+      "distractorRules": ["a*9+9", "a*10"],
+      "askStyles": ["kenji", "digger"],
+      "hint": "Ten lots, minus one lot.",
+      "explain": "{a} × 9 = {a} × 10 − {a} = {answer}."
+    },
+    {
+      "id": "tt-t3-003", "tier": 3,
+      "template": "A 24-tooth gear drives an 8-tooth gear. How many spins does the small gear make per big turn?",
+      "choices": ["3", "2", "8"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "24 shared into 8s…",
+      "explain": "24 ÷ 8 = 3 — the little gear whizzes three times around."
+    },
+    {
+      "id": "tt-t3-004", "tier": 3,
+      "template": "What is {a} × {b}?",
+      "params": { "a": { "min": 6, "max": 12 }, "b": { "min": 6, "max": 9 } },
+      "answerExpr": "a*b",
+      "distractorRules": ["a*b+a", "a*b-b", "(a+1)*b"],
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Break it up: {a} × {b} is {a} lots of {b}.",
+      "explain": "{a} × {b} = {answer}."
+    }
+  ]
+}

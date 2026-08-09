@@ -57,6 +57,10 @@ export function buildit(ctx: TaskContext): TaskInstance {
   });
 
   const testPad = ctx.kit.makePad(ctx.origin.clone().addScaledVector(fwd, 0.8), ctx.strings.get('task.buildit.test'), '#6BCB77');
+  // edge-trigger: the player must step ONTO the pad — standing there when the
+  // task starts (or lingering after a test) must not machine-gun the tester
+  let padWasOn = true;
+  let armT = 0.6;
 
   function renderSlot(rig: SlotRig): void {
     const idx = chosen.get(rig.def.id)!;
@@ -112,14 +116,17 @@ export function buildit(ctx: TaskContext): TaskInstance {
   return {
     update: (dt) => {
       if (done) return;
+      armT = Math.max(0, armT - dt);
       if (spinT > 0) {
         spinT -= dt;
         for (const [i, rig] of rigs.entries()) {
           rig.partHolder.rotation.z += dt * (i === 0 ? 4 : 4 * (i % 2 === 0 ? 1 : -1)) * 0.8;
         }
-        if (spinT <= 0 && !done) testing = false;
       }
-      if (!testing && ctx.kit.padTriggered(testPad)) {
+      const padOn = ctx.kit.padTriggered(testPad);
+      const padEntered = padOn && !padWasOn;
+      padWasOn = padOn;
+      if (!testing && armT <= 0 && padEntered) {
         testing = true;
         attempts++;
         testPad.pulse();
@@ -140,11 +147,13 @@ export function buildit(ctx: TaskContext): TaskInstance {
             ctx.panel.flash(false);
             ctx.education.recordAnswer(def.topicId ?? 'gears-levers', false, 1, attempts === 1);
             const fail = def.failText ?? 'Not quite — the design loop says: test, learn, improve!';
+            // speech is fire-and-forget: the player can keep swapping parts
+            // while the companion talks (the design loop shouldn't queue-block)
+            testing = false;
             void (async () => {
               await ctx.voice.sayText(ctx.speaker, report);
               await ctx.voice.sayText(ctx.speaker, fail);
               if (attempts >= 2) await ctx.voice.say(ctx.speaker, 'hint_buildit', { hint: def.goalText ?? '' });
-              testing = false;
             })();
           }
         }, 1650);

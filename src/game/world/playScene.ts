@@ -152,6 +152,7 @@ export class PlayScene implements CollisionWorld {
         (bossId, fossilId) => this.handleBossVictory(bossId, fossilId),
       );
     }
+    this.buildNpcs();
 
     this.cameraRig = new CameraRig(s.content.config.camera, s.renderer.camera, s.input);
     this.cameraRig.snapTo(this.build.spawn, this.build.spawnYaw + Math.PI);
@@ -439,7 +440,19 @@ export class PlayScene implements CollisionWorld {
 
   private onTaskChainComplete(headId: string, practice: boolean): void {
     const headDef = this.s.content.tasks[headId];
-    if (headDef?.flagOnComplete) this.s.session.setFlag(headDef.flagOnComplete);
+    if (headDef?.flagOnComplete) {
+      if (headDef.flagOnComplete.startsWith('gadget:')) {
+        // BUILD-IT projects in Kenji's Workshop produce real gadgets (§4.6)
+        const gadgetId = headDef.flagOnComplete.slice('gadget:'.length);
+        if (!this.s.session.hasGadget(gadgetId)) {
+          this.s.session.addGadget(gadgetId);
+          this.s.hud.toast(this.s.strings.get('toast.gadgetBuilt', { name: headDef.title }), 4);
+          if (gadgetId === 'spring_boots') this.s.hud.toast(this.s.strings.get('toast.springPads'), 5);
+        }
+      } else {
+        this.s.session.setFlag(headDef.flagOnComplete);
+      }
+    }
     const fossil = (this.def.fossils ?? []).find((f) => f.taskId === headId);
     if (fossil && !practice && !this.s.session.hasFossil(fossil.id)) {
       // the fossil pops out right where the work was done
@@ -499,6 +512,43 @@ export class PlayScene implements CollisionWorld {
   private bankLabel(): string {
     const target = this.s.content.config.economy.bonusFossilChips;
     return `${this.s.strings.get('bank.title')}\n${this.s.session.banked(this.def.id)} of ${target}`;
+  }
+
+  // ---------------- NPCs: café champions, Botto, future friends ----------------
+  private npcs: { rig: ReturnType<typeof buildRig>; char: string; talkT: number; pos: THREE.Vector3 }[] = [];
+
+  private buildNpcs(): void {
+    for (const n of this.def.npcs ?? []) {
+      if (n.requiresFreed && !this.s.session.isFreed(n.char)) continue;
+      const charDef = this.s.content.characters[n.char];
+      if (!charDef) continue;
+      const rig = buildRig(charDef);
+      const pos = new THREE.Vector3(...n.pos);
+      rig.root.position.copy(pos);
+      rig.root.rotation.y = n.yaw ?? 0;
+      this.build.group.add(rig.root);
+      this.s.renderer.addOutline(rig.root);
+      const npc = { rig, char: n.char, talkT: Math.random() * 10, pos };
+      this.npcs.push(npc);
+      this.interactables.add({
+        id: `npc:${n.char}`,
+        pos, radius: 2.6,
+        label: n.practiceTask
+          ? this.s.strings.get('prompt.practice')
+          : this.s.strings.get('prompt.talk'),
+        enabled: () => !this.runner.isActive,
+        onInteract: () => {
+          const greetPool = this.s.content.voices[n.char]?.pools.cafe ? 'cafe' : n.chatPool ?? 'banter';
+          this.s.dialogue.bark(n.char, greetPool, { priority: 2 });
+          if (n.practiceTask) {
+            // café practice draws from the player's weakest topics (§5.1.5)
+            setTimeout(() => {
+              if (!this.runner.isActive) this.runner.start(n.practiceTask!, pos, (n.yaw ?? 0) + Math.PI, { practice: true });
+            }, 1200);
+          }
+        },
+      });
+    }
   }
 
   // ---------------- gameplay handlers ----------------
@@ -739,6 +789,17 @@ export class PlayScene implements CollisionWorld {
           this.player.takeDamage(h.damage ?? 0.5, pos);
         }
       }
+    }
+
+    // NPC idle life: gentle animation, face Max when he's close
+    for (const npc of this.npcs) {
+      npc.talkT += dt;
+      const near = npc.pos.distanceTo(this.player.pos) < 4;
+      if (near) {
+        const d = this.player.pos.clone().sub(npc.pos);
+        npc.rig.root.rotation.y = Math.atan2(d.x, d.z);
+      }
+      npc.rig.update({ mode: near && this.s.dialogue.speaking ? 'talk' : 'idle', speed01: 0 }, npc.talkT, dt);
     }
 
     // brain power sync into the save

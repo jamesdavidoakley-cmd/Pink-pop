@@ -1,0 +1,38 @@
+{
+  "$schema": "../schemas/levels.schema.json",
+  "id": "w2_arena_mini",
+  "nameKey": "level.w2_arena_mini",
+  "kind": "arena",
+  "world": "w2",
+  "palette": {
+    "skyTop": "#3A5A78",
+    "skyBottom": "#C89858",
+    "fog": "#98805E",
+    "fogNear": 28,
+    "fogFar": 100,
+    "sun": "#FFE0B8",
+    "ambient": "#B8A898"
+  },
+  "music": "w2",
+  "spawn": [0, 1, 13],
+  "spawnYaw": 3.14159,
+  "geometry": [
+    { "type": "cyl", "pos": [0, -0.6, 0], "r": 16, "r2": 17, "h": 1.2, "seg": 24, "color": "#8A7050" },
+    { "type": "ring", "pos": [0, 1.4, 0], "r": 16.5, "h": 2.8, "thick": 1.5, "seg": 20, "color": "#5E4E3A" },
+    { "type": "box", "pos": [0, 0.15, 9], "size": [5, 0.3, 5], "color": "#9A7E58" },
+    { "type": "box", "pos": [-7, 0.4, -5], "size": [3, 0.8, 3], "color": "#9A7E58" },
+    { "type": "box", "pos": [7, 0.4, -3], "size": [3, 0.8, 3], "color": "#9A7E58" }
+  ],
+  "props": [
+    { "type": "gearDeco", "pos": [-10, 1.4, 6], "scale": 1.4 },
+    { "type": "gearDeco", "pos": [10, 1.2, 7], "scale": 1.1 },
+    { "type": "pipe", "pos": [-11, 0.1, -7] },
+    { "type": "crate", "pos": [9, 0.1, 5] }
+  ],
+  "portals": [
+    { "to": "w2", "pos": [0, 0.4, 14.6], "kind": "exit", "labelKey": "level.w2", "yaw": 3.14159 }
+  ],
+  "quizOrbs": [[-7, 2.4, 2], [7, 2.4, -6]],
+  "checkpoints": [[0, 1, 13]],
+  "boss": "tinkerer_prime"
+}

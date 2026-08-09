@@ -1,0 +1,15 @@
+{
+  "$schema": "../schemas/music.schema.json",
+  "id": "w2",
+  "tempo": 104,
+  "root": 45,
+  "mode": "minor",
+  "layers": [
+    { "wave": "triangle", "pattern": [0, null, 4, 2, null, 2, 0, null, -1, null, 2, 4, null, 4, 5, 4], "octave": 1, "gain": 0.13, "decay": 0.28, "role": "melody" },
+    { "wave": "sine", "pattern": [0, null, null, 0, null, null, -3, null, null, 4, null, null], "octave": 0, "gain": 0.2, "decay": 0.5, "role": "bass" },
+    { "wave": "square", "pattern": [null, 7, null, 7, null, 9, null, 7], "octave": 1, "gain": 0.035, "decay": 0.1, "role": "arp" },
+    { "wave": "noise", "pattern": [0, null, 0, null, 0, null, 0, null], "octave": 0, "gain": 0.1, "decay": 0.03, "role": "perc" },
+    { "wave": "noise", "pattern": [null, null, 0, null], "octave": 0, "gain": 0.28, "decay": 0.08, "role": "perc", "combatOnly": true },
+    { "wave": "sawtooth", "pattern": [0, null, 0, 0, null, 0, -3, null], "octave": -1, "gain": 0.08, "decay": 0.14, "role": "bass", "combatOnly": true }
+  ]
+}

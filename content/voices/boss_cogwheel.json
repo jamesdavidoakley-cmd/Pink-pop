@@ -39,6 +39,11 @@
     "repair": [
       "Repair swarm — tidy me up.",
       "Maintenance interval! Do excuse me."
+    ],
+    "cafe": [
+      "Ah, my star pupil. Tea? I've calculated the optimal steeping time, obviously.",
+      "The Gear Ratio Workshop is open. Do sit up straight; posture aids arithmetic.",
+      "Between us — losing to you was the finest data I've gathered in years."
     ]
   }
 }

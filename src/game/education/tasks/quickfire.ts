@@ -12,6 +12,7 @@ export function quickfire(ctx: TaskContext): TaskInstance {
   let pads: Pad[] = [];
   let resolvePick: ((i: number) => void) | null = null;
   let armed = false;
+  let offPadSinceArm = false;
   let disposed = false;
   let current: QuestionInstance | null = null;
 
@@ -32,7 +33,8 @@ export function quickfire(ctx: TaskContext): TaskInstance {
       pads.forEach((p, i) => { p.setLabel(q.choices[i] ?? ''); p.setColor('#8898B8'); });
       void attempt;
       armed = false;
-      setTimeout(() => { armed = true; }, 450); // don't trigger on the pad you're stood on
+      offPadSinceArm = false; // must step OFF, then onto an answer — no auto-answers
+      setTimeout(() => { armed = true; }, 450);
       return new Promise<number>((resolve) => { resolvePick = resolve; });
     },
     onCorrect: () => {
@@ -68,15 +70,17 @@ export function quickfire(ctx: TaskContext): TaskInstance {
 
   return {
     update: () => {
+      const onPad = pads.findIndex((p) => ctx.kit.padTriggered(p));
+      // dev/test visibility into the answer gate
+      (ctx.kit.group.userData as Record<string, unknown>).qf = {
+        armed, off: offPadSinceArm, waiting: !!resolvePick, onPad,
+      };
       if (!resolvePick || !armed) return;
-      for (let i = 0; i < pads.length; i++) {
-        if (ctx.kit.padTriggered(pads[i])) {
-          const r = resolvePick;
-          resolvePick = null;
-          r(i);
-          break;
-        }
-      }
+      if (onPad === -1) { offPadSinceArm = true; return; }
+      if (!offPadSinceArm) return;
+      const r = resolvePick;
+      resolvePick = null;
+      r(onPad);
     },
     dispose: () => { disposed = true; pads = []; ctx.panel.hide(); },
   };

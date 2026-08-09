@@ -1,0 +1,44 @@
+{
+  "$schema": "../schemas/questions.schema.json",
+  "id": "maths-symmetry",
+  "strand": "maths",
+  "topic": "symmetry",
+  "questions": [
+    {
+      "id": "sy-t1-001", "tier": 1,
+      "template": "A shape has line symmetry when…?",
+      "choices": ["One half mirrors the other", "It is very big", "It is painted blue"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "Imagine folding it down the middle.",
+      "explain": "If the fold makes both halves match exactly, that's line symmetry."
+    },
+    {
+      "id": "sy-t1-002", "tier": 1,
+      "template": "How many lines of symmetry does a square have?",
+      "choices": ["4", "1", "0"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Two through the middles, two through the corners.",
+      "explain": "A square folds perfectly four different ways."
+    },
+    {
+      "id": "sy-t2-001", "tier": 2,
+      "template": "Which letter has a line of symmetry?",
+      "choices": ["A", "F", "G"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "Fold each letter down the middle in your head.",
+      "explain": "A mirrors left-to-right; F and G don't fold onto themselves."
+    },
+    {
+      "id": "sy-t2-002", "tier": 2,
+      "template": "How many lines of symmetry does a circle have?",
+      "choices": ["Endless — every line through the middle", "Exactly 2", "None"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "Try folding a circle any way through its centre…",
+      "explain": "Every fold through the centre matches — circles are symmetry champions."
+    }
+  ]
+}

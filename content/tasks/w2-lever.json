@@ -1,0 +1,34 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "w2-lever",
+  "type": "buildit",
+  "title": "The Counterweight Lift",
+  "topicId": "gears-levers",
+  "speaker": "kenji",
+  "intro": "The lift is a giant see-saw, Max-kun. The load is 60 blocks sitting 2 arms out — so our side must MULTIPLY to the same: weight × distance = 120. Balance it!",
+  "success": "Equilibrium! Sixty times two on their side, your clever pick on ours. The lift rises like a polite whale.",
+  "variant": "lever",
+  "goalText": "Balance the beam: your weight × your arm length must equal 60 × 2 = 120.",
+  "failText": "Multiply your weight by its distance — does it make exactly 120?",
+  "slots": [
+    {
+      "id": "weight",
+      "label": "Counterweight",
+      "options": [
+        { "id": "w20", "label": "20 blocks", "value": 20 },
+        { "id": "w40", "label": "40 blocks", "value": 40 },
+        { "id": "w60", "label": "60 blocks", "value": 60 }
+      ]
+    },
+    {
+      "id": "arm",
+      "label": "Arm position",
+      "options": [
+        { "id": "a1", "label": "1 arm out", "value": 1 },
+        { "id": "a2", "label": "2 arms out", "value": 2 },
+        { "id": "a3", "label": "3 arms out", "value": 3 }
+      ]
+    }
+  ],
+  "goal": { "kind": "leverBalance", "loadValue": 60, "loadArm": 2 }
+}

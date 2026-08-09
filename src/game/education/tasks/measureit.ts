@@ -45,6 +45,8 @@ export function measureit(ctx: TaskContext): TaskInstance {
   const plus = ctx.kit.makePad(ctx.origin.clone().addScaledVector(side, 2.4).addScaledVector(fwd, 1.6), `+ ${step}`, '#6A9AB8');
   const confirm = ctx.kit.makePad(ctx.origin.clone().addScaledVector(fwd, 0.6), '✓', '#6BCB77');
   let cooldown = 0;
+  // ✓ is edge-triggered: standing on it must not re-submit over and over
+  let confirmWasOn = true;
 
   const setAmount = (v: number): void => {
     current = THREE.MathUtils.clamp(v, 0, max);
@@ -59,10 +61,13 @@ export function measureit(ctx: TaskContext): TaskInstance {
     update: (dt) => {
       if (done) return;
       cooldown = Math.max(0, cooldown - dt);
+      const confirmOn = ctx.kit.padTriggered(confirm);
+      const confirmEntered = confirmOn && !confirmWasOn;
+      confirmWasOn = confirmOn;
       if (cooldown === 0) {
         if (ctx.kit.padTriggered(plus)) { setAmount(current + step); plus.pulse(); ctx.kit.audio.sfx('pop'); cooldown = 0.34; }
         else if (ctx.kit.padTriggered(minus)) { setAmount(current - step); minus.pulse(); ctx.kit.audio.sfx('pop'); cooldown = 0.34; }
-        else if (ctx.kit.padTriggered(confirm)) {
+        else if (confirmEntered) {
           cooldown = 0.8;
           confirm.pulse();
           if (current === target) {

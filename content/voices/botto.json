@@ -1,0 +1,12 @@
+{
+  "$schema": "../schemas/voices.schema.json",
+  "character": "botto",
+  "pools": {
+    "chat": [
+      "Beep! Botto reports: workshop operational. Kenji-san's snacks: guarded. By me. Poorly.",
+      "Boop-beep! Query: do dinosaurs need umbrellas? Compiling… inconclusive.",
+      "Bzzt! Botto has counted the plaza tiles. Twice. There are MANY.",
+      "Beep-boop! Reminder: the Workshop bench takes project requests!"
+    ]
+  }
+}

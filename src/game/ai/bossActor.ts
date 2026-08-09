@@ -106,7 +106,26 @@ export class BossActor {
     );
     this.telegraphShell.position.y = 1.0;
     this.rig.root.add(this.telegraphShell);
+    // gimmick: a shield generator that education switches off (Cogwheel §6.7)
+    const gimmick = def.gimmick as { shieldTask?: string } | undefined;
+    this.shieldBubble = new THREE.Mesh(
+      new THREE.SphereGeometry(1.5 * (charDef.scale ?? 1), 16, 12),
+      new THREE.MeshBasicMaterial({ color: '#7AC8FF', transparent: true, opacity: 0.28, side: THREE.DoubleSide }),
+    );
+    this.shieldBubble.position.y = 1.0;
+    this.rig.root.add(this.shieldBubble);
+    if (gimmick?.shieldTask) this.shielded = true;
+    this.shieldBubble.visible = this.shielded;
     this.decisionTimer = 1.2; // a beat before the first move
+  }
+
+  private shieldBubble: THREE.Mesh;
+
+  dropShield(): void {
+    this.shielded = false;
+    this.shieldBubble.visible = false;
+    this.state = 'staggered';
+    this.stateT = 2.0; // the generator dying staggers her — earned opening
   }
 
   get alive(): boolean { return this.state !== 'defeated'; }
@@ -196,6 +215,10 @@ export class BossActor {
     this.time += dt;
     this.hitFlash = Math.max(0, this.hitFlash - dt);
     this.updateQuakes(dt);
+    if (this.shielded) {
+      this.shieldBubble.visible = true;
+      (this.shieldBubble.material as THREE.MeshBasicMaterial).opacity = 0.2 + Math.sin(this.time * 3) * 0.08;
+    }
     if (frozen) { this.syncRig(dt, 0); return; }
 
     const player = this.host.playerPos();

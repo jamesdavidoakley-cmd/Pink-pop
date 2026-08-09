@@ -1,0 +1,19 @@
+{
+  "$schema": "../schemas/bosses.schema.json",
+  "id": "tinkerer_prime",
+  "name": "Tinkerer Prime",
+  "world": "w2",
+  "kind": "miniboss",
+  "hp": 8,
+  "phases": 1,
+  "traits": { "aggression": 0.35, "caution": 0.7, "trickery": 0.6, "patience": 0.5, "showmanship": 0.45 },
+  "traitNoise": 0.15,
+  "moveset": "spanner_turrets",
+  "abilities": [
+    { "id": "fix_everything", "trigger": { "type": "onHpBelow", "value": 0.5 }, "effect": "repair" },
+    { "id": "backup_turrets", "trigger": { "type": "onTimer", "value": 15 }, "effect": "turrets", "repeat": true }
+  ],
+  "voicePack": "boss_tinkerer_prime",
+  "arena": "w2_arena_mini",
+  "fossil": "w2-f5"
+}

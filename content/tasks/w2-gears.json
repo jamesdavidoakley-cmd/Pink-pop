@@ -1,0 +1,43 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "w2-gears",
+  "type": "buildit",
+  "title": "The Great Gear Train",
+  "topicId": "gears-levers",
+  "speaker": "kenji",
+  "intro": "Now — the Great Gear Train! We need the output to spin FAST: at least three turns for every crank. Big gear driving small gear means speed. Feel the maths, Max-kun!",
+  "success": "Listen to it sing! A big driver spinning a small output — that's how three-times speed feels.",
+  "variant": "gears",
+  "goalText": "Make the output spin at least 3 turns per crank: driver teeth ÷ output teeth ≥ 3.",
+  "failText": "Count the teeth! A 24-tooth driver turning an 8-tooth output spins it 24 ÷ 8 = 3 times.",
+  "slots": [
+    {
+      "id": "driver",
+      "label": "Drive gear (crank)",
+      "options": [
+        { "id": "d8", "label": "8 teeth", "value": 8 },
+        { "id": "d12", "label": "12 teeth", "value": 12 },
+        { "id": "d24", "label": "24 teeth", "value": 24 }
+      ]
+    },
+    {
+      "id": "idler",
+      "label": "Middle gear",
+      "options": [
+        { "id": "m8", "label": "8 teeth", "value": 8 },
+        { "id": "m12", "label": "12 teeth", "value": 12 },
+        { "id": "m24", "label": "24 teeth", "value": 24 }
+      ]
+    },
+    {
+      "id": "output",
+      "label": "Output gear",
+      "options": [
+        { "id": "o8", "label": "8 teeth", "value": 8 },
+        { "id": "o12", "label": "12 teeth", "value": 12 },
+        { "id": "o24", "label": "24 teeth", "value": 24 }
+      ]
+    }
+  ],
+  "goal": { "kind": "gearSpeed", "min": 3 }
+}

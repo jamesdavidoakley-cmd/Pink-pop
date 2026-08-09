@@ -42,6 +42,8 @@ export type AskResult = 'first_try' | 'after_hint' | 'taught';
 export class EducationEngine {
   /** The question currently being asked (drives dev tools + tests). */
   lastQuestion: QuestionInstance | null = null;
+  /** Monotonic counter — bumps every time a question instance goes live. */
+  askSeq = 0;
 
   constructor(private content: Content, private session: Session) {}
 
@@ -148,6 +150,7 @@ export class EducationEngine {
     let q = this.makeQuestion(topicId, opts.tier);
     if (!q) return 'first_try';
     this.lastQuestion = q;
+    this.askSeq++;
     const speaker = voice.pickAskSpeaker(q.askStyles);
     bus.emit('QuestionAsked', { topicId, tier: q.tier, questionId: q.def.id });
     if (opts.intro !== false) await voice.say(speaker, 'ask_intro', { topic: topicId });
@@ -179,6 +182,7 @@ export class EducationEngine {
         await voice.say(speaker, 'teach', { explain: q.explain });
         q = this.makeQuestion(topicId, q.tier) ?? q;
         this.lastQuestion = q;
+        this.askSeq++;
         await voice.sayText(speaker, q.text);
         attempt = 0;
       }

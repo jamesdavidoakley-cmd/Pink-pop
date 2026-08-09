@@ -1,0 +1,62 @@
+{
+  "$schema": "../schemas/questions.schema.json",
+  "id": "sci-circuits",
+  "strand": "science",
+  "topic": "circuits",
+  "questions": [
+    {
+      "id": "ci-t1-001", "tier": 1,
+      "template": "Electricity only flows when the circuit is…?",
+      "choices": ["A complete loop", "A straight line", "Wet"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "Think of a racetrack — cars need the whole track.",
+      "explain": "Current needs an unbroken loop from the battery, around, and back."
+    },
+    {
+      "id": "ci-t1-002", "tier": 1,
+      "template": "Which of these needs electricity to work?",
+      "choices": ["A bulb", "A sandwich", "A rock"],
+      "answerIndex": 0,
+      "askStyles": ["digger", "marcus"],
+      "hint": "It lights up!",
+      "explain": "Bulbs glow when current flows through them."
+    },
+    {
+      "id": "ci-t1-003", "tier": 1,
+      "template": "What does a switch do in a circuit?",
+      "choices": ["Opens or closes the loop", "Makes it taste better", "Paints the wires"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "It's a drawbridge for electricity.",
+      "explain": "A switch closes the loop (on!) or breaks it (off!)."
+    },
+    {
+      "id": "ci-t2-001", "tier": 2,
+      "template": "Which material lets electricity flow through it?",
+      "choices": ["Copper", "Plastic", "Wood"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "Wires are made of it.",
+      "explain": "Metals like copper are conductors; plastic and wood are insulators."
+    },
+    {
+      "id": "ci-t2-002", "tier": 2,
+      "template": "Why are plug casings made of plastic?",
+      "choices": ["Plastic is an insulator — it keeps us safe", "Plastic is shiny", "Plastic is magnetic"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "marcus"],
+      "hint": "It's about what electricity CANNOT go through.",
+      "explain": "Insulators like plastic stop current reaching our hands."
+    },
+    {
+      "id": "ci-t2-003", "tier": 2,
+      "template": "A bulb won't light. The battery is fine. What's the likely problem?",
+      "choices": ["A gap in the loop", "The bulb is shy", "Too much sunshine"],
+      "answerIndex": 0,
+      "askStyles": ["kenji", "digger"],
+      "hint": "Check every connection — is the loop truly closed?",
+      "explain": "Any break — a loose wire, an open switch — stops the whole circuit."
+    }
+  ]
+}

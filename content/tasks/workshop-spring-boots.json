@@ -1,0 +1,34 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "workshop-spring-boots",
+  "type": "buildit",
+  "title": "Spring Boots",
+  "topicId": "gears-levers",
+  "speaker": "kenji",
+  "intro": "The Spring Boots, Max-kun! Bounce power is spring strength times lever length. Too little and you flop; too much and you meet the ceiling. We want power between 20 and 30!",
+  "success": "Yosh — perfect bounce! I'll wire every spring pad in Terra Nova to your new boots. Boing responsibly!",
+  "variant": "spring",
+  "goalText": "Pick a spring and a lever so strength × length lands between 20 and 30.",
+  "failText": "Multiply the spring number by the lever number — is it between 20 and 30?",
+  "flagOnComplete": "gadget:spring_boots",
+  "slots": [
+    {
+      "id": "spring",
+      "label": "Spring",
+      "options": [
+        { "id": "s4", "label": "Gentle (4)", "value": 4 },
+        { "id": "s8", "label": "Springy (8)", "value": 8 },
+        { "id": "s12", "label": "Mighty (12)", "value": 12 }
+      ]
+    },
+    {
+      "id": "lever",
+      "label": "Launch lever",
+      "options": [
+        { "id": "l2", "label": "Short (2)", "value": 2 },
+        { "id": "l3", "label": "Long (3)", "value": 3 }
+      ]
+    }
+  ],
+  "goal": { "kind": "springLaunch", "min": 20, "max": 30 }
+}

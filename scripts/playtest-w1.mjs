@@ -20,13 +20,11 @@ const errors = [];
 const subtitles = [];
 page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 page.on('pageerror', (e) => errors.push(String(e)));
-
 const fail = (msg) => { console.log(`FAILED: ${msg}`); process.exitCode = 1; };
 
 await page.goto(`${base}/?level=hub&slot=2`, { waitUntil: 'networkidle', timeout: 60000 });
-await page.waitForFunction(() => window.__game?.player, null, { timeout: 30000 });
+await page.waitForFunction(() => window.__game?.player, null, { timeout: 60000 });
 
-// record every subtitle line we see
 const pollSubs = setInterval(async () => {
   try {
     const s = await page.evaluate(() => {
@@ -41,7 +39,7 @@ const pollSubs = setInterval(async () => {
   } catch { /* page busy */ }
 }, 150);
 
-// 1. walk up to the numeral drill pedestal and start it
+// 1. walk to the numeral drill pedestal and start it
 await page.evaluate(() => {
   const t = window.__game.scene.def.tasks.find((x) => x.ref === 'hub-numeral-drill');
   window.__game.player.pos.set(t.pos[0] + 0.6, t.pos[1] + 0.6, t.pos[2] + 0.6);
@@ -57,20 +55,37 @@ const padPos = (i) => page.evaluate((idx) => {
   return [t.pos[0] + fx * 3.2 + sx * (idx - 1) * 2.6, t.pos[1] + 0.5, t.pos[2] + fz * 3.2 + sz * (idx - 1) * 2.6];
 }, i);
 
-const waitForQuestion = async (prevText) => {
-  await page.waitForFunction((prev) => {
-    const q = window.__game.scene.education.lastQuestion;
-    return q && q.text !== prev;
-  }, prevText, { timeout: 40000 });
-  // let the ask() spoken lines finish + pads arm
-  await page.waitForTimeout(2600);
+/** Sustained-silence wait: lines are paced for young readers (~8 s each). */
+const waitQuiet = async (samples = 8) => {
+  let quiet = 0;
+  const deadline = Date.now() + 120000;
+  while (Date.now() < deadline) {
+    const speaking = await page.evaluate(() => window.__game.dialogue.speaking);
+    quiet = speaking ? 0 : quiet + 1;
+    if (quiet >= samples) break;
+    await page.waitForTimeout(200);
+  }
+  await page.waitForTimeout(900); // pad arming
+};
+
+/** Wait for a NEW question instance (nonce, not text — re-rolls can repeat). */
+const waitForQuestion = async (prevSeq) => {
+  await page.waitForFunction((prev) => window.__game.scene.education.askSeq > prev, prevSeq, { timeout: 90000 });
+  await waitQuiet(); // intro + spoken question finish → presenter arms
   return page.evaluate(() => ({
+    seq: window.__game.scene.education.askSeq,
     text: window.__game.scene.education.lastQuestion.text,
     correct: window.__game.scene.education.lastQuestion.correctIndex,
   }));
 };
 
 const standOn = async (i) => {
+  // answers are edge-triggered: step OFF the pads first, like a real player
+  await page.evaluate(() => {
+    const t = window.__game.scene.def.tasks.find((x) => x.ref === 'hub-numeral-drill');
+    window.__game.player.pos.set(t.pos[0], t.pos[1] + 0.4, t.pos[2]);
+  });
+  await page.waitForTimeout(600);
   const p = await padPos(i);
   await page.evaluate((pos) => { window.__game.player.pos.set(pos[0], pos[1], pos[2]); window.__game.player.vel.set(0, -1, 0); }, p);
   await page.waitForTimeout(900);
@@ -81,46 +96,44 @@ const stats = () => page.evaluate(() => {
 });
 
 // ---- Q1: wrong once (warm loop), then right
-let q = await waitForQuestion(null);
+let q = await waitForQuestion(0);
 console.log(`Q1: "${q.text}" (correct pad ${q.correct})`);
 await standOn((q.correct + 1) % 3);
-await page.waitForFunction(() => (window.__game.session.data.mastery['roman-numerals']?.attempts ?? 0) >= 1, null, { timeout: 30000 });
+await page.waitForFunction(() => (window.__game.session.data.mastery['roman-numerals']?.attempts ?? 0) >= 1, null, { timeout: 60000 });
 let s = await stats();
 if (s.correct !== 0) fail(`expected 0 correct after wrong answer, got ${s.correct}`);
 console.log(`  wrong answer registered (attempts=${s.attempts}) — waiting out the gentle hint…`);
-await page.waitForTimeout(6500); // gentle line + hint wrapper get spoken
+await waitQuiet(); // gentle line + hint wrapper, pads re-arm
 await standOn(q.correct);
-await page.waitForFunction(() => (window.__game.session.data.mastery['roman-numerals']?.correct ?? 0) >= 1, null, { timeout: 30000 });
+await page.waitForFunction(() => (window.__game.session.data.mastery['roman-numerals']?.correct ?? 0) >= 1, null, { timeout: 60000 });
 console.log('  correct after hint ✓ (warm failure loop verified)');
 
 // ---- Q2: wrong twice → teach + fresh numbers → then right
-q = await waitForQuestion(q.text);
+q = await waitForQuestion(q.seq);
 console.log(`Q2: "${q.text}"`);
 await standOn((q.correct + 1) % 3);
-await page.waitForTimeout(6500);
+await waitQuiet();
 await standOn((q.correct + 2) % 3);
-// teach fires, question regenerates with fresh values
-const q2b = await waitForQuestion(q.text);
+const q2b = await waitForQuestion(q.seq); // teach → regenerated instance
 console.log(`  after teach, fresh question: "${q2b.text}" ✓`);
 await standOn(q2b.correct);
-await page.waitForFunction(() => (window.__game.session.data.mastery['roman-numerals']?.correct ?? 0) >= 2, null, { timeout: 30000 });
+await page.waitForFunction(() => (window.__game.session.data.mastery['roman-numerals']?.correct ?? 0) >= 2, null, { timeout: 60000 });
 
 // ---- Q3: straight correct → drill completes → scoreboard flag
-q = await waitForQuestion(q2b.text);
+q = await waitForQuestion(q2b.seq);
 console.log(`Q3: "${q.text}"`);
 await standOn(q.correct);
-await page.waitForFunction(() => !!window.__game.session.data.flags.hub_numeral_drill, null, { timeout: 30000 });
+await page.waitForFunction(() => !!window.__game.session.data.flags.hub_numeral_drill, null, { timeout: 60000 });
 s = await stats();
 console.log(`drill complete: attempts=${s.attempts} correct=${s.correct} scoreboardFlag=${s.flag} ✓`);
 
-// speakers rotated? (ask intros + hints came from companions)
 const speakers = new Set(subtitles.map((x) => x.name));
 console.log(`speakers heard: ${[...speakers].join(', ')} (${subtitles.length} lines)`);
 if (speakers.size < 1) fail('no spoken subtitles seen');
 
 // ---- W1 boots and renders its task pedestals
 await page.evaluate(() => window.__game.goto('w1'));
-await page.waitForFunction(() => window.__game.scene?.def?.id === 'w1', null, { timeout: 30000 });
+await page.waitForFunction(() => window.__game.scene?.def?.id === 'w1', null, { timeout: 60000 });
 await page.waitForTimeout(2500);
 const w1 = await page.evaluate(() => ({
   tasks: window.__game.scene.def.tasks.length,

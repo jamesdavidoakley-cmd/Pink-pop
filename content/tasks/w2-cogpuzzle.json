@@ -1,0 +1,34 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "w2-cogpuzzle",
+  "type": "buildit",
+  "title": "Shield Generator Cogs",
+  "topicId": "gears-levers",
+  "speaker": "kenji",
+  "intro": "Her shield generator feeds from this gear box! Spin its intake DOWN: pick gears so the output turns at half speed or slower — big driver won't do it, we need a SMALL driver and a BIG output!",
+  "success": "The generator groans… and dies! Her shield is DOWN, Max-kun — NOW!",
+  "variant": "cogpuzzle",
+  "goalText": "Starve the shield: output must turn at half speed or slower (driver teeth ÷ output teeth ≤ ½).",
+  "failText": "We want SLOW: a small driver turning a big output. 8 teeth driving 24 turns it just a third of a spin!",
+  "slots": [
+    {
+      "id": "driver",
+      "label": "Intake gear",
+      "options": [
+        { "id": "p8", "label": "8 teeth", "value": 8 },
+        { "id": "p12", "label": "12 teeth", "value": 12 },
+        { "id": "p24", "label": "24 teeth", "value": 24 }
+      ]
+    },
+    {
+      "id": "output",
+      "label": "Generator gear",
+      "options": [
+        { "id": "g8", "label": "8 teeth", "value": 8 },
+        { "id": "g12", "label": "12 teeth", "value": 12 },
+        { "id": "g24", "label": "24 teeth", "value": 24 }
+      ]
+    }
+  ],
+  "goal": { "kind": "gearSpeed", "min": 0, "max": 0.5 }
+}

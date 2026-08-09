@@ -77,6 +77,19 @@ export class CombatSystem {
         spawn.y = this.groundHeight(spawn.x, spawn.z);
         this.boss = new BossActor(bd, s.content, spawn, this.bossHost(bd), group, s.content.config.bossAI);
         s.audio.setCombat(true);
+        // shield-generator gimmick: solving the arena-edge puzzle drops it
+        const shieldTask = (bd.gimmick as { shieldTask?: string } | undefined)?.shieldTask;
+        if (shieldTask) {
+          const off = bus.on('TaskCompleted', ({ taskId }) => {
+            if (taskId !== shieldTask || !this.boss) return;
+            off();
+            this.boss.dropShield();
+            this.particles.burst(this.boss.pos.clone().add(new THREE.Vector3(0, 1.5, 0)), '#7AC8FF', 30, 6);
+            this.s.audio.sfx('stun');
+            this.s.renderer.shake(0.25);
+            this.s.dialogue.bark('kenji', 'combat_tip', { priority: 3 });
+          });
+        }
       }
     }
   }
@@ -224,6 +237,9 @@ export class CombatSystem {
       this.playerHitStreak = 0;
     } else if (result === 'shielded') {
       this.s.audio.sfx('incorrect');
+      if (this.boss && Math.random() < 0.4) {
+        this.s.dialogue.bark(this.voiceCharFor(this.boss.def.id), 'shield', { priority: 2 });
+      }
     }
   }
 

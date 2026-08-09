@@ -1,0 +1,44 @@
+{
+  "$schema": "../schemas/levels.schema.json",
+  "id": "w2_arena_boss",
+  "nameKey": "level.w2_arena_boss",
+  "kind": "arena",
+  "world": "w2",
+  "palette": {
+    "skyTop": "#2E4A68",
+    "skyBottom": "#C8A868",
+    "fog": "#8E7A5E",
+    "fogNear": 28,
+    "fogFar": 110,
+    "sun": "#FFE0B8",
+    "ambient": "#B8A8A0"
+  },
+  "music": "w2",
+  "spawn": [0, 1, 17],
+  "spawnYaw": 3.14159,
+  "geometry": [
+    { "type": "cyl", "pos": [0, -0.6, 0], "r": 20, "r2": 21, "h": 1.2, "seg": 32, "color": "#8A7050" },
+    { "type": "ring", "pos": [0, 1.8, 0], "r": 20.5, "h": 3.6, "thick": 1.6, "seg": 24, "color": "#5E4E3A" },
+    { "type": "box", "pos": [0, 0.15, 13], "size": [6, 0.3, 6], "color": "#9A7E58" },
+    { "type": "box", "pos": [-9, 0.5, -7], "size": [3.5, 1, 3.5], "color": "#9A7E58" },
+    { "type": "box", "pos": [9, 0.5, -5], "size": [3.5, 1, 3.5], "color": "#9A7E58" },
+    { "type": "box", "pos": [-14, 0.3, 6], "size": [5, 0.6, 5], "color": "#B8934A" }
+  ],
+  "props": [
+    { "type": "gearDeco", "pos": [0, 3.0, -17], "scale": 2.6 },
+    { "type": "gearDeco", "pos": [-13, 2.0, -11], "scale": 1.6 },
+    { "type": "gearDeco", "pos": [13, 1.8, -10], "scale": 1.3 },
+    { "type": "pipe", "pos": [16, 0.1, 8] },
+    { "type": "flag", "pos": [-7, 0.1, 11], "color": "#6E4E8E" },
+    { "type": "flag", "pos": [7, 0.1, 11], "color": "#6E4E8E" }
+  ],
+  "portals": [
+    { "to": "w2", "pos": [0, 0.4, 19.4], "kind": "exit", "labelKey": "level.w2", "yaw": 3.14159 }
+  ],
+  "quizOrbs": [[-11, 2.4, 0], [11, 2.4, 3], [0, 2.6, -12]],
+  "tasks": [
+    { "ref": "w2-cogpuzzle", "pos": [-14, 0.7, 6], "yaw": 1.2 }
+  ],
+  "checkpoints": [[0, 1, 17]],
+  "boss": "cogwheel"
+}

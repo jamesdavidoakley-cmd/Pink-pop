@@ -1,0 +1,13 @@
+{
+  "$schema": "../schemas/movesets.schema.json",
+  "id": "spanner_turrets",
+  "moves": [
+    { "id": "calc_reposition", "label": "Calculated Reposition", "tags": ["reposition"], "baseWeight": 1.0, "duration": 1.1, "range": "near", "motion": { "kind": "strafe", "speed": 4.2 }, "threat": 0 },
+    { "id": "measured_withdraw", "label": "Measured Withdrawal", "tags": ["retreat"], "baseWeight": 0.9, "duration": 1.0, "range": "near", "motion": { "kind": "retreat", "speed": 4.6 }, "threat": 0 },
+    { "id": "bolt_volley", "label": "Bolt Volley", "tags": ["ranged", "strike"], "baseWeight": 1.1, "duration": 1.4, "telegraph": 0.66, "recovery": 0.6, "cooldown": 2.6, "threat": 2, "range": "mid", "damage": 0.5, "projectile": { "speed": 10, "damage": 0.5, "count": 3 } },
+    { "id": "spanner_swing", "label": "Spanner Swing", "tags": ["strike"], "baseWeight": 0.8, "duration": 1.2, "telegraph": 0.64, "recovery": 0.5, "cooldown": 2.4, "threat": 2, "range": "near", "damage": 1, "hit": { "shape": "arc", "radius": 2.0, "arc": 2.2, "from": 0.64, "to": 0.95 } },
+    { "id": "advance_prim", "label": "Prim Advance", "tags": ["advance"], "baseWeight": 0.9, "duration": 0.9, "range": "far", "motion": { "kind": "approach", "speed": 3.8 }, "threat": 0 },
+    { "id": "guard_stance", "label": "Clipboard Guard", "tags": ["block"], "baseWeight": 0.8, "duration": 1.2, "range": "any", "stance": "block", "threat": 0 },
+    { "id": "disappointed_look", "label": "Disappointed Look", "tags": ["taunt", "wait"], "baseWeight": 0.5, "duration": 1.1, "cooldown": 6, "range": "any", "threat": 0, "bark": "taunt" }
+  ]
+}

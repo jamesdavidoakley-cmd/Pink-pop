@@ -1,0 +1,23 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "w2-symmetry",
+  "type": "sortit",
+  "title": "Cogs of Symmetry",
+  "topicId": "symmetry",
+  "speaker": "kenji",
+  "intro": "A gear must be symmetrical, Max-kun — fold it in half in your mind. If both halves match, it spins true; if not, it wobbles the whole machine!",
+  "success": "Perfectly sorted! Only true-spinning cogs for our gear train.",
+  "chain": ["w2-gears"],
+  "bins": [
+    { "id": "sym", "label": "SYMMETRICAL\nboth halves match" },
+    { "id": "not", "label": "NOT symmetrical\nwobbly!" }
+  ],
+  "items": [
+    { "id": "cog6", "label": "Six-tooth cog", "bin": "sym", "shape": "gem", "color": "#C89A3B", "fact": "Fold it through the middle — every tooth lines up with a partner." },
+    { "id": "star", "label": "Star plate", "bin": "sym", "shape": "gem", "color": "#B8B8C8", "fact": "A star has lots of fold lines — symmetry everywhere!" },
+    { "id": "heartcam", "label": "Heart cam", "bin": "sym", "shape": "ball", "color": "#C86A5A", "fact": "A heart shape has one line of symmetry, right down the middle." },
+    { "id": "bentrod", "label": "Bent rod", "bin": "not", "shape": "box", "color": "#7A6248", "fact": "Bent on one side only — no fold makes the halves match." },
+    { "id": "brokecog", "label": "Chipped cog", "bin": "not", "shape": "box", "color": "#8A8A96", "fact": "One missing tooth ruins the mirror — and the spin." },
+    { "id": "squiggle", "label": "Squiggle bracket", "bin": "not", "shape": "box", "color": "#5A6A78", "fact": "A squiggle leans one way — its halves never mirror." }
+  ]
+}
