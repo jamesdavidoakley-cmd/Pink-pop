@@ -120,11 +120,15 @@ if (config && characters) {
     }
   }
 
-  // Bosses: refs
+  // Bosses: refs. Inactive bosses (characters[id].active === false) are
+  // data-complete for the AI sims but their worlds haven't shipped — their
+  // arenas may not exist yet.
   for (const [id, b] of Object.entries(docs.bosses)) {
     if (!docs.movesets[b.moveset]) errors.push(`boss ${id}: unknown moveset '${b.moveset}'`);
     if (!docs.voices[b.voicePack]) errors.push(`boss ${id}: unknown voicePack '${b.voicePack}'`);
-    if (b.arena && !levelIds.has(b.arena)) errors.push(`boss ${id}: unknown arena '${b.arena}'`);
+    const active = characters[id]?.active !== false;
+    if (active && b.arena && !levelIds.has(b.arena)) errors.push(`boss ${id}: unknown arena '${b.arena}'`);
+    if (!active && b.arena && !levelIds.has(b.arena)) warnings.push(`boss ${id}: arena '${b.arena}' arrives with its world (boss inactive)`);
     if (!characters[id]) warnings.push(`boss ${id}: no character entry (visuals will use defaults)`);
   }
 

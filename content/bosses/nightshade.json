@@ -1,0 +1,17 @@
+{
+  "$schema": "../schemas/bosses.schema.json",
+  "id": "nightshade",
+  "name": "Nightshade — The Unseen",
+  "world": "w5",
+  "kind": "boss",
+  "hp": 24,
+  "phases": 2,
+  "traits": { "aggression": 0.6, "caution": 0.6, "trickery": 0.95, "patience": 0.7, "showmanship": 0.4 },
+  "moveset": "twin_daggers",
+  "abilities": [
+    { "id": "cloak", "trigger": { "type": "onHpBelow", "value": 0.4 }, "effect": "invisible", "counter": "lighthouse_beam_shadow" }
+  ],
+  "voicePack": "boss_nightshade",
+  "arena": "w5_arena_boss",
+  "fossil": "w5-f6"
+}

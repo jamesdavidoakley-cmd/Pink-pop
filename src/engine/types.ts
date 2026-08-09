@@ -124,7 +124,8 @@ export interface MoveDef {
 export interface MovesetDef { id: string; moves: MoveDef[] }
 
 export interface GeoItem {
-  type: 'box' | 'cyl' | 'ramp'; pos: Vec3; size?: Vec3; r?: number; r2?: number; h?: number; seg?: number;
+  type: 'box' | 'cyl' | 'ramp' | 'ring'; pos: Vec3; size?: Vec3; r?: number; r2?: number; h?: number; seg?: number;
+  thick?: number;
   rot?: Vec3; color?: string; collide?: boolean; special?: 'cracked' | 'roarwall'; contains?: string;
 }
 export interface FossilDefC {

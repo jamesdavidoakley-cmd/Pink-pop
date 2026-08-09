@@ -1,0 +1,17 @@
+{
+  "$schema": "../schemas/enemies.schema.json",
+  "id": "cogling_scout",
+  "name": "Cogling Scout",
+  "hp": 2,
+  "speed": 3.6,
+  "behavior": "scout",
+  "traits": { "aggression": 0.25, "caution": 0.8 },
+  "traitNoise": 0.15,
+  "attack": { "kind": "projectile", "damage": 0.5, "cooldown": 2.4, "range": 9, "telegraph": 0.7 },
+  "fleeBelowHp": 0.5,
+  "alertRadius": 10,
+  "aggroRadius": 11,
+  "scale": 0.8,
+  "colors": { "body": "#8A8A96", "belly": "#B8B8C8", "accent": "#5A5A68", "eye": "#FFD24A" },
+  "chompable": true
+}

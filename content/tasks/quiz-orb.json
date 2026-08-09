@@ -1,0 +1,9 @@
+{
+  "$schema": "../schemas/tasks.schema.json",
+  "id": "quiz-orb",
+  "type": "quickfire",
+  "title": "Quiz Orb!",
+  "speaker": "kenji",
+  "count": 1,
+  "adaptive": true
+}

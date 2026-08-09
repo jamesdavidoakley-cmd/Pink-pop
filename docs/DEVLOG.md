@@ -73,7 +73,18 @@ Running log of phase progress, decisions, and gate evidence. Newest entries at t
 **Gate evidence** (`scripts/playtest-w1.mjs`, headless): spoken intro + question subtitles (13 lines, Marcus & Kenji rotating) → wrong answer → gentle line + hint → correct-after-hint ✓ → double-wrong → **teach + regenerated fresh values** ✓ → drill completes, scoreboard flag set, mastery recorded (6 attempts / 3 correct) → W1 boots with 2 task stations + 7 fossils, zero console errors. Unit suite: 20/20 (expression evaluator, instancing, adaptive promote/demote, mastery stars, weak-topic weighting).
 
 ## P5 · Combat & AI framework
-_(pending)_
+
+**Done:**
+- **BossBrain** (pure, no three.js — simulates headless): trait-driven utility scoring over shared movesets, range-band context, softmax top-3 with trickery-scaled temperature, ban-repeat (relentless types exempt), data-driven ability triggers (onHpBelow/onTimer/onPlayerStreak/onDistanceHeld/onPhaseEnter), fairness governor (threat budget per rolling 10 s, difficulty-scaled, rubber-banded by recent player damage), and **in-fight learning**: a rolling habit histogram + confidence that ramps with observations — cautious bosses raise their shields against your favourite move, tricksters feint it out.
+- **All four §6.6 proofs green** (`npm run test:ai`): divergence — Bruno strikes **4.4×** Bastion's rate and Bastion guards **3.5×** Bruno's *on the identical sword_and_board moveset*; Nightshade cloaks below 40% HP on time in **100/100** runs; a caution-0.9 boss raises its block rate **1.75×** by tick 300 against a spam bot; 20 same-seed-family runs produce 20 distinct action sequences, and two trait-noised Foremen fight measurably differently.
+- **BossActor** executes decisions in-world: telegraph shells (flash + audio, Explorer windup ×1.5), absolute-time hit windows (arc/ring/line), motion kinds (lunge/leap/strafe/retreat/vanishStep — Nightshade's kit ready), block stances with frontal deflection, quake rings (jump to dodge), repair/turret abilities (Cogwheel-ready), phase transitions with Explorer checkpoints, the Obedience Cog physically popping off on defeat, and Bruno's authored tell — he goes dizzy after whiffing his 3-swing combo.
+- **The Clockwork Legion**: scouts (keep range, throw bolts, flee at half HP *and alert friends*), brutes (huge telegraphs, dizzy-on-miss punish window), tinkerers (hide + repair allies — priority-target lesson), buzzer data for W3+. Spawn-time trait noise ±0.15. Contact damage ½ heart with cooldown; defeats are pops + gears + chips + chance heart drops — bonked, never killed. Stunned coglings are chompable and spittable.
+- Player combat feel: spin/stomp/spit/roar all wired with hit-pause (75 ms at 8% timescale), shake, hit sparks; streak feeds `onPlayerStreak` triggers; **Quiz Orbs** pause combat for one spoken quick-fire (+1 heart, +1 Brain Power — learning always helps, never forced); companions coach through the bark scheduler (Marcus when you're hit, Kenji at phase changes, Digger when scouts call for backup).
+- W1 arenas open: the Quarry Ring (Foreman mini-boss) and Bruno's Big Dig; W1 populated with scouts + brutes; boss victory flow → defeat-freed line → champion freed to the café → fossil pops.
+
+**Found & fixed:** arena walls were authored as *solid* cylinders — boss ground raycasts hit their top face (bosses floated at y=3) while the player capsule tunnelled deep inside them. Added a `ring` geometry type (segmented box chords) to the recipe language; both arenas rebuilt with it.
+
+**Gate evidence:** `npm run test:ai` → 5/5 (metrics above logged in output). `scripts/bruno-check.mjs` headless: a cautious button-masher bot (retreat on glow, waddle in and spin otherwise) beats Bruno on Explorer in **36 s**, phase 2 reached, zero wipes, zero console errors; champion freed + fossil banked. Full suite 25/25.
 
 ## P6 · Worlds 2–4 (this build: W2 complete — stop point for "end of World 2")
 _(pending)_

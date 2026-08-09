@@ -71,6 +71,30 @@ export function buildLevel(def: LevelDef): LevelBuild {
   let breakId = 0;
 
   for (const g of def.geometry) {
+    if (g.type === 'ring') {
+      // hollow wall ring built from box chords (solid cylinders would put a
+      // false ceiling over the whole arena — raycasts and capsules agree here)
+      const seg = g.seg ?? 16;
+      const r = g.r ?? 10;
+      const h = g.h ?? 3;
+      const thick = g.thick ?? 1;
+      const chord = 2 * r * Math.tan(Math.PI / seg) + 0.35;
+      for (let i = 0; i < seg; i++) {
+        const a = (i / seg) * Math.PI * 2;
+        const geo = new THREE.BoxGeometry(chord, h, thick);
+        _e.set(0, -a, 0);
+        _q.setFromEuler(_e);
+        _m.compose(
+          new THREE.Vector3(g.pos[0] + Math.sin(a) * r, g.pos[1], g.pos[2] + Math.cos(a) * r),
+          _q, new THREE.Vector3(1, 1, 1),
+        );
+        geo.applyMatrix4(_m);
+        paintVertexColors(geo, g.color ?? '#A0A0A0');
+        visualGeos.push(geo);
+        if (g.collide !== false) collisionGeos.push(geo.clone());
+      }
+      continue;
+    }
     if (g.special) {
       const size = g.size ?? [1, 1, 1];
       const mesh = new THREE.Mesh(

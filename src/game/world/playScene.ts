@@ -24,6 +24,7 @@ import { TaskRunner } from '../education/runner';
 import { TaskKit } from '../education/taskKit';
 import { registerTaskModules } from '../education/registry';
 import type { QuestionPanel } from '../education/panel';
+import { CombatSystem } from '../combat/combatSystem';
 
 export interface SceneServices {
   content: Content;
@@ -84,6 +85,7 @@ export class PlayScene implements CollisionWorld {
   private focusBeacon: THREE.Mesh | null = null;
   education!: EducationEngine;
   runner!: TaskRunner;
+  combat: CombatSystem | null = null;
   private sniffCooldown = 0;
 
   constructor(protected s: SceneServices, levelId: string, private opts: { focusFossilId?: string | null } = {}) {
@@ -107,9 +109,12 @@ export class PlayScene implements CollisionWorld {
       s.content.config, maxRig, this, s.input,
       {
         getGrabTarget: (pos, fwd, range) => this.findGrabTarget(pos, fwd, range),
-        onSpit: (origin, dir, carried) => this.spawnProjectile(origin, dir, carried),
+        onSpit: (origin, dir, carried) => {
+          this.combat?.notePlayerAction('spit');
+          this.spawnProjectile(origin, dir, carried);
+        },
         onStompLand: (pos) => this.handleStomp(pos),
-        onSpinStart: () => { /* combat hooks arrive in P5 */ },
+        onSpinStart: () => { /* spin damage windows live in CombatSystem */ },
         onRoar: (pos) => this.handleRoar(pos),
         onFellOut: () => this.respawn(false),
         onDizzy: () => this.handleDizzy(),
@@ -140,6 +145,13 @@ export class PlayScene implements CollisionWorld {
     this.buildGarden();
     this.buildTaskStations();
     this.buildBank();
+
+    if ((def.enemies?.length ?? 0) > 0 || def.boss || (def.quizOrbs?.length ?? 0) > 0) {
+      this.combat = new CombatSystem(
+        s, def, this.player, this.particles, this.build.staticWorld, this.build.group, this.runner,
+        (bossId, fossilId) => this.handleBossVictory(bossId, fossilId),
+      );
+    }
 
     this.cameraRig = new CameraRig(s.content.config.camera, s.renderer.camera, s.input);
     this.cameraRig.snapTo(this.build.spawn, this.build.spawnYaw + Math.PI);
@@ -502,9 +514,24 @@ export class PlayScene implements CollisionWorld {
     return best ?? this.extraGrabTarget(pos, fwd, range);
   }
 
-  /** Task items + (from P5) chompable enemies. */
+  /** Task items + chompable (stunned) enemies. */
   protected extraGrabTarget(pos: THREE.Vector3, fwd: THREE.Vector3, range: number): CarryTarget | null {
-    return this.runner?.getGrabTarget(pos, fwd, range) ?? null;
+    return this.runner?.getGrabTarget(pos, fwd, range)
+      ?? this.combat?.getGrabTarget(pos, fwd, range)
+      ?? null;
+  }
+
+  private handleBossVictory(bossId: string, fossilId?: string): void {
+    const fossil = (this.def.fossils ?? []).find((f) => f.id === fossilId);
+    const pos = fossil?.pos
+      ? new THREE.Vector3(...fossil.pos)
+      : this.player.pos.clone().add(new THREE.Vector3(0, 1.6, 0));
+    if (fossilId && !this.s.session.hasFossil(fossilId)) {
+      this.fossilPickups.push(new FossilPickup(this.build.group, fossilId, pos.add(new THREE.Vector3(0, 1.2, 0))));
+      this.particles.burst(pos, '#FFE87F', 26, 5);
+      this.s.audio.sfx('secret');
+    }
+    void bossId;
   }
 
   private spawnProjectile(origin: THREE.Vector3, dir: THREE.Vector3, carried: CarryTarget): void {
@@ -524,6 +551,7 @@ export class PlayScene implements CollisionWorld {
       if (b.broken || b.kind !== 'cracked') continue;
       if (b.mesh.position.distanceTo(pos) < r + Math.max(b.half.x, b.half.z)) this.breakBlock(b);
     }
+    this.combat?.playerStomp(pos);
   }
 
   protected handleRoar(pos: THREE.Vector3): void {
@@ -533,6 +561,7 @@ export class PlayScene implements CollisionWorld {
       if (b.broken || b.kind !== 'roarwall') continue;
       if (b.mesh.position.distanceTo(pos) < r + Math.max(b.half.x, b.half.z)) this.breakBlock(b);
     }
+    this.combat?.playerRoar(pos);
   }
 
   private breakBlock(b: Breakable): void {
@@ -559,6 +588,7 @@ export class PlayScene implements CollisionWorld {
   protected respawn(fromDizzy: boolean): void {
     this.player.revive(this.checkpoint.clone().add(new THREE.Vector3(0, 0.5, 0)));
     if (!fromDizzy) this.s.renderer.shake(0.2);
+    if (fromDizzy) this.combat?.onPlayerRetry();
   }
 
   private collectChip(): void {
@@ -638,8 +668,10 @@ export class PlayScene implements CollisionWorld {
     this.particles.update(dt);
   }
 
-  /** Overridden by later phases (NPCs, tasks, enemies, hazards). */
-  protected updateExtras(dt: number): void {
+  /** NPCs, tasks, enemies, hazards, ambient voice. */
+  protected updateExtras(rawDt: number): void {
+    const dt = this.combat ? this.combat.consumeHitPause(rawDt) : rawDt;
+    this.combat?.update(dt);
     // companions + ambient voice
     this.party.update(dt, this.player.pos, this.player.facing, this.build.staticWorld,
       this.s.content.config.companions.catchUpTeleport);
@@ -734,6 +766,7 @@ export class PlayScene implements CollisionWorld {
   protected projectileLanded(_pr: { mesh: THREE.Object3D; carried: CarryTarget }, _hit: THREE.Intersection | null): void { /* combat uses this */ }
 
   dispose(): void {
+    this.combat?.dispose();
     this.runner.cancel();
     this.s.panel.hide();
     this.s.renderer.scene.remove(this.build.group);

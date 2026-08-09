@@ -1,0 +1,14 @@
+{
+  "$schema": "../schemas/movesets.schema.json",
+  "id": "twin_daggers",
+  "moves": [
+    { "id": "ghost_step", "label": "Ghost Step", "tags": ["advance", "feint"], "baseWeight": 1.0, "duration": 0.7, "range": "far", "motion": { "kind": "approach", "speed": 7 }, "threat": 0 },
+    { "id": "dash_stab", "label": "Dash Stab", "tags": ["strike", "advance"], "baseWeight": 1.0, "duration": 1.1, "telegraph": 0.62, "recovery": 0.4, "cooldown": 2.0, "threat": 2, "range": "mid", "damage": 1, "motion": { "kind": "lunge", "speed": 11 }, "hit": { "shape": "line", "radius": 1.2, "from": 0.62, "to": 0.9 } },
+    { "id": "cross_slash", "label": "Cross Slash", "tags": ["strike"], "baseWeight": 1.0, "duration": 1.0, "telegraph": 0.6, "recovery": 0.4, "cooldown": 1.8, "threat": 2, "range": "near", "damage": 1, "hit": { "shape": "arc", "radius": 1.8, "arc": 2.0, "from": 0.6, "to": 0.9 } },
+    { "id": "shadow_feint", "label": "Shadow Feint", "tags": ["feint"], "baseWeight": 0.9, "duration": 0.8, "cooldown": 2.0, "range": "near", "motion": { "kind": "vanishStep", "speed": 9 }, "threat": 0 },
+    { "id": "backstep_fade", "label": "Backstep Fade", "tags": ["retreat", "feint"], "baseWeight": 0.8, "duration": 0.8, "range": "near", "motion": { "kind": "retreat", "speed": 8 }, "threat": 0 },
+    { "id": "sideways_drift", "label": "Sideways Drift", "tags": ["reposition"], "baseWeight": 0.8, "duration": 0.9, "range": "mid", "motion": { "kind": "strafe", "speed": 5 }, "threat": 0 },
+    { "id": "poised_read", "label": "Poised Read", "tags": ["wait", "block"], "baseWeight": 0.6, "duration": 1.0, "range": "mid", "stance": "block", "threat": 0 },
+    { "id": "whisper_taunt", "label": "Whisper", "tags": ["taunt"], "baseWeight": 0.4, "duration": 0.9, "cooldown": 6, "range": "any", "threat": 0, "bark": "taunt" }
+  ]
+}

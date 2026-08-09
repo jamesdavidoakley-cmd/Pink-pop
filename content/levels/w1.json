@@ -155,11 +155,17 @@
       "speaker": "digger"
     }
   ],
-  "enemies": [],
+  "enemies": [
+    { "archetype": "cogling_scout", "pos": [24, 0.1, 8], "patrolRadius": 4 },
+    { "archetype": "cogling_scout", "pos": [46, 0.9, -8], "patrolRadius": 3 },
+    { "archetype": "cogling_brute", "pos": [30, 0.1, -10], "patrolRadius": 3 },
+    { "archetype": "cogling_brute", "pos": [68, 0.7, 4], "patrolRadius": 4 },
+    { "archetype": "cogling_scout", "pos": [84, 0.1, 10], "patrolRadius": 5 }
+  ],
   "portals": [
     { "to": "hub", "pos": [0, 0, 0], "kind": "exit", "labelKey": "level.hub", "yaw": -1.5708, "color": "#C8945A" },
-    { "to": "w1_arena_mini", "pos": [74, 0, -19], "kind": "arena", "labelKey": "level.w1_arena_mini", "yaw": 0.3, "color": "#B87A3A", "sealed": true },
-    { "to": "w1_arena_boss", "pos": [100, 0, 0], "kind": "arena", "labelKey": "level.w1_arena_boss", "yaw": -1.5708, "color": "#A05A2E", "sealed": true }
+    { "to": "w1_arena_mini", "pos": [74, 0, -19], "kind": "arena", "labelKey": "level.w1_arena_mini", "yaw": 0.3, "color": "#B87A3A" },
+    { "to": "w1_arena_boss", "pos": [100, 0, 0], "kind": "arena", "labelKey": "level.w1_arena_boss", "yaw": -1.5708, "color": "#A05A2E" }
   ],
   "infoPoints": [
     { "pos": [4, 0.4, -3], "textKey": "w1.sign.gulch", "speaker": "digger", "label": "Dust Gulch" },

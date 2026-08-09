@@ -1,0 +1,16 @@
+{
+  "$schema": "../schemas/enemies.schema.json",
+  "id": "cogling_tinkerer",
+  "name": "Cogling Tinkerer",
+  "hp": 2,
+  "speed": 3.0,
+  "behavior": "tinkerer",
+  "traits": { "aggression": 0.1, "caution": 0.9 },
+  "traitNoise": 0.15,
+  "attack": { "kind": "repair", "damage": 0, "cooldown": 3.5, "range": 6, "telegraph": 0.7 },
+  "fleeBelowHp": 0.99,
+  "aggroRadius": 12,
+  "scale": 0.75,
+  "colors": { "body": "#6A8A9A", "belly": "#A8C8D8", "accent": "#3A4A58", "eye": "#7AFFE8" },
+  "chompable": true
+}

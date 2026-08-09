@@ -1,0 +1,15 @@
+{
+  "$schema": "../schemas/enemies.schema.json",
+  "id": "cogling_brute",
+  "name": "Cogling Brute",
+  "hp": 4,
+  "speed": 2.6,
+  "behavior": "brute",
+  "traits": { "aggression": 0.85, "caution": 0.1 },
+  "traitNoise": 0.15,
+  "attack": { "kind": "melee", "damage": 1, "cooldown": 2.2, "range": 2.0, "telegraph": 0.85, "dizzyOnMiss": 1.6 },
+  "aggroRadius": 9,
+  "scale": 1.15,
+  "colors": { "body": "#7A6A5A", "belly": "#A89078", "accent": "#4A3E32", "eye": "#FF8A4A" },
+  "chompable": false
+}

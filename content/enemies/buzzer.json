@@ -1,0 +1,15 @@
+{
+  "$schema": "../schemas/enemies.schema.json",
+  "id": "buzzer",
+  "name": "Buzzer",
+  "hp": 1,
+  "speed": 5.5,
+  "behavior": "buzzer",
+  "traits": { "aggression": 0.7, "caution": 0.2 },
+  "traitNoise": 0.15,
+  "attack": { "kind": "charge", "damage": 0.5, "cooldown": 3.0, "range": 8, "telegraph": 0.7 },
+  "aggroRadius": 11,
+  "scale": 0.6,
+  "colors": { "body": "#9A8A3A", "belly": "#C8B860", "accent": "#5A501E", "eye": "#FF4A4A" },
+  "chompable": true
+}
