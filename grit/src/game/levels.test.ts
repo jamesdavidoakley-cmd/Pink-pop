@@ -147,7 +147,7 @@ describe('level shape', () => {
 
   it('the brake only appears once it has been introduced', () => {
     for (const level of LEVELS) {
-      if (level.number < 6) expect(level.brakeEnabled).toBe(false)
+      if (level.number < 7) expect(level.brakeEnabled).toBe(false)
     }
   })
 

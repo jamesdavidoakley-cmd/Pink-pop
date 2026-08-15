@@ -70,6 +70,11 @@ export function scoreRun(args: {
     awards.push({ id: 'eased-off', label: 'You eased off and got it back', amount: 20 })
   }
 
+  // A timer is never a fail state — beating it is simply worth something.
+  if (level.timer !== undefined && succeeded && stats.seconds <= level.timer) {
+    awards.push({ id: 'in-time', label: 'In good time', amount: 25 })
+  }
+
   if (level.isBoss && succeeded) {
     awards.push({ id: 'boss', label: 'Out-gripped!', amount: 80 })
   }

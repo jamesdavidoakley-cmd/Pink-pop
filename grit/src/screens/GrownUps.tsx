@@ -81,7 +81,7 @@ export function GrownUps() {
             <h2 className="signwritten mb-3 text-2xl text-slate-deep">Progress</h2>
             <dl className="grid grid-cols-2 gap-3 text-slate-deep">
               <Stat label="Jobs finished" value={`${completed} of ${LEVELS.length}`} />
-              <Stat label="Points earned" value={`${profile.xp}`} />
+              <Stat label="Grip coins" value={`${profile.xp}`} />
               <Stat
                 label="Guesses right"
                 value={

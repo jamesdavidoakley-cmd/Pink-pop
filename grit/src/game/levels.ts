@@ -165,10 +165,10 @@ export const LEVELS: Level[] = [
     id: 'l6',
     number: 6,
     title: 'The bends',
-    spoken: 'Bends need grip too. Slow down before you turn, not in the middle.',
+    spoken: 'Bends need grip too. Come off the pedal before you turn, not in the middle.',
     objective: 'deliver',
     teaches: 'budget',
-    brakeEnabled: true,
+    brakeEnabled: false,
     track: {
       segments: [
         seg(40, 'gravel'),
@@ -335,8 +335,8 @@ export const LEVELS: Level[] = [
     },
     runs: [
       {
-        brief: 'A long hill down. Stop in the box at the bottom.',
-        crates: [crate('a', 1800, 'brick'), crate('b', 1500, 'brick')],
+        brief: 'A long hill down. The tall one is not tied down. Stop in the box.',
+        crates: [crate('a', 1800, 'brick'), crate('b', 1500, 'brick', false)],
         markAt: 152,
         markTolerance: 8,
       },

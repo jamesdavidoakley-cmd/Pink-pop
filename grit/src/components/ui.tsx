@@ -170,9 +170,13 @@ export function PressBar({ value, className = '' }: { value: number; className?:
   )
 }
 
+/** Grip coins — what the child calls XP, and the only name they ever hear. */
 export function XpBadge({ xp }: { xp: number }) {
   return (
-    <span className="toy-sm inline-flex items-center gap-2 rounded-full bg-hivis px-4 py-2 text-slate-deep">
+    <span
+      className="toy-sm inline-flex items-center gap-2 rounded-full bg-hivis px-4 py-2 text-slate-deep"
+      aria-label={`${xp} grip coins`}
+    >
       <Icon name="star" className="h-6 w-6" />
       <span className="signwritten-centred text-2xl leading-none">{xp}</span>
     </span>

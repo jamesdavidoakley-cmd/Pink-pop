@@ -26,7 +26,7 @@ export function Results({ levelId, awards, succeeded, nextRun }: Props) {
   const total = awards.reduce((sum, a) => sum + a.amount, 0)
 
   useEffect(() => {
-    speak(succeeded ? `Nice work. ${total} points.` : 'Have another go whenever you like.', {
+    speak(succeeded ? `Nice work. ${total} grip coins.` : 'Have another go whenever you like.', {
       force: true,
     })
     if (!succeeded) return
@@ -65,7 +65,7 @@ export function Results({ levelId, awards, succeeded, nextRun }: Props) {
         </ul>
 
         <div className="mt-4 flex items-center justify-between border-t-4 border-slate-deep pt-3">
-          <span className="signwritten text-3xl text-slate-deep">Total</span>
+          <span className="signwritten text-3xl text-slate-deep">Grip coins</span>
           <XpBadge xp={profile.xp} />
         </div>
       </Panel>

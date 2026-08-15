@@ -43,7 +43,7 @@ export function Shop() {
 
   const buy = (item: ShopItem) => {
     if (profile.owned.includes(item.id) || profile.xp < item.price) {
-      speak(profile.xp < item.price ? 'Not quite enough yet. Go and earn some more.' : item.spoken, {
+      speak(profile.xp < item.price ? 'Not quite enough grip coins yet. Go and earn some more.' : item.spoken, {
         force: true,
       })
       return

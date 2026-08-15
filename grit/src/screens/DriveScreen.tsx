@@ -249,6 +249,18 @@ export function DriveScreen({ levelId, runIndex, placement, predictionCorrect, c
               />
             </div>
           </div>
+        ) : level.timer !== undefined ? (
+          /* Runs down, but running out costs nothing — it is only a bonus. */
+          <div className="toy-sm w-44 rounded-2xl bg-card/95 px-3 py-2">
+            <div className="h-4 overflow-hidden rounded-full border-2 border-slate-deep bg-slate-soft">
+              <div
+                className="h-full bg-hivis"
+                style={{
+                  width: `${Math.max(0, 1 - hud.seconds / level.timer) * 100}%`,
+                }}
+              />
+            </div>
+          </div>
         ) : (
           <div className="w-11" />
         )}
@@ -536,6 +548,7 @@ function readHud(sim: DriveSim, inputs: { throttle: number; brake: number } = { 
     ballast: sim.rig.ballastKg,
     cabMud: sim.cabMud,
     bossProgress: sim.boss.progress,
+    seconds: sim.stats.seconds,
     braking: inputs.brake > 0.05,
     throttle: inputs.throttle > 0.05,
     numbers: {
