@@ -345,7 +345,7 @@ export class DriveSim {
 
     if (boss.kind === 'slick') {
       // Slick keeps just ahead, freezing what is in front of you.
-      boss.position = Math.min(length - 6, s + 42 + Math.sin(boss.wobble * 0.8) * 8)
+      boss.position = Math.min(length - 6, s + 16 + Math.sin(boss.wobble * 0.8) * 4)
       boss.phase = s < 120 ? 1 : s < 200 ? 2 : 3
       boss.mood = boss.progress > 0.9 ? 'beaten' : boss.phase >= 2 ? 'cross' : 'calm'
 
@@ -369,7 +369,7 @@ export class DriveSim {
     }
 
     if (boss.kind === 'mudzilla') {
-      boss.position = Math.min(length - 10, Math.max(s + 30, 90))
+      boss.position = Math.min(length - 10, Math.max(s + 16, 50))
       boss.phase = s < 120 ? 1 : s < 210 ? 2 : 3
       boss.mood = boss.progress > 0.92 ? 'beaten' : boss.phase >= 2 ? 'cross' : 'calm'
 

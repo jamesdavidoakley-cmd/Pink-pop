@@ -11,15 +11,22 @@ import { speak } from '../a11y/narration'
 import { configureFreePlay, FREE_PLAY, type CrateSpec } from '../game/levels'
 import { hardestPoint } from '../game/analysis'
 import { useGame, usePlayer } from '../state/store'
-import { SURFACE_IDS, ZONES, type SurfaceId, type Zone } from '../physics/constants'
+import { SURFACE_IDS, type SurfaceId, type Zone } from '../physics/constants'
 import { loadOnDrive, type Rig } from '../physics/model'
 import { SURFACE_COLOURS, SURFACE_NAME } from '../theme'
 import { useRef } from 'react'
 
 const CRATE_SIZES = [
-  { mass: 500, kind: 'sand' as const, label: 'Light' },
-  { mass: 1400, kind: 'brick' as const, label: 'Middling' },
-  { mass: 2800, kind: 'pipe' as const, label: 'Heavy' },
+  { mass: 500, kind: 'sand' as const, label: 'Light', box: 18 },
+  { mass: 1400, kind: 'brick' as const, label: 'Middling', box: 26 },
+  { mass: 2800, kind: 'pipe' as const, label: 'Heavy', box: 34 },
+]
+
+/** Same order as the load bay: back of the lorry on the left. */
+const YARD_ORDER: { zone: Zone; label: string }[] = [
+  { zone: 'over_rear_axle', label: 'Back' },
+  { zone: 'middle', label: 'Middle' },
+  { zone: 'over_cab', label: 'Front' },
 ]
 
 export function FreePlayBay() {
@@ -161,11 +168,9 @@ export function FreePlayBay() {
               ) : null}
             </div>
             <div className="grid grid-cols-3 gap-2">
-              {ZONES.map((zone) => (
+              {YARD_ORDER.map(({ zone, label }) => (
                 <div key={zone} className="rounded-2xl border-4 border-dashed border-slate-deep/25 p-2">
-                  <p className="mb-2 text-center text-xs text-slate-deep/70">
-                    {zone === 'over_cab' ? 'Front' : zone === 'middle' ? 'Middle' : 'Back'}
-                  </p>
+                  <p className="mb-2 text-center text-xs text-slate-deep/70">{label}</p>
                   <div className="mb-2 flex min-h-[34px] flex-wrap justify-center gap-1">
                     {load
                       .filter((c) => c.zone === zone)
@@ -180,16 +185,20 @@ export function FreePlayBay() {
                         />
                       ))}
                   </div>
-                  <div className="flex justify-center gap-1">
+                  {/* Three sizes of box, shown at three sizes. No reading. */}
+                  <div className="flex items-end justify-center gap-2">
                     {CRATE_SIZES.map((spec) => (
                       <button
                         key={spec.label}
                         type="button"
                         onClick={() => addCrate(spec, zone)}
-                        className="toy-sm rounded-lg bg-card px-2 py-1 text-xs text-slate-deep"
+                        className="toy-sm flex h-12 w-12 items-end justify-center rounded-lg bg-card p-1 text-slate-deep"
                         aria-label={`Add a ${spec.label.toLowerCase()} one`}
                       >
-                        +{spec.label[0]}
+                        <span
+                          className="rounded-[3px] border-2 border-slate-deep bg-mud"
+                          style={{ width: spec.box, height: spec.box * 0.8 }}
+                        />
                       </button>
                     ))}
                   </div>

@@ -16,7 +16,7 @@ import { levelById } from '../game/levels'
 import { CRATE_COLOURS } from '../render/lorry'
 import { useGame, usePlayer } from '../state/store'
 import { loadOnDrive, type Rig } from '../physics/model'
-import { ZONES, type Zone } from '../physics/constants'
+import type { Zone } from '../physics/constants'
 import type { XpAward } from '../game/xp'
 
 interface Props {
@@ -30,6 +30,9 @@ const ZONE_LABEL: Record<Zone, string> = {
   middle: 'In the middle',
   over_rear_axle: 'Over the back wheels',
 }
+
+/** Left to right on screen, matching where they sit on a lorry facing right. */
+const BAY_ORDER: Zone[] = ['over_rear_axle', 'middle', 'over_cab']
 
 export function LoadBay({ levelId, runIndex, carried }: Props) {
   const { go, reducedMotion } = useGame()
@@ -107,50 +110,75 @@ export function LoadBay({ levelId, runIndex, carried }: Props) {
       <div className="flex min-h-0 flex-1 gap-3">
         {/* --- the lorry ------------------------------------------------- */}
         <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <Panel className="flex min-h-0 flex-1 flex-col p-3">
-            <div className="grid min-h-0 flex-1 grid-cols-3 gap-2">
-              {ZONES.map((zone) => (
-                <DropZone
-                  key={zone}
-                  zone={zone}
-                  label={ZONE_LABEL[zone]}
-                  crates={cratesIn(zone).map((c) => ({ ...c, mass: c.mass }))}
-                  armed={held !== null}
-                  onDrop={() => held && place(held, zone)}
-                  onPickUp={takeBack}
-                />
-              ))}
+          {/* The bed really is a lorry: the cab is on the right, the driving
+              wheels are on the left, and the three zones sit where they sit. */}
+          <Panel className="flex min-h-0 flex-1 flex-col justify-center p-3">
+            <div className="flex items-end gap-1">
+              <div className="min-w-0 flex-1">
+                <div className="grid grid-cols-3 gap-1.5">
+                  {BAY_ORDER.map((zone) => (
+                    <DropZone
+                      key={zone}
+                      zone={zone}
+                      label={ZONE_LABEL[zone]}
+                      crates={cratesIn(zone)}
+                      armed={held !== null}
+                      onDrop={() => held && place(held, zone)}
+                      onPickUp={takeBack}
+                    />
+                  ))}
+                </div>
+                {/* Bed floor. */}
+                <div className="mt-1 h-5 rounded-md border-[3px] border-slate-deep bg-haulage" />
+              </div>
+
+              {/* Cab. */}
+              <div className="w-24 shrink-0" aria-hidden>
+                <div className="toy-sm h-28 rounded-t-2xl rounded-br-lg bg-haulage p-2">
+                  <div className="h-14 rounded-lg border-[3px] border-slate-deep bg-[#9FC4D2]" />
+                </div>
+              </div>
             </div>
 
-            {/* The cab end, so the three zones read as places on a lorry. */}
-            <div className="mt-2 flex items-end gap-1" aria-hidden>
-              <div className="h-3 flex-1 rounded-l-lg border-[3px] border-slate-deep bg-slate-soft" />
-              <div className="h-8 w-16 rounded-t-lg border-[3px] border-slate-deep bg-haulage" />
-              <Wheel />
-              <div className="h-3 w-6 border-y-[3px] border-slate-deep bg-slate-soft" />
-              <Wheel />
-              <Wheel big />
+            {/* Chassis and wheels, with the driving wheels marked. */}
+            <div aria-hidden>
+              <div className="h-2.5 rounded border-[3px] border-slate-deep bg-slate-soft" />
+              <div className="relative h-11">
+                <div className="absolute left-[4%] top-0">
+                  <Wheel big />
+                </div>
+                <div className="absolute left-[14%] top-0">
+                  <Wheel big />
+                </div>
+                <div className="absolute left-[46%] top-0">
+                  <Wheel />
+                </div>
+                <div className="absolute right-[4%] top-0">
+                  <Wheel />
+                </div>
+                <span className="absolute left-[2%] top-10 text-lg leading-none text-hivis">
+                  ▲▲
+                </span>
+              </div>
             </div>
           </Panel>
 
           {/* --- the yard --------------------------------------------------- */}
-          <Panel tone="slate" className="p-3">
-            <div className="signwritten mb-2 text-lg text-cream">Still in the yard</div>
-            <div className="flex min-h-[76px] flex-wrap items-end gap-3">
-              {cratesOut.length === 0 ? (
-                <span className="signwritten-centred text-xl text-grit">All loaded</span>
-              ) : (
-                cratesOut.map((c) => (
-                  <CrateChip
-                    key={c.id}
-                    id={c.id}
-                    mass={c.mass}
-                    kind={c.kind}
-                    selected={held === c.id}
-                    onSelect={() => setHeld(held === c.id ? null : c.id)}
-                  />
-                ))
-              )}
+          <Panel tone="slate" className="shrink-0 p-3">
+            <div className="signwritten mb-2 text-lg text-cream">
+              {cratesOut.length === 0 ? 'All loaded' : 'Still in the yard — tap one, then tap a spot'}
+            </div>
+            <div className="flex min-h-[72px] flex-wrap items-end gap-3">
+              {cratesOut.map((c) => (
+                <CrateChip
+                  key={c.id}
+                  id={c.id}
+                  mass={c.mass}
+                  kind={c.kind}
+                  selected={held === c.id}
+                  onSelect={() => setHeld(held === c.id ? null : c.id)}
+                />
+              ))}
             </div>
           </Panel>
         </div>
@@ -215,12 +243,12 @@ function DropZone({
       type="button"
       onClick={onDrop}
       aria-label={`Put it ${label}`}
-      className={`flex min-h-0 flex-col justify-end rounded-2xl border-4 border-dashed p-2 transition-colors ${
+      className={`flex flex-col justify-end rounded-2xl border-4 border-dashed p-2 transition-colors ${
         armed ? 'border-hivis bg-hivis/15' : 'border-slate-deep/30 bg-paper/60'
       }`}
       data-zone={zone}
     >
-      <div className="flex min-h-[70px] flex-wrap content-end items-end justify-center gap-2">
+      <div className="flex min-h-[92px] flex-wrap content-end items-end justify-center gap-2">
         {crates.map((c) => (
           <CrateChip
             key={c.id}
@@ -228,6 +256,9 @@ function DropZone({
             mass={c.mass}
             kind={c.kind}
             onSelect={() => onPickUp(c.id)}
+            /* While a crate is in hand, tapping anywhere in the zone should
+               drop it — including on top of a crate already sitting there. */
+            passThrough={armed}
             placed
           />
         ))}
@@ -242,37 +273,43 @@ function CrateChip({
   mass,
   kind,
   selected,
-  placed,
+  passThrough,
   onSelect,
 }: {
   id: string
   mass: number
   kind: keyof typeof CRATE_COLOURS
   selected?: boolean
+  /** Ignore taps and let the zone underneath take the drop. */
+  passThrough?: boolean
   placed?: boolean
   onSelect: () => void
 }) {
   const colours = CRATE_COLOURS[kind]
   const size = 40 + Math.min(46, mass / 60)
+  const interactive = !passThrough
   return (
     <span
-      role="button"
-      tabIndex={0}
-      aria-label={`Crate ${id}`}
+      role={interactive ? 'button' : undefined}
+      tabIndex={interactive ? 0 : -1}
+      aria-label={interactive ? `Crate ${id}` : undefined}
+      aria-hidden={interactive ? undefined : true}
       onClick={(e) => {
+        if (!interactive) return
         e.stopPropagation()
         onSelect()
       }}
       onKeyDown={(e) => {
+        if (!interactive) return
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
           e.stopPropagation()
           onSelect()
         }
       }}
-      className={`toy-sm flex cursor-pointer flex-col items-center justify-center rounded-xl ${
-        selected ? 'animate-wobble ring-4 ring-hivis' : ''
-      } ${placed ? '' : ''}`}
+      className={`toy-sm flex flex-col items-center justify-center rounded-xl ${
+        interactive ? 'cursor-pointer' : 'pointer-events-none'
+      } ${selected ? 'animate-wobble ring-4 ring-hivis' : ''}`}
       style={{
         width: size,
         height: size * 0.82,
@@ -288,7 +325,7 @@ function CrateChip({
 function Wheel({ big }: { big?: boolean }) {
   return (
     <span
-      className={`rounded-full border-[3px] border-slate-deep bg-slate-wet ${
+      className={`block rounded-full border-[3px] border-slate-deep bg-slate-wet ${
         big ? 'h-9 w-9' : 'h-7 w-7'
       }`}
       aria-hidden

@@ -29,7 +29,7 @@ interface Props {
 
 export function Predict({ levelId, runIndex, placement, carried }: Props) {
   const { go } = useGame()
-  const { profile } = usePlayer()
+  const { profile, update } = usePlayer()
   const level = levelById(levelId)!
   const run = level.runs[runIndex]!
 
@@ -68,6 +68,13 @@ export function Predict({ levelId, runIndex, placement, carried }: Props) {
     if (answer !== null) return
     setAnswer(guess)
     const right = guess === truth
+    update((p) => ({
+      ...p,
+      predictions: {
+        correct: p.predictions.correct + (right ? 1 : 0),
+        total: p.predictions.total + 1,
+      },
+    }))
     audio.start()
     if (right) audio.chime(1)
     else audio.clunk()

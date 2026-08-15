@@ -266,7 +266,9 @@ export function DriveScreen({ levelId, runIndex, placement, predictionCorrect, c
       </div>
 
       {/* --- kit buttons -------------------------------------------------- */}
-      <div className="absolute left-3 top-1/2 flex -translate-y-1/2 flex-col gap-2">
+      {/* Boxed in between the top bar and the pedals, so nothing a thumb wants
+          ever ends up underneath anything else. */}
+      <div className="absolute bottom-44 left-3 top-20 flex flex-col justify-center gap-2">
         {profile.fitted.sandHopper ? (
           <KitButton
             icon="sand"
@@ -317,42 +319,44 @@ export function DriveScreen({ levelId, runIndex, placement, predictionCorrect, c
             ariaLabel="Sound the horn"
           />
         ) : null}
-      </div>
 
-      {/* --- ballast slider ----------------------------------------------- */}
-      {profile.fitted.ballastTank ? (
-        <div className="absolute bottom-40 left-3 w-32">
-          <div className="toy-sm rounded-2xl bg-card px-2 py-2">
-            <div className="mb-1 flex items-center gap-1">
-              <Icon name="tank" className="h-5 w-5 text-slate-deep" />
-              <div className="h-3 flex-1 overflow-hidden rounded-full border-2 border-slate-deep bg-slate-soft">
-                <div
-                  className="h-full bg-ice-dark"
-                  style={{ width: `${(hud.ballast / BALLAST_MAX) * 100}%` }}
-                />
+        {/* --- ballast, in the same column so it cannot collide with a pedal */}
+        {profile.fitted.ballastTank ? (
+          <div className="w-16">
+            <div className="toy-sm rounded-2xl bg-card px-1.5 py-1.5">
+              <div className="mb-1 flex items-center gap-1">
+                <Icon name="tank" className="h-4 w-4 shrink-0 text-slate-deep" />
+                <div className="h-3 flex-1 overflow-hidden rounded-full border-2 border-slate-deep bg-slate-soft">
+                  <div
+                    className="h-full bg-ice-dark"
+                    style={{ width: `${(hud.ballast / BALLAST_MAX) * 100}%` }}
+                  />
+                </div>
+              </div>
+              {/* Stacked, not side by side: two thumb-sized targets rather
+                  than four thin ones. */}
+              <div className="flex flex-col gap-1">
+                <button
+                  type="button"
+                  className="toy-sm signwritten-centred rounded-lg bg-haulage py-2 text-xl leading-none text-cream"
+                  onClick={() => sim.setBallast(sim.ballastTarget + 400)}
+                  aria-label="Fill with water"
+                >
+                  +
+                </button>
+                <button
+                  type="button"
+                  className="toy-sm signwritten-centred rounded-lg bg-slate-soft py-2 text-xl leading-none text-cream"
+                  onClick={() => sim.setBallast(sim.ballastTarget - 400)}
+                  aria-label="Let water out"
+                >
+                  −
+                </button>
               </div>
             </div>
-            <div className="flex gap-1">
-              <button
-                type="button"
-                className="toy-sm flex-1 rounded-lg bg-slate-soft py-2 text-cream"
-                onClick={() => sim.setBallast(sim.ballastTarget - 400)}
-                aria-label="Let water out"
-              >
-                −
-              </button>
-              <button
-                type="button"
-                className="toy-sm flex-1 rounded-lg bg-haulage py-2 text-cream"
-                onClick={() => sim.setBallast(sim.ballastTarget + 400)}
-                aria-label="Fill with water"
-              >
-                +
-              </button>
-            </div>
           </div>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
 
       {/* --- pedals -------------------------------------------------------- */}
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-4">
@@ -587,7 +591,9 @@ function applyLearning(
         completed: (previous?.completed ?? false) || succeeded,
         cleanRun: (previous?.cleanRun ?? false) || (succeeded && !sim.stats.hadWheelspin),
         cargoIntact: (previous?.cargoIntact ?? false) || (succeeded && sim.stats.cargoLost === 0),
-        boughtNothing: previous?.boughtNothing ?? false,
+        boughtNothing:
+          (previous?.boughtNothing ?? false) ||
+          (succeeded && awards.some((a) => a.id === 'no-shopping')),
         bestTime:
           succeeded && (previous?.bestTime === null || previous?.bestTime === undefined
             ? true

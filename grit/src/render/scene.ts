@@ -636,7 +636,7 @@ function drawBoss(
   const t = view.reducedMotion ? 0 : view.time
 
   if (boss.kind === 'slick') drawSlick(ctx, x, y, ppm, t, boss.mood)
-  if (boss.kind === 'mudzilla') drawMudzilla(ctx, x, y, ppm, t, boss.mood)
+  if (boss.kind === 'mudzilla') drawMudzilla(ctx, x, y + ppm * 0.3, ppm, t, boss.mood)
 }
 
 function drawSlick(
@@ -716,7 +716,7 @@ function drawMudzilla(
 ): void {
   ctx.save()
   const bob = Math.sin(t * 2.4) * ppm * 0.12
-  const r = ppm * 1.5
+  const r = ppm * 2.1
 
   ctx.strokeStyle = TONE.mudDark
   ctx.lineWidth = 5

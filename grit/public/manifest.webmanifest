@@ -1,0 +1,14 @@
+{
+  "name": "GRIT",
+  "short_name": "GRIT",
+  "description": "A haulage game about grip.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#E8E0CF",
+  "theme_color": "#1F5C3C",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
