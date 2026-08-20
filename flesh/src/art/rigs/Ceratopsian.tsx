@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { GEO, flatMaterial } from '../toon'
-import { PALETTE } from '../palette'
+import { PALETTE, varyColour } from '../palette'
 import { Eyes, Part } from '../Part'
 import type { HerdAnimal } from '@/sim/types'
 
@@ -41,8 +41,17 @@ export function CeratopsianRig({ animal }: Props) {
   const marker = useRef<THREE.Group>(null)
 
   const styraco = animal.kind === 'styracosaur'
-  const hide = animal.juvenile ? PALETTE.juvenile : styraco ? PALETTE.styracosaur : PALETTE.triceratops
-  const frillColour = styraco ? PALETTE.styracosaurFrill : PALETTE.triceratopsFrill
+  /* No two head are the same shade. The matriarch also runs a little darker and
+     richer than the rest, which is a second, quieter way of picking her out
+     when the brand on her flank is facing away from you. */
+  const baseHide = animal.juvenile ? PALETTE.juvenile : styraco ? PALETTE.styracosaur : PALETTE.triceratops
+  const hide = varyColour(baseHide, animal.id * 31, 0.02, animal.matriarch ? 0.0 : 0.1)
+  const frillColour = varyColour(
+    styraco ? PALETTE.styracosaurFrill : PALETTE.triceratopsFrill,
+    animal.id * 31 + 7,
+    0.02,
+    0.08,
+  )
   const brandTexture = useMemo(() => makeBrandTexture(), [])
 
   useFrame((_, dt) => {

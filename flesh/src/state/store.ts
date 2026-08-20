@@ -159,7 +159,10 @@ export function toActiveUpgrades(owned: OwnedUpgrades): ActiveUpgrades {
 
 let toastId = 1
 
-export const useGame = create<GameStore>((set, get) => ({
+export const useGame = createStore()
+
+function createStore() {
+  return create<GameStore>((set, get) => ({
   screen: 'title',
   save: loadSave(),
   world: null,
@@ -289,4 +292,12 @@ export const useGame = create<GameStore>((set, get) => ({
     writeSave(save)
     set({ save, result: null, world: null, screen: 'title', revision: get().revision + 1 })
   },
-}))
+  }))
+}
+
+/* Exposed for the console and for the end-to-end tests, which need to read the
+   current screen before any Canvas exists to hang a handle off. */
+if (typeof window !== 'undefined') {
+  const w = window as unknown as { __flesh?: Record<string, unknown> }
+  ;(w.__flesh ??= {}).store = useGame
+}

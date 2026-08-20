@@ -33,6 +33,15 @@ export interface GulchDef {
   /** Perpendicular distance from the route centreline where the ground gives out. */
   offset: number
   depth: number
+  /**
+   * How wide the chasm is before the far wall climbs back up.
+   *
+   * Without a far wall the drop reads as a change of colour rather than as a
+   * cliff: from the shelf you see an edge and then more ground a long way
+   * below, which the eye files as distance, not depth. The opposite wall is
+   * what makes it a canyon.
+   */
+  width: number
   /** Along-route range the gulch exists over, as a fraction of route length. */
   from: number
   to: number
@@ -131,6 +140,36 @@ export class Terrain {
     return { dist: best.d, side: best.side, progress: along / this.totalLength, cx: best.cx, cz: best.cz }
   }
 
+  /**
+   * A point at `t` (0..1) along the route polyline, offset `side` metres
+   * perpendicular to it.
+   *
+   * Scatter uses this instead of sampling the bounds uniformly. The playable
+   * area is roughly half a square kilometre and the player never sees most of
+   * it; spending instances on the far corners buys nothing, while the same
+   * count spread along the trail is dense enough to read as ground cover.
+   */
+  routePoint(t: number, side: number): { x: number; z: number } {
+    const route = this.def.route
+    const target = clamp(t, 0, 1) * this.totalLength
+    let i = 1
+    while (i < route.length - 1 && (this.cumulative[i] ?? 0) < target) i++
+    const a = route[i - 1]!
+    const b = route[i]!
+    const segStart = this.cumulative[i - 1] ?? 0
+    const segLen = (this.cumulative[i] ?? this.totalLength) - segStart || 1
+    const f = clamp((target - segStart) / segLen, 0, 1)
+    const x = lerp(a.x, b.x, f)
+    const z = lerp(a.z, b.z, f)
+    let dx = b.x - a.x
+    let dz = b.z - a.z
+    const l = Math.hypot(dx, dz) || 1
+    dx /= l
+    dz /= l
+    // Perpendicular in XZ.
+    return { x: x + -dz * side, z: z + dx * side }
+  }
+
   /** Ground height, before water. This is the surface things stand on. */
   height(x: number, z: number): number {
     const d = this.def
@@ -141,6 +180,32 @@ export class Terrain {
 
     const route = this.routeInfo(x, z)
 
+    /*
+     * Badlands relief, applied only well off the trail.
+     *
+     * Plain fbm gives rolling dunes, which is the wrong landscape entirely —
+     * the whole look of the strip is eroded benches and hard-edged mesas.
+     * Ridged noise (1 - |n|) turns the smooth crests into sharp ones, and
+     * quantising the result into terraces gives the flat benches and steep
+     * risers that actually read as erosion.
+     *
+     * It is deliberately kept out of the corridor. The drive has to stay
+     * walkable, and a herd trying to negotiate a staircase is not the game.
+     */
+    const away = smoothstep(d.corridorWidth * 0.95, d.corridorWidth * 2.8, route.dist)
+    if (away > 0.001) {
+      const ridge = 1 - Math.abs(fbm(x * s * 1.7 - 21.4, z * s * 1.7 + 8.9, 3))
+      let relief = h + ridge * ridge * d.amplitude * 2.2
+
+      // Terrace. The smoothstep is the riser; the flat part is the bench.
+      const step = Math.max(1.5, d.amplitude * 0.55)
+      const q = Math.floor(relief / step)
+      const f = relief / step - q
+      relief = (q + smoothstep(0.5, 0.92, f)) * step
+
+      h = lerp(h, relief, away)
+    }
+
     // Grade the corridor flat-ish so the drive reads as a trail, not a scramble.
     const corridorBlend = 1 - smoothstep(d.corridorWidth * 0.5, d.corridorWidth * 1.6, route.dist)
     if (corridorBlend > 0) {
@@ -148,30 +213,41 @@ export class Terrain {
       h = lerp(h, trailH * 0.75, corridorBlend * 0.85)
     }
 
-    // Water basins.
+    /* Water basins.
+     *
+     * The falloff stays close to the rim on purpose. An earlier version
+     * shallowed from 55% of the radius outward, which meant a seventy-eight
+     * metre pool was only twenty-five metres of actual water with a wide flat
+     * apron around it — and since the water surface is drawn at the full
+     * radius, most of that surface sat a few centimetres above dry ground and
+     * was invisible. The drawn disc and the carved basin have to agree. */
     for (const w of d.water) {
       const dist = Math.hypot(x - w.x, z - w.z)
-      const inside = 1 - smoothstep(w.radius * 0.55, w.radius, dist)
+      const inside = 1 - smoothstep(w.radius * 0.82, w.radius, dist)
       if (inside > 0) {
         let depth = w.depth * inside
         if (w.ford) {
-          // The ford is a raised bar across the basin. Finding it is the counter
-          // to the phobosuchus, so it must be shallow enough to read visually.
+          /* The ford is a raised bar across the basin, not a general shallowing.
+             Finding it is the counter to the phobosuchus, so it has to be
+             narrow enough to be a decision and obvious enough to be findable. */
           const fd = Math.hypot(x - w.ford.x, z - w.ford.z)
-          const fordLift = 1 - smoothstep(w.ford.width * 0.4, w.ford.width, fd)
-          depth *= 1 - fordLift * 0.86
+          const fordLift = 1 - smoothstep(w.ford.width * 0.45, w.ford.width * 0.8, fd)
+          depth *= 1 - fordLift * 0.93
         }
         h -= depth
       }
     }
 
-    // The gulch: ground simply gives out on one side of the trail.
+    // The gulch: the ground gives out on one side of the trail, and comes back
+    // as a wall on the far side of the chasm.
     if (d.gulch) {
       const g = d.gulch
       if (route.progress >= g.from && route.progress <= g.to && route.side === g.side) {
         const over = route.dist - g.offset
         if (over > 0) {
-          h -= g.depth * smoothstep(0, 9, over)
+          const fall = smoothstep(0, 5, over)
+          const farWall = smoothstep(g.width, g.width + 16, over)
+          h -= g.depth * (fall - farWall * 0.92)
         }
       }
     }
@@ -198,13 +274,20 @@ export class Terrain {
     return clamp(1 - n.y, 0, 1)
   }
 
-  /** Water surface level for the basin containing this point, or null. */
+  /**
+   * Water surface level for the basin containing this point, or null.
+   *
+   * Anchored to the un-basined height at the *centre*, not to a single sample
+   * on the rim. Sampling the rim was fragile: the underlying noise varies by
+   * several metres across a basin this wide, so on some seeds the "surface"
+   * came out below the basin floor and the water simply did not exist — which
+   * is exactly what happened to the Tar Shallows crossing.
+   */
   waterLevelAt(x: number, z: number): number | null {
     for (const w of this.def.water) {
       const dist = Math.hypot(x - w.x, z - w.z)
       if (dist < w.radius) {
-        const rim = this.heightWithoutWater(w.x + w.radius, w.z)
-        return rim - WATER_SURFACE_BIAS
+        return this.heightWithoutWater(w.x, w.z) - WATER_SURFACE_BIAS
       }
     }
     return null
@@ -222,6 +305,23 @@ export class Terrain {
       h = lerp(h, trailH * 0.75, corridorBlend * 0.85)
     }
     return h
+  }
+
+  /**
+   * The height something of the given draft actually sits at.
+   *
+   * Anything in water deeper than its draft floats rather than walking along
+   * the bottom. Without this a triceratops crossing a five-metre pool
+   * disappears under the surface and reappears on the far bank, which looks
+   * like a bug even though the simulation is doing exactly what it was told.
+   */
+  standHeight(x: number, z: number, draft: number): number {
+    const ground = this.height(x, z)
+    const level = this.waterLevelAt(x, z)
+    if (level === null) return ground
+    const depth = level - ground
+    if (depth <= draft) return ground
+    return level - draft
   }
 
   /** How deep the water is here. 0 on dry land. */

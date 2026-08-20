@@ -71,6 +71,27 @@ class FxSystem {
     })
   }
 
+  /**
+   * A slow drifting mote of ash. Same pool as the dust, but it falls instead of
+   * rising and lives a great deal longer.
+   */
+  mote(x: number, y: number, z: number): void {
+    if (this.puffs.length >= MAX_PUFFS) return
+    this.puffs.push({
+      x,
+      y,
+      z,
+      vx: (Math.random() - 0.5) * 1.1,
+      vy: -0.9 - Math.random() * 0.7,
+      vz: (Math.random() - 0.5) * 1.1,
+      life: 0,
+      maxLife: 5 + Math.random() * 4,
+      size: 0.1 + Math.random() * 0.12,
+      grow: 0,
+      tint: 1,
+    })
+  }
+
   burst(x: number, y: number, z: number, count: number, size = 1, tint = 0): void {
     for (let i = 0; i < count; i++) this.puff(x, y, z, size, tint)
   }
@@ -102,9 +123,15 @@ class FxSystem {
       p.x += p.vx * dt
       p.y += p.vy * dt
       p.z += p.vz * dt
-      p.vy -= dt * 0.6
-      p.vx *= 1 - dt * 1.4
-      p.vz *= 1 - dt * 1.4
+      if (p.tint === 1) {
+        // Ash: it drifts sideways on the wind rather than settling straight down.
+        p.vx += Math.sin(p.life * 1.7 + p.z) * dt * 0.5
+        p.vz += Math.cos(p.life * 1.3 + p.x) * dt * 0.5
+      } else {
+        p.vy -= dt * 0.6
+        p.vx *= 1 - dt * 1.4
+        p.vz *= 1 - dt * 1.4
+      }
     }
     for (let i = this.tracers.length - 1; i >= 0; i--) {
       const t = this.tracers[i]!
@@ -223,7 +250,7 @@ export function Effects() {
         // Swell, then collapse. The collapse is what stands in for a per-puff
         // alpha, which would cost an instance colour attribute for very little.
         const fade = t < 0.72 ? 1 : 1 - (t - 0.72) / 0.28
-        const size = (puff.size + puff.grow * t) * fade
+        const size = (puff.size + puff.grow * t) * (puff.grow > 0 ? fade : 1)
         s.set(size, size, size)
         m.compose(p, camera.quaternion, s)
         d.setMatrixAt(i, m)

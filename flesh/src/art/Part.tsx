@@ -54,9 +54,27 @@ export function Part({
         rotation={rotation}
         scale={scale}
         renderOrder={renderOrder}
+        /* Only the pieces that define the silhouette cast. Horns, teeth, eyes,
+           studs and stripes contribute nothing a shadow map can resolve, and
+           each one is a second draw call in the shadow pass — on a twelve-head
+           herd that was most of the frame's draw calls for no visible result.
+           `outline` already marks exactly the set of parts that matter here. */
+        castShadow={!flat && outline}
+        receiveShadow={!flat}
       />
+      {/* The inverted hull is a size larger than the thing it outlines, so it
+          must never cast: it would throw a shadow that does not fit its own
+          animal. */}
       {outline && (
-        <mesh geometry={geo} material={ink} position={position} rotation={rotation} scale={scale} />
+        <mesh
+          geometry={geo}
+          material={ink}
+          position={position}
+          rotation={rotation}
+          scale={scale}
+          castShadow={false}
+          receiveShadow={false}
+        />
       )}
     </>
   )

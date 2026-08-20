@@ -29,6 +29,13 @@ export interface LevelDef {
   scriptedStampede?: { atProgress: number }
   /** Seconds a competent drive should take. Shown on the results screen. */
   par: number
-  /** Sky and ground tint override, so the six levels do not blur together. */
-  mood: { sky: string; fog: string; ground: string; fogDensity: number }
+  /**
+   * The level's palette.
+   *
+   * Both ends of the sky gradient are here, not just the top: an earlier
+   * version fixed the horizon band globally and every level came out the same
+   * burnt orange regardless of what its `sky` said, which made the Ash Plains
+   * indistinguishable from the Fern Flats.
+   */
+  mood: { sky: string; skyLow: string; fog: string; ground: string; fogDensity: number }
 }

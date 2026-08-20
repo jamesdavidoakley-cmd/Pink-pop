@@ -697,7 +697,8 @@ function integrate(world: World, a: HerdAnimal, dt: number): void {
     }
   }
 
-  a.pos.y = t.height(a.pos.x, a.pos.z)
+  // Deep water floats them; they do not walk along the bottom of it.
+  a.pos.y = t.standHeight(a.pos.x, a.pos.z, 1.5 * a.scale)
 
   const sp = len2(a.vel.x, a.vel.z)
   if (sp > 0.05) {
@@ -727,8 +728,11 @@ function integrate(world: World, a: HerdAnimal, dt: number): void {
   }
 
   /* The one place the ground itself takes an animal: over the edge at Bone
-     Gulch. That one is visible, learnable, and the whole point of the level. */
-  if (t.fallDepth(a.pos.x, a.pos.z) > 14) {
+     Gulch. That one is visible, learnable, and the whole point of the level.
+     Gated on the level actually having a gulch — with real eroded relief off
+     the trail, an ungated depth test would write animals off for wandering
+     into an ordinary ravine, which is neither visible nor learnable. */
+  if (t.def.gulch && t.fallDepth(a.pos.x, a.pos.z) > 14) {
     loseAnimal(world, a, 'fell')
   }
 }

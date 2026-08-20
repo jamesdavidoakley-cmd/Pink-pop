@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { Beacons, Foliage, Rocks, StartPen } from './Props'
+import { Beacons, Rocks, StartPen } from './Props'
+import { Vegetation } from './Vegetation'
 import { Ground, Lighting, Sky, Water } from './Environment'
+import { Horizon } from './Horizon'
+import { Structures } from './Structures'
 import { CameraRig, type CameraState } from './CameraRig'
 import { Effects, fx } from './Effects'
 import { CeratopsianRig } from '@/art/rigs/Ceratopsian'
@@ -16,7 +19,7 @@ import { DRONE, GOAD, WHOOP } from '@/core/tuning'
 import { dist2 } from '@/core/math'
 import type { InputManager } from '@/core/input'
 import { stepWorld } from '@/sim/world'
-import type { SimEvent, World } from '@/sim/types'
+import { NO_INPUT, type SimEvent, type World } from '@/sim/types'
 
 /**
  * The scene: everything inside the Canvas.
@@ -68,12 +71,14 @@ export function Scene({ world, input, camera, paused, hat, droneActive, onEvent,
       <CameraRig world={world} input={input} state={camera} paused={paused} />
 
       <Sky level={world.level} flash={skyFlash} />
-      <Lighting level={world.level} />
+      <Lighting level={world.level} focus={world.player.pos} />
+      <Horizon terrain={world.terrain} level={world.level} />
       <Ground terrain={world.terrain} level={world.level} />
       <Water terrain={world.terrain} />
-      <Foliage terrain={world.terrain} />
+      <Vegetation terrain={world.terrain} />
       <Rocks terrain={world.terrain} />
       <StartPen world={world} />
+      <Structures world={world} />
       <Beacons world={world} />
 
       {world.herd.map((animal) => (
@@ -123,6 +128,93 @@ function SimDriver({
   /** Last gait phase per entity, for footfall detection. */
   const footfalls = useRef(new Map<number, number>())
   const rosterSize = useRef(-1)
+  const reportedPhase = useRef<World['phase']>('playing')
+
+  /*
+   * A dev hook that advances the simulation without waiting for frames.
+   *
+   * `stepWorld` caps itself at four sub-steps a frame so a stalled tab cannot
+   * deliver a sixty-second step to the herd — which means that on a machine
+   * rendering at four frames a second the game runs at about a quarter speed
+   * rather than skipping. That is the right behaviour, but it makes visual
+   * checks of the later levels impossible: every screenshot is two seconds into
+   * the drive, before anything has spawned. This lets the screenshot scripts
+   * fast-forward. It is never called by the game itself.
+   */
+  useEffect(() => {
+    // Create the handle rather than requiring it: the Canvas sets it in
+    // onCreated, and whether that has run before this effect is not something
+    // to depend on.
+    const w = window as unknown as { __flesh?: Record<string, unknown> }
+    const handle = (w.__flesh ??= {})
+    handle.world = world
+    handle.warp = (seconds: number, drive = true) => {
+      reportedPhase.current = 'playing'
+      const steps = Math.round(seconds * 60)
+      for (let i = 0; i < steps; i++) {
+        const input = { ...NO_INPUT, aimYaw: camera.yaw, aimPitch: camera.pitch }
+        if (drive) {
+          // Push the matriarch toward the next beacon, roughly as a player would.
+          const lead = world.herd.find((a) => a.matriarch && !a.lost && !a.delivered)
+          const beacon = world.level.terrain.route[Math.min(world.beaconIndex, world.level.terrain.route.length - 1)]
+          if (lead && beacon) {
+            let dx = beacon.x - lead.pos.x
+            let dz = beacon.z - lead.pos.z
+            const d = Math.hypot(dx, dz) || 1
+            dx /= d
+            dz /= d
+            const px = lead.pos.x - dx * 3 - world.player.pos.x
+            const pz = lead.pos.z - dz * 3 - world.player.pos.z
+            const pd = Math.hypot(px, pz) || 1
+            if (pd > 0.6) {
+              input.moveX = px / pd
+              input.moveZ = pz / pd
+            }
+          }
+        }
+        stepWorld(world, input, 1 / 60)
+        // Deliver the events rather than dropping them. Skipping the audio and
+        // the particles is deliberate — a hundred and fifty seconds of warp
+        // would otherwise arrive as a wall of noise — but swallowing the
+        // completion event means the drive silently never ends.
+        for (const event of world.events) onEvent(event)
+        world.events.length = 0
+      }
+    }
+    /**
+     * Put the drive at a given fraction along the route.
+     *
+     * The warp above simulates, which is what you want for spawns and state,
+     * but its stand-in driver is crude and often loses the herd before it gets
+     * anywhere. For checking that a piece of scenery looks right — the Bone
+     * Gulch drop, the Tar Shallows crossing — you want to be standing at it,
+     * with the herd, in one call.
+     */
+    handle.place = (t: number, lateral = 0) => {
+      const p = world.terrain.routePoint(t, lateral)
+      world.player.pos.x = p.x
+      world.player.pos.z = p.z + 14
+      world.player.pos.y = world.terrain.height(world.player.pos.x, world.player.pos.z)
+      world.herd.forEach((a, i) => {
+        if (a.lost || a.delivered) return
+        const ang = (i / world.herd.length) * Math.PI * 2
+        a.pos.x = p.x + Math.sin(ang) * (i === 0 ? 0 : 6 + (i % 3) * 4)
+        a.pos.z = p.z + Math.cos(ang) * (i === 0 ? 0 : 6 + (i % 3) * 4)
+        a.pos.y = world.terrain.height(a.pos.x, a.pos.z)
+        a.calm = 100
+      })
+      // Advance the beacon so the compass and the markers agree with where we
+      // have just been dropped.
+      const route = world.level.terrain.route
+      world.beaconIndex = Math.max(1, Math.min(route.length - 1, Math.round(t * (route.length - 1)) + 1))
+    }
+
+    return () => {
+      delete handle.warp
+      delete handle.world
+      delete handle.place
+    }
+  }, [world, camera])
 
   useFrame((_, rawDt) => {
     // A tab that has been in the background for a minute must not deliver a
@@ -148,6 +240,15 @@ function SimDriver({
     for (const event of world.events) handleEvent(event, world, onEvent, skyFlash)
     world.events.length = 0
 
+    /* A safety net. The end of a drive is announced by an event, and if that
+       event were ever missed — dropped by a warp, lost across a remount — the
+       player would be left standing in a world that has already finished with
+       no way out of it. The phase is the truth; the event is only the notice. */
+    if (world.phase !== 'playing' && reportedPhase.current === 'playing') {
+      reportedPhase.current = world.phase
+      onEvent({ t: world.phase === 'complete' ? 'complete' : 'failed' })
+    }
+
     if (world.predators.length !== rosterSize.current) {
       rosterSize.current = world.predators.length
       onRosterChange()
@@ -155,6 +256,7 @@ function SimDriver({
 
     /* ------------------------------------------------- dust and footfalls */
     emitFootfalls(world, footfalls.current, dt)
+    emitWeather(world, dt)
 
     /* ------------------------------------------------------------- audio */
     // The rumble that tells you the herd is going without you having to look.
@@ -307,6 +409,29 @@ function emitFootfalls(world: World, last: Map<number, number>, _dt: number): vo
   }
   if (player.onBike && player.bikeSpeed > 2) {
     fx.puff(player.pos.x, player.pos.y - 1, player.pos.z, 0.6)
+  }
+}
+
+/**
+ * Ashfall.
+ *
+ * The Ash Plains is meant to be a different place, not the same badlands with
+ * the fog turned up. Slow motes drifting past the camera do more for that than
+ * any amount of colour grading, and they cost nothing — they are the dust pool
+ * with the gravity turned around.
+ */
+function emitWeather(world: World, dt: number): void {
+  if (!world.level.storm) return
+  const player = world.player
+  // A handful per second, seeded around and above the camera.
+  const wanted = 26 * dt
+  const count = Math.floor(wanted) + (Math.random() < wanted % 1 ? 1 : 0)
+  for (let i = 0; i < count; i++) {
+    fx.mote(
+      player.pos.x + (Math.random() - 0.5) * 46,
+      player.pos.y + 9 + Math.random() * 9,
+      player.pos.z + (Math.random() - 0.5) * 46,
+    )
   }
 }
 

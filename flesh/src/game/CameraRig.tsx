@@ -27,6 +27,8 @@ export interface CameraState {
   /** Set by the rig each frame, read by everything that needs a shot direction. */
   aimYaw: number
   aimPitch: number
+  /** 1 while the camera is below a water surface. The HUD tints for it. */
+  submerged: number
 }
 
 const CHASE = {
@@ -127,6 +129,10 @@ export function CameraRig({
     // Never let it end up underground, whatever the boom did.
     const floor = world.terrain.height(px, pz) + 0.9
     if (py < floor) py = floor
+
+    // Being under the surface is a state the player needs to see, not deduce.
+    const surface = world.terrain.waterLevelAt(px, pz)
+    state.submerged = surface !== null && py < surface ? 1 : 0
 
     if (!initialised.current) {
       camera.position.set(px, py, pz)

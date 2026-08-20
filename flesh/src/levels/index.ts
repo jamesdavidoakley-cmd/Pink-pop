@@ -9,12 +9,12 @@ import type { LevelDef } from './types'
  */
 
 const PALETTE = {
-  badlands: { sky: '#d9642a', fog: '#c97a4b', ground: '#b98b52', fogDensity: 0.0062 },
-  flats: { sky: '#e07a33', fog: '#cf8a55', ground: '#c19a5c', fogDensity: 0.0052 },
-  gulch: { sky: '#b8492a', fog: '#a86445', ground: '#a97a4c', fogDensity: 0.0068 },
-  tar: { sky: '#c4703a', fog: '#8d7a5e', ground: '#7d6a4a', fogDensity: 0.0088 },
-  ash: { sky: '#6b5a52', fog: '#8a7d74', ground: '#8b8074', fogDensity: 0.014 },
-  base: { sky: '#c25a2f', fog: '#a86a48', ground: '#b0824f', fogDensity: 0.0072 },
+  badlands: { sky: '#d9642a', skyLow: '#e8933c', fog: '#c97a4b', ground: '#b98b52', fogDensity: 0.0034 },
+  flats: { sky: '#e07a33', skyLow: '#efa855', fog: '#cf8a55', ground: '#c19a5c', fogDensity: 0.0029 },
+  gulch: { sky: '#b8492a', skyLow: '#dd8146', fog: '#a86445', ground: '#a97a4c', fogDensity: 0.0038 },
+  tar: { sky: '#c4703a', skyLow: '#c9a273', fog: '#8d7a5e', ground: '#71614a', fogDensity: 0.0052 },
+  ash: { sky: '#4a413c', skyLow: '#8d7f70', fog: '#75695f', ground: '#6d645c', fogDensity: 0.0105 },
+  base: { sky: '#c25a2f', skyLow: '#e0985a', fog: '#a86a48', ground: '#b0824f', fogDensity: 0.0040 },
 }
 
 export const LEVELS: LevelDef[] = [
@@ -119,7 +119,7 @@ export const LEVELS: LevelDef[] = [
       ],
       water: [],
       tar: [],
-      gulch: { side: 1, offset: 26, depth: 58, from: 0.16, to: 0.84 },
+      gulch: { side: 1, offset: 26, depth: 58, width: 105, from: 0.16, to: 0.84 },
       bounds: { minX: -240, maxX: 240, minZ: -700, maxZ: 110 },
     },
     spawns: [
@@ -156,7 +156,8 @@ export const LEVELS: LevelDef[] = [
         { x: 0, z: -600, label: 'TRANS-TIME GATE' },
       ],
       water: [
-        { x: 10, z: -300, radius: 78, depth: 4.4, ford: { x: 44, z: -292, width: 34 } },
+        // Deep enough that crossing anywhere but the ford is a real decision.
+        { x: 10, z: -300, radius: 76, depth: 5.6, ford: { x: 46, z: -294, width: 40 } },
       ],
       tar: [
         { x: 44, z: -120, radius: 34 },

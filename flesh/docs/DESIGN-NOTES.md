@@ -147,6 +147,34 @@ Found by tracing full drives headless, not by reading the code:
 
 ---
 
+## Bugs the end-to-end test found
+
+The unit tests prove the simulation and the smoke test proves the game boots.
+Neither touches the parts in between, and that is where these were hiding.
+
+**The pause menu was unusable.** The input manager stayed attached behind the
+overlay, so its mousedown handler grabbed pointer lock the instant you pressed
+a button — which moved the cursor out from under the mouseup, so the click never
+completed and the button did nothing. Input is now silenced whenever any
+overlay is up: a click on a button is a click on a button.
+
+**Resuming bounced straight back to pause.** Chrome refuses to re-enter pointer
+lock for a moment after the user leaves it with Escape, and the refusal arrives
+as a lock-change with a null element — indistinguishable from the player
+alt-tabbing away. There is now a grace window after a deliberate resume, and the
+request is retried twice.
+
+**Resuming re-showed the briefing.** The level-start effect was keyed on the
+screen becoming 'playing', which happens every time you come back from the
+pause menu, not just when a new drive starts. It is keyed on the world now.
+
+**A dropped completion event would strand you forever.** The end of a drive was
+announced only by an event; if that event were ever missed the player would be
+left standing in a world that had already finished with no way out. The phase is
+now watched directly — the event is the notice, not the truth.
+
+---
+
 ## Old One Eye
 
 Her fight is one primitive: a dead white eye on her left side.
@@ -192,19 +220,105 @@ ships.
 
 ---
 
+## The graphics pass
+
+The first playable build looked like a flat orange void with brown boxes in it.
+Six things fixed that, in rough order of how much difference each made:
+
+**Shadows.** Nothing cast one, so everything floated. Real shadow maps from the
+key light, on a 62-metre frustum that follows the player — a frustum wide
+enough to cover a six-hundred-metre level would put a 2048 map at a texel every
+thirty centimetres and the shadows would be mush. Inverted-hull outlines never
+cast: they are a size larger than the thing they outline and would throw a
+shadow that does not fit its own animal.
+
+**Three-band shading that is actually three bands.** The gradient ramp was
+96/108/255 — the dark and mid bands within eight per cent of each other, so in
+practice a two-band ramp with a cliff, and anything facing away from the key
+went to mud. Evenly spread at 96/172/255, with ambient dropped from 1.0 to
+0.46, a rounded animal reads as rounded. A cool rim light from behind does the
+rest: on a banded ramp a back light produces a hard-edged rim for free, and it
+is what separates a brown dinosaur from brown ground at forty metres.
+
+**A horizon.** A ring of mesas and buttes outside the bounds, in three
+proportions — mostly broad flat-topped mesas, some buttes, the odd spire —
+because a ring of identical cones reads as a row of tents. They opt out of the
+scene fog and are hazed by hand, since at the fog density the levels use
+anything past two hundred and fifty metres is already fog-coloured and would be
+invisible by definition.
+
+**Terrain that erodes.** Plain fbm gives rolling dunes, which is the wrong
+landscape entirely. Ridged noise sharpens the crests and quantising the result
+into terraces gives the benches and risers that read as erosion. All of it is
+kept off the graded trail, which has to stay walkable.
+
+**Vegetation with a mix in it.** One kind of fern scattered evenly is a
+texture; five kinds with different heights and silhouettes are a place. Ferns,
+cycads, horsetails, scrub, and dead snags — the snags being the treeline Reagan
+keeps telling you not to turn your back on, and without something tall the
+horizon has nothing for a rex to come out of.
+
+**Ground you can see.** The vertex mottling works at landscape scale, but the
+mesh has a vertex every two and a half metres, so within ten metres of the
+camera the ground was smooth paint. One 128px tile, multiplied over the vertex
+colour and mipmapped away at distance, fixed it for a single texture and no
+draw calls. It has to stay close to white: the first version had real contrast
+in it and read as a visible repeating pattern instead of as grain.
+
+Three smaller ones worth recording:
+
+- **Per-individual colour.** Twelve animals sharing one hex value read as twelve
+  copies of one animal. A narrow hue and lightness jitter keyed off the id costs
+  nothing — the toon material caches per colour.
+- **Each level keeps its own palette.** The mottling derived its highlight and
+  shadow from the shared palette, mixing the level's ground colour up to seventy
+  per cent toward the same orange before it reached the screen. The Ash Plains
+  rendered as more badlands. Both ends of the sky gradient are per-level now
+  too, not just the top.
+- **Carver City and Base 3 exist.** The strip's whole visual joke is corporate
+  cleanliness sitting wrong against the badlands, and it only lands if the
+  corporation has buildings in it. Without them the first and last levels began
+  and ended in empty desert with a signpost.
+
+### The water was not there
+
+The Tar Shallows crossing had no water in it at all, and the cause was two
+compounding mistakes. The surface height was anchored to a single sample on the
+basin rim, where the underlying noise runs several metres off the centre — so
+on this seed the "surface" came out below the basin floor. And the basin
+shallowed from 55% of its radius outward while the surface disc was drawn at
+the full radius, so most of that disc sat a few centimetres above dry ground.
+The drawn disc and the carved basin have to agree.
+
+While fixing it: anything in water deeper than its draft now floats rather than
+walking along the bottom, because a triceratops crossing a five-metre pool used
+to vanish under the surface and reappear on the far bank.
+
+### Cost
+
+Draw calls went from ~360 to ~1,050 before any of it was paid for. Most of that
+was the shadow pass: `Part` cast from every piece, and a herd animal is about
+twenty pieces. Casting only from the pieces that already carry an outline — the
+ones that define the silhouette — halved it. Horns, teeth, eyes, studs and
+stripes contribute nothing a shadow map can resolve.
+
+---
+
 ## Budget
 
 Measured by `scripts/smoke.mjs` against the production build, on level one with
 the full herd:
 
-- **335 draw calls**, **166k triangles**, 13 programs, 31 geometries.
+- **440–900 draw calls** and **around 500k triangles**, depending on the level
+  and where the player is standing. 18 programs, 40 geometries, 6 textures.
 - The simulation steps twelve head and five predators in well under a
   millisecond of a 16.6ms frame.
 
-The ground is 180×180 segments and the foliage is 1000 instanced ferns in one
-draw call; both were cut back from higher numbers that looked no better. Outlines
-are the main multiplier on draw calls — every silhouette-defining part is drawn
-twice — which is why horns, studs, teeth and eyes do not get one.
+The ground is 180×180 segments and each plant species is a single instanced
+draw call whatever its count; both were cut back from higher numbers that looked
+no better. Outlines are the main multiplier on draw calls — every
+silhouette-defining part is drawn twice, and the shadow pass draws it a third
+time — which is why horns, studs, teeth and eyes get neither.
 
 Note that the frame rate itself has **not** been verified on real hardware. This
 was built with software rendering, where nothing runs at sixty frames a second.

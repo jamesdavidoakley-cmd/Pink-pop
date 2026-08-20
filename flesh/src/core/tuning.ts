@@ -29,6 +29,8 @@ export const PLAYER = {
   vaultHeight: 0.85,
   radius: 0.45,
   height: 1.8,
+  /** How deep he wades before he starts swimming instead of walking. */
+  wadeDepth: 1.25,
   stamina: { max: 100, drain: 22, regen: 16, regenDelay: 0.7 },
   eyeHeight: 1.5,
 } as const

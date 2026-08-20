@@ -93,7 +93,8 @@ export function stepPlayer(world: World, input: InputFrame, dt: number): void {
   resolveObstacles(world, dt)
   clampToBounds(world)
 
-  const ground = t.height(p.pos.x, p.pos.z)
+  // Chest-deep is as deep as he gets: past that he is wading, not walking.
+  const ground = t.standHeight(p.pos.x, p.pos.z, PLAYER.wadeDepth)
   if (p.pos.y <= ground) {
     const hard = p.vel.y < -14
     if (!p.grounded) world.events.push({ t: 'land', hard })
@@ -148,8 +149,9 @@ function stepBike(world: World, input: InputFrame, dt: number): void {
   resolveObstacles(world, dt)
   clampToBounds(world)
 
-  // It hovers, so it ignores small ground detail and skims the bigger stuff.
-  const ground = t.height(p.pos.x, p.pos.z)
+  // It hovers, so it ignores small ground detail and skims the bigger stuff —
+  // and it hovers over water as happily as over dirt.
+  const ground = Math.max(t.height(p.pos.x, p.pos.z), t.waterLevelAt(p.pos.x, p.pos.z) ?? -Infinity)
   p.pos.y += ((ground + BIKE.hoverHeight) - p.pos.y) * Math.min(1, dt * 7)
   p.grounded = true
   p.vel.y = 0

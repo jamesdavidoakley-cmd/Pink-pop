@@ -75,6 +75,18 @@ canvas {
     radial-gradient(ellipse at 92% 50%, rgba(40, 120, 255, 0.5) 0%, transparent 42%);
 }
 
+/* Under the surface. Cheaper than a second fog pass, and the point is only to
+   tell the player they are in the water, which a colour does perfectly well. */
+.fx-submerged {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, rgba(30, 88, 82, 0.42) 0%, rgba(12, 44, 44, 0.86) 100%);
+  opacity: 0;
+  transition: opacity 180ms ease-out;
+}
+
 .fx-vignette {
   position: absolute;
   inset: 0;

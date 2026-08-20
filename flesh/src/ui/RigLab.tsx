@@ -29,13 +29,32 @@ export function RigLab() {
   return (
     <div className="absolute inset-0 bg-[#c97a4b]">
       <Canvas
+        shadows="percentage"
         dpr={[1, 1.75]}
         gl={{ antialias: true }}
         camera={{ position: [0, dist * 0.28, dist], fov: 46, near: 0.1, far: 400 }}
       >
-        <directionalLight position={[60, 90, 50]} intensity={2.4} color={PALETTE.sun} />
-        <ambientLight intensity={1.0} color={PALETTE.shadowSoft} />
-        <hemisphereLight args={[PALETTE.skyLow, PALETTE.shadow, 0.6]} />
+        {/* Deliberately the same three-light rig and shadow setup the game
+            uses. A turntable lit differently from the game is a turntable that
+            tells you the wrong thing. */}
+        <directionalLight
+          castShadow
+          position={[52, 34, 78]}
+          intensity={3.1}
+          color={PALETTE.sun}
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+          shadow-camera-left={-40}
+          shadow-camera-right={40}
+          shadow-camera-top={40}
+          shadow-camera-bottom={-40}
+          shadow-camera-far={220}
+          shadow-bias={-0.0012}
+          shadow-normalBias={0.04}
+        />
+        <directionalLight position={[-52, 42, -78]} intensity={1.35} color={PALETTE.shadowSoft} />
+        <ambientLight intensity={0.46} color={PALETTE.shadow} />
+        <hemisphereLight args={[PALETTE.skyLow, PALETTE.shadow, 0.5]} />
         <LabFloor />
         <Turntable only={only} spacing={spacing} />
       </Canvas>
@@ -56,7 +75,7 @@ function LabFloor() {
     () => new THREE.MeshToonMaterial({ color: new THREE.Color(PALETTE.groundMid), gradientMap: toonGradient() }),
     [],
   )
-  return <mesh geometry={geo} material={mat} />
+  return <mesh geometry={geo} material={mat} receiveShadow />
 }
 
 /** A row of plinths, each subject turning on the spot so every angle is seen. */

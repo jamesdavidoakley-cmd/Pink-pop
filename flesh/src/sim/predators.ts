@@ -857,7 +857,8 @@ function integratePredator(world: World, p: Predator, dt: number): void {
       p.vel.x *= 1 - (1 - speedFactor) * Math.min(1, dt * 3)
       p.vel.z *= 1 - (1 - speedFactor) * Math.min(1, dt * 3)
     }
-    p.pos.y = t.height(p.pos.x, p.pos.z)
+    // The crocodilian sits low in the water; everything else floats normally.
+    p.pos.y = t.standHeight(p.pos.x, p.pos.z, p.kind === 'phobosuchus' ? 0.35 : 1.6 * p.scale)
   }
 
   p.gait += len2(p.vel.x, p.vel.z) * dt * (p.kind === 'raptor' ? 1.6 : 0.55)

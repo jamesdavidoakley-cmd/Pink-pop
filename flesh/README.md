@@ -37,13 +37,24 @@ Two dev tools, both of which earned their keep:
 
 | Command | What |
 |---|---|
-| `node scripts/smoke.mjs [shot.png]` | Boots the built game in Chromium, plays it, fails on any console error, and reports the draw-call and triangle budget |
+| `npm run test:smoke` | Boots the built game in Chromium, plays it, fails on any console error, and reports the draw-call and triangle budget |
+| `npm run test:e2e` | Thirty-seven assertions across the whole flow: title → drive → pause → map → gate → pay slip → commissary → reload |
 | `node scripts/shots.mjs <dir>` | Captures every screen for a visual check |
+| `node scripts/levelshot.mjs <n> <out.png> [warpSeconds] [routeT] [turn] [lateral]` | Boots straight into a level, fast-forwards, and screenshots it |
 
-And `?rig=` in the browser opens a turntable for every animal in the game —
-`?rig=herd`, `?rig=rex`, `?rig=oldoneeye`, `?rig=reagan`, and so on, with `&d=`
-for camera distance. Judging a procedural dinosaur from gameplay screenshots is
-hopeless; it is always half behind another one at the wrong angle.
+Three dev hooks, all of which earned their keep:
+
+- **`?rig=`** opens a turntable for every animal — `?rig=herd`, `?rig=rex`,
+  `?rig=oldoneeye`, `?rig=reagan`, with `&d=` for camera distance. Judging a
+  procedural dinosaur from gameplay screenshots is hopeless; it is always half
+  behind another one at the wrong angle.
+- **`?level=3`** boots straight into a drive. Reaching the Ash Plains honestly
+  is about forty minutes of play.
+- **`window.__flesh`** exposes the renderer, the store, the live world, and
+  `warp(seconds)` / `place(t, lateral)`. The last two exist because this was
+  built under software rendering at four frames a second, where the fixed-step
+  loop advances the game at about a quarter speed — without them every
+  screenshot is two seconds into a level, before anything has spawned.
 
 ## Controls
 
@@ -95,6 +106,30 @@ and finally Old One Eye — who does not chase you, hunts the herd patiently whi
 you try to get the last head through the fence, and cannot see anything in a
 ninety-degree cone on her blind left side. Nothing in the game tells you that.
 
+## How it looks
+
+Cel-shaded, with thick black outlines done as inverted hulls rather than as a
+post-processing pass. Three-band toon shading on a key/rim/ambient rig, real
+shadow maps from a low sun on a frustum that follows the player, and a palette
+per level so the six drives do not blur into one another.
+
+The landscape is a heightfield with ridged noise and erosion terracing applied
+everywhere except the graded trail — the drive has to stay walkable, and a herd
+negotiating a staircase is not the game. Beyond the playable bounds a ring of
+mesas and buttes stands in hand-mixed haze; they opt out of the scene fog
+entirely, because at the density the levels use anything past two hundred and
+fifty metres is already fog-coloured and a fogged mesa is an invisible one.
+
+Five plant species and two kinds of ground clutter are scattered along the
+route rather than across the bounds — the camera spends the whole drive within
+a hundred metres of the trail, so uniform placement spends most of the budget
+where nobody stands. Everything growing is instanced: one draw call a species
+for the level.
+
+Nothing is a downloaded asset. Every dinosaur, every plant, every building and
+every texture in the game is built from boxes, spheres, cones and cylinders, or
+drawn to a canvas at load time.
+
 ## What is inside
 
 ```
@@ -104,7 +139,7 @@ src/
   world/     analytic heightfield terrain
   levels/    the six drives
   art/       toon shading, outlines, and every procedural rig
-  game/      the r3f scene, camera, effects
+  game/      the r3f scene, camera, lighting, terrain mesh, vegetation, effects
   ui/        HUD, herd map, menus, commissary
   state/     zustand store, save, difficulty
 tests/       the acceptance tests from §16 of the brief, plus per-level runs
@@ -160,10 +195,12 @@ The frame-rate one cannot be honestly asserted from here: this was built in a
 container with software rendering, where nothing runs at sixty frames a second.
 What *is* measured is the budget it asks for — the simulation steps a full
 twelve-head, five-predator world in well under a millisecond (`§16 —
-performance budget`), and the smoke script reports the render side at **335 draw
-calls and 166k triangles**, which is a comfortable 60fps budget on any GPU of
-the last decade. Somebody should still play it on a real laptop before that box
-is ticked.
+performance budget`), and the browser scripts report the render side at
+**440–900 draw calls and around 500k triangles** depending on the level and
+where you are standing — a comfortable 60fps budget on any GPU of the last
+decade, though a good deal less comfortable than it was before the graphics
+pass. Somebody should still play it on a real laptop before that box is
+ticked.
 
 ## Rights
 

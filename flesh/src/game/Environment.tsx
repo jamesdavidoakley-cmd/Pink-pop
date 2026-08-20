@@ -41,9 +41,22 @@ const SKY_VERT = /* glsl */ `
 const SKY_FRAG = /* glsl */ `
   uniform vec3 high;
   uniform vec3 low;
+  uniform vec3 sunColor;
+  uniform vec3 sunDir;
   uniform float flash;
   uniform float time;
+  uniform float cloud;
   varying vec3 vDir;
+
+  // Cheap value noise, for the cloud bands. Nothing here needs a texture.
+  float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+  float noise(vec2 p) {
+    vec2 i = floor(p), f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
+               mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+  }
+
   void main() {
     float t = clamp(vDir.y * 0.5 + 0.5, 0.0, 1.0);
 
@@ -58,6 +71,27 @@ const SKY_FRAG = /* glsl */ `
     float banded = floor(t * 7.0) / 7.0;
     t = mix(t, banded, 0.55);
     vec3 c = mix(low, high, t);
+
+    /* The sun, low and enormous. A flat disc with a banded corona, because a
+       soft bloom would be the one expensive-looking thing in a frame that is
+       meant to read as newsprint. */
+    float sunDot = dot(normalize(vDir), normalize(sunDir));
+    float disc = smoothstep(0.9955, 0.9975, sunDot);
+    float corona = pow(max(sunDot, 0.0), 22.0);
+    float coronaBands = floor(corona * 5.0) / 5.0;
+    c = mix(c, sunColor, coronaBands * 0.45);
+    c = mix(c, sunColor + 0.25, disc);
+
+    /* Long horizontal cloud bands, drifting. Banded like everything else, so
+       they read as flat printed shapes rather than as volume. */
+    if (vDir.y > 0.0) {
+      vec2 uv = vec2(vDir.x, vDir.z) / max(vDir.y, 0.12);
+      float n = noise(uv * 0.7 + vec2(time * 0.006, 0.0));
+      n = n * 0.6 + noise(uv * 1.9 - vec2(time * 0.011, 0.0)) * 0.4;
+      float band = smoothstep(0.55, 0.72, n) * smoothstep(0.02, 0.22, vDir.y) * cloud;
+      c = mix(c, high * 0.72 + sunColor * 0.18, floor(band * 3.0) / 3.0 * 0.55);
+    }
+
     // A little of the ground's heat bleeding up into the first band of sky.
     c += horizon * 0.05 * (0.5 + ripple * 0.5);
     c += flash * 0.65;
@@ -65,13 +99,20 @@ const SKY_FRAG = /* glsl */ `
   }
 `
 
+/** Where the sun sits. Everything else in the scene is lit to agree with it. */
+export const SUN_DIR = new THREE.Vector3(0.52, 0.34, 0.78).normalize()
+
 export function Sky({ level, flash }: { level: LevelDef; flash: React.RefObject<number> }) {
   const mat = useMemo(
     () =>
       new THREE.ShaderMaterial({
         uniforms: {
           high: { value: new THREE.Color(level.mood.sky) },
-          low: { value: new THREE.Color(PALETTE.skyLow) },
+          low: { value: new THREE.Color(level.mood.skyLow) },
+          sunColor: { value: new THREE.Color(PALETTE.sun) },
+          sunDir: { value: SUN_DIR.clone() },
+          // The Ash Plains are under low cloud; everywhere else is clear.
+          cloud: { value: level.storm ? 1 : 0.45 },
           flash: { value: 0 },
           time: { value: 0 },
         },
@@ -81,7 +122,7 @@ export function Sky({ level, flash }: { level: LevelDef; flash: React.RefObject<
         depthWrite: false,
         fog: false,
       }),
-    [level.mood.sky],
+    [level.mood.sky, level.mood.skyLow, level.storm],
   )
 
   useFrame((state) => {
@@ -98,37 +139,168 @@ export function Sky({ level, flash }: { level: LevelDef; flash: React.RefObject<
 
 /* ------------------------------------------------------------- lighting */
 
-export function Lighting({ level }: { level: LevelDef }) {
+/**
+ * Lighting.
+ *
+ * Three lights and a shadow map, arranged so the cel bands actually read:
+ *
+ *  - A low key from the sun's own direction, warm and strong.
+ *  - A cool rim from behind and opposite, which is what separates a brown
+ *    dinosaur from brown ground at forty metres. On a banded toon ramp a
+ *    back light produces a hard-edged rim for free, with no shader surgery.
+ *  - Just enough ambient to keep the shadow side from going to mud, and no
+ *    more. The first version ran ambient at 1.0 and the result was flat: the
+ *    three-band ramp existed but almost nothing ever fell into the low band.
+ *
+ * The shadow camera is small and follows the player, because a frustum big
+ * enough to cover a six-hundred-metre level would put a 2048 map at roughly a
+ * texel every thirty centimetres and the shadows would be mush.
+ */
+export function Lighting({ level, focus }: { level: LevelDef; focus: { x: number; y: number; z: number } }) {
   const { scene } = useThree()
+  const key = useRef<THREE.DirectionalLight>(null)
+  const target = useMemo(() => new THREE.Object3D(), [])
+
   useMemo(() => {
     scene.fog = new THREE.FogExp2(new THREE.Color(level.mood.fog), level.mood.fogDensity)
     scene.background = null
   }, [scene, level])
 
+  useFrame(() => {
+    const light = key.current
+    if (!light) return
+    // Keep the shadow box centred on the player, a little ahead of them.
+    target.position.set(focus.x, focus.y, focus.z)
+    target.updateMatrixWorld()
+    light.position.set(
+      focus.x + SUN_DIR.x * 90,
+      focus.y + SUN_DIR.y * 90,
+      focus.z + SUN_DIR.z * 90,
+    )
+    light.target = target
+    light.target.updateMatrixWorld()
+  })
+
+  const stormy = !!level.storm
+
   return (
     <>
-      {/* A single low sun, so the toon bands fall across the landscape rather
-          than lighting everything evenly from overhead. */}
-      <directionalLight position={[120, 160, 90]} intensity={2.4} color={PALETTE.sun} />
-      {/* Fill is teal, not grey: "deep teal shadows". */}
-      <ambientLight intensity={1.0} color={PALETTE.shadowSoft} />
-      <hemisphereLight args={[level.mood.sky, PALETTE.shadow, 0.6]} />
+      <primitive object={target} />
+      <directionalLight
+        ref={key}
+        castShadow
+        intensity={stormy ? 1.9 : 3.1}
+        color={PALETTE.sun}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        shadow-camera-near={1}
+        shadow-camera-far={220}
+        shadow-camera-left={-62}
+        shadow-camera-right={62}
+        shadow-camera-top={62}
+        shadow-camera-bottom={-62}
+        shadow-bias={-0.0012}
+        shadow-normalBias={0.04}
+      />
+      {/* The cool rim. Teal, from behind — "deep teal shadows". */}
+      <directionalLight
+        position={[-SUN_DIR.x * 80, 42, -SUN_DIR.z * 80]}
+        intensity={stormy ? 0.9 : 1.35}
+        color={PALETTE.shadowSoft}
+      />
+      <ambientLight intensity={stormy ? 0.7 : 0.46} color={PALETTE.shadow} />
+      <hemisphereLight args={[level.mood.sky, PALETTE.shadow, stormy ? 0.7 : 0.5]} />
     </>
   )
 }
 
 /* ---------------------------------------------------------------- ground */
 
+/**
+ * A small tiling grain for the ground.
+ *
+ * The vertex mottling works at landscape scale but the mesh has a vertex every
+ * two and a half metres, so within ten metres of the camera — which is most of
+ * the bottom of the screen, all the time — the ground is smooth paint. Piling
+ * on more instanced pebbles is the expensive way to fix that; one 128px tile,
+ * multiplied over the vertex colour and mipmapped away at distance, is the
+ * cheap one. It costs a single texture and no draw calls.
+ *
+ * Kept close to white and drawn with wrap-around so the seams do not show.
+ */
+function makeGroundGrain(): THREE.CanvasTexture {
+  const size = 128
+  const c = document.createElement('canvas')
+  c.width = size
+  c.height = size
+  const ctx = c.getContext('2d')!
+  /* Near white, and it stays near white. The map multiplies the vertex colour,
+     so anything with real contrast in it stops being grain and starts being a
+     visible repeating pattern — which at a seven-metre tile is the one thing
+     in the frame that would give the trick away. */
+  ctx.fillStyle = '#ebebeb'
+  ctx.fillRect(0, 0, size, size)
+
+  // Deterministic, so two loads of the same level look the same.
+  let seed = 0x5eed
+  const rnd = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0
+    return seed / 4294967296
+  }
+
+  const blot = (draw: (x: number, y: number) => void) => {
+    const x = rnd() * size
+    const y = rnd() * size
+    // Draw nine times, once per wrap offset, so nothing is cut at the seam.
+    for (let ox = -1; ox <= 1; ox++) for (let oy = -1; oy <= 1; oy++) draw(x + ox * size, y + oy * size)
+  }
+
+  for (let i = 0; i < 1400; i++) {
+    const r = 0.5 + rnd() * 1.9
+    const v = Math.round(206 + rnd() * 46)
+    ctx.fillStyle = `rgb(${v},${v},${v})`
+    blot((x, y) => {
+      ctx.beginPath()
+      ctx.arc(x, y, r, 0, Math.PI * 2)
+      ctx.fill()
+    })
+  }
+  // A few dried cracks.
+  ctx.strokeStyle = 'rgba(150,150,150,0.16)'
+  for (let i = 0; i < 22; i++) {
+    const len = 8 + rnd() * 26
+    const a = rnd() * Math.PI * 2
+    ctx.lineWidth = 0.6 + rnd()
+    blot((x, y) => {
+      ctx.beginPath()
+      ctx.moveTo(x, y)
+      ctx.lineTo(x + Math.cos(a) * len, y + Math.sin(a) * len)
+      ctx.stroke()
+    })
+  }
+
+  const tex = new THREE.CanvasTexture(c)
+  tex.wrapS = THREE.RepeatWrapping
+  tex.wrapT = THREE.RepeatWrapping
+  tex.anisotropy = 4
+  tex.colorSpace = THREE.SRGBColorSpace
+  return tex
+}
+
 export function Ground({ terrain, level }: { terrain: Terrain; level: LevelDef }) {
   const geometry = useMemo(() => buildGroundGeometry(terrain, level), [terrain, level])
-  const material = useMemo(
-    () =>
-      new THREE.MeshToonMaterial({
-        vertexColors: true,
-        gradientMap: toonGradient(),
-      }),
-    [],
-  )
+  const material = useMemo(() => {
+    const grain = makeGroundGrain()
+    const b = terrain.def.bounds
+    // Roughly one tile every five metres — fine enough that the repeat is not
+    // legible, coarse enough that the individual specks still read as stones.
+    grain.repeat.set((b.maxX - b.minX) / 5, (b.maxZ - b.minZ) / 5)
+    return new THREE.MeshToonMaterial({
+      vertexColors: true,
+      gradientMap: toonGradient(),
+      map: grain,
+    })
+  }, [terrain])
 
   /* A flat apron well beyond the playable bounds. The heightfield mesh has to
      stop somewhere, and without this the world visibly ends in a straight edge
@@ -165,10 +337,14 @@ function buildGroundGeometry(terrain: Terrain, level: LevelDef): THREE.BufferGeo
 
   const pos = geo.attributes.position as THREE.BufferAttribute
   const colours = new Float32Array(pos.count * 3)
+  /* Every mottling colour is derived from the level's own ground tone rather
+     than from the shared palette. Mixing toward a fixed orange highlight is
+     what made the Ash Plains render as more badlands: the level's colour was
+     being overwritten by up to seventy per cent before it reached the screen. */
   const base = new THREE.Color(level.mood.ground)
-  const light = new THREE.Color(PALETTE.groundLight)
-  const dark = new THREE.Color(PALETTE.groundDark)
-  const rock = new THREE.Color(PALETTE.rockDark)
+  const light = base.clone().lerp(new THREE.Color(PALETTE.groundLight), 0.45).offsetHSL(0, 0, 0.1)
+  const dark = base.clone().lerp(new THREE.Color(PALETTE.groundDark), 0.4).offsetHSL(0, 0, -0.11)
+  const rock = base.clone().lerp(new THREE.Color(PALETTE.rockDark), 0.55)
   const wet = new THREE.Color(PALETTE.water)
   const tarC = new THREE.Color(PALETTE.tar)
   const c = new THREE.Color()
@@ -191,16 +367,26 @@ function buildGroundGeometry(terrain: Terrain, level: LevelDef): THREE.BufferGeo
        finer grain on top. Without it the badlands are one flat field of orange
        and the eye has nothing to judge distance or speed against. */
     const broad = fbm(x * 0.011, z * 0.011, 3)
+    const mid = fbm(x * 0.035 - 4.2, z * 0.035 + 9.1, 2)
     const fine = fbm(x * 0.09 + 7.7, z * 0.09 - 3.1, 2)
-    c.lerp(light, clamp(broad * 0.55 + 0.28, 0, 0.6))
-    c.lerp(dark, clamp(-broad * 0.5 + fine * 0.22, 0, 0.5))
+    c.lerp(light, clamp(broad * 0.7 + 0.3, 0, 0.72))
+    c.lerp(dark, clamp(-broad * 0.62 + mid * 0.3 + fine * 0.26, 0, 0.62))
+    // A hint of the rock underneath, wherever the dirt has worn thin.
+    c.lerp(rock, clamp(mid * 0.45 - 0.06, 0, 0.35))
     c.lerp(rock, clamp(slope * 2.6, 0, 0.85))
     // The trodden trail: paler, and the only straight-ish thing in the frame.
     c.lerp(light, onTrail * 0.34)
+    // A band of bare rock along the rim of the gulch. The edge has to be
+    // visible from further away than the geometry alone makes it.
+    if (terrain.isCliffEdge(x, z)) c.lerp(rock, 0.55)
     c.lerp(dark, clamp((-h / 30) * 0.9, 0, 0.7))
 
-    if (terrain.waterDepth(x, z) > 0.05) {
-      c.lerp(wet, clamp(terrain.waterDepth(x, z) / 2.5, 0.2, 0.8))
+    // Wet ground goes dark and drab, not green. The old tint used the water
+    // colour directly and turned the whole Tar Shallows basin into a lawn.
+    const depth = terrain.waterDepth(x, z)
+    if (depth > 0.05) {
+      c.lerp(dark, clamp(depth / 2.0, 0.25, 0.7))
+      c.lerp(wet, clamp(depth / 3.0, 0.1, 0.4))
     }
     for (const t of terrain.def.tar) {
       const dist = Math.hypot(x - t.x, z - t.z)
@@ -219,6 +405,58 @@ function buildGroundGeometry(terrain: Terrain, level: LevelDef): THREE.BufferGeo
 
 /* ----------------------------------------------------------------- water */
 
+/**
+ * Banded ripples for the water surface.
+ *
+ * Flat teal reads as a sheet of plastic. Rather than a real wave shader, this
+ * is a tiling stripe of two lighter bands that gets scrolled across the disc —
+ * which is how the strip would have printed moving water anyway, and costs one
+ * small texture.
+ */
+function makeRippleTexture(): THREE.CanvasTexture {
+  const w = 64
+  const h = 64
+  const c = document.createElement('canvas')
+  c.width = w
+  c.height = h
+  const ctx = c.getContext('2d')!
+  ctx.fillStyle = '#39655c'
+  ctx.fillRect(0, 0, w, h)
+  ctx.fillStyle = '#5d8f81'
+  for (let i = 0; i < 3; i++) {
+    const y = 8 + i * 20
+    ctx.beginPath()
+    ctx.moveTo(0, y)
+    for (let x = 0; x <= w; x += 4) ctx.lineTo(x, y + Math.sin((x / w) * Math.PI * 2) * 3)
+    ctx.lineTo(w, y + 3.5)
+    for (let x = w; x >= 0; x -= 4) ctx.lineTo(x, y + 3.5 + Math.sin((x / w) * Math.PI * 2) * 3)
+    ctx.closePath()
+    ctx.fill()
+  }
+  const tex = new THREE.CanvasTexture(c)
+  tex.wrapS = THREE.RepeatWrapping
+  tex.wrapT = THREE.RepeatWrapping
+  tex.colorSpace = THREE.SRGBColorSpace
+  return tex
+}
+
+/** Radial alpha, so the disc dissolves into the shore instead of ending. */
+function makeShoreAlpha(): THREE.CanvasTexture {
+  const size = 128
+  const c = document.createElement('canvas')
+  c.width = size
+  c.height = size
+  const ctx = c.getContext('2d')!
+  const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
+  g.addColorStop(0, '#ffffff')
+  g.addColorStop(0.74, '#ffffff')
+  g.addColorStop(0.93, '#8a8a8a')
+  g.addColorStop(1, '#000000')
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, size, size)
+  return new THREE.CanvasTexture(c)
+}
+
 export function Water({ terrain }: { terrain: Terrain }) {
   const refs = useRef<(THREE.Mesh | null)[]>([])
 
@@ -231,21 +469,30 @@ export function Water({ terrain }: { terrain: Terrain }) {
     [terrain],
   )
 
-  const material = useMemo(
-    () =>
-      new THREE.MeshBasicMaterial({
-        color: new THREE.Color(PALETTE.water),
-        transparent: true,
-        opacity: 0.78,
-        depthWrite: false,
-      }),
-    [],
-  )
+  const material = useMemo(() => {
+    const ripple = makeRippleTexture()
+    ripple.repeat.set(9, 9)
+    return new THREE.MeshBasicMaterial({
+      map: ripple,
+      alphaMap: makeShoreAlpha(),
+      color: new THREE.Color('#ffffff'),
+      transparent: true,
+      opacity: 0.93,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    })
+  }, [])
 
   useFrame((state) => {
-    // A slow swell, so standing water does not look like a sheet of plastic.
+    // A slow drift across the surface, and a gentle swell underneath it.
+    const t = state.clock.elapsedTime
+    const map = material.map
+    if (map) {
+      map.offset.x = t * 0.012
+      map.offset.y = Math.sin(t * 0.21) * 0.03
+    }
     for (const m of refs.current) {
-      if (m) m.position.y += Math.sin(state.clock.elapsedTime * 0.8) * 0.004
+      if (m) m.position.y += Math.sin(t * 0.8) * 0.004
     }
   })
 
@@ -264,7 +511,7 @@ export function Water({ terrain }: { terrain: Terrain }) {
           rotation={[-Math.PI / 2, 0, 0]}
           renderOrder={2}
         >
-          <circleGeometry args={[w.radius, 40]} />
+          <circleGeometry args={[w.radius * 0.99, 48]} />
         </mesh>
       ))}
     </>

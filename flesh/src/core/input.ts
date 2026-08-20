@@ -65,6 +65,15 @@ export class InputManager {
   private attached: HTMLElement | null = null
   /** Set while the pointer is locked; otherwise the mouse does not turn the camera. */
   locked = false
+  /**
+   * False whenever a menu is up.
+   *
+   * Without this the manager keeps listening behind the pause screen, and its
+   * mousedown handler grabs pointer lock the instant you press a button — which
+   * moves the cursor out from under the mouseup, so the click never completes
+   * and the button does nothing. The pause menu was effectively unusable.
+   */
+  private enabled = true
   sensitivity = 0.0022
   invertY = false
 
@@ -103,7 +112,20 @@ export class InputManager {
     this.edges.clear()
   }
 
+  /** Menus call this. Disabled means: no input, and no grabbing the pointer. */
+  setEnabled(enabled: boolean): void {
+    if (this.enabled === enabled) return
+    this.enabled = enabled
+    if (!enabled) {
+      this.held.clear()
+      this.edges.clear()
+      this.lookX = 0
+      this.lookY = 0
+    }
+  }
+
   requestLock(): void {
+    if (!this.enabled) return
     this.attached?.requestPointerLock?.()
   }
 
@@ -114,6 +136,7 @@ export class InputManager {
   /* ------------------------------------------------------------ handlers */
 
   private onKeyDown = (e: KeyboardEvent) => {
+    if (!this.enabled) return
     const action = KEY_MAP[e.code]
     if (!action) return
     // Tab would otherwise walk the focus ring off the canvas mid-drive.
@@ -133,6 +156,7 @@ export class InputManager {
   }
 
   private onMouseDown = (e: MouseEvent) => {
+    if (!this.enabled) return
     if (e.button === 0) {
       this.held.add('fire')
       this.edges.add('fire')
@@ -147,12 +171,14 @@ export class InputManager {
   }
 
   private onMouseMove = (e: MouseEvent) => {
-    if (!this.locked) return
+    if (!this.locked || !this.enabled) return
     this.lookX += e.movementX
     this.lookY += e.movementY
   }
 
-  private onContextMenu = (e: Event) => e.preventDefault()
+  private onContextMenu = (e: Event) => {
+    if (this.enabled) e.preventDefault()
+  }
 
   private onPointerLockChange = () => {
     this.locked = document.pointerLockElement === this.attached

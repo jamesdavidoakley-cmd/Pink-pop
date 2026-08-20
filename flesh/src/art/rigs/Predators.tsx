@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { GEO, flatMaterial } from '../toon'
-import { PALETTE } from '../palette'
+import { PALETTE, varyColour } from '../palette'
 import { Eyes, Part } from '../Part'
 import { OLD_ONE_EYE } from '@/core/tuning'
 import type { Predator } from '@/sim/types'
@@ -82,8 +82,10 @@ function TyrannosaurRig({ predator }: Props) {
   const flopY = useRef(0)
 
   const boss = predator.kind === 'oldoneeye'
-  const hide = boss ? PALETTE.oldOneEye : PALETTE.rex
-  const belly = boss ? PALETTE.oldOneEyeScar : PALETTE.rexBelly
+  // Old One Eye is always exactly herself. Ordinary rexes vary, so a pair
+  // arriving together do not look like one animal rendered twice.
+  const hide = boss ? PALETTE.oldOneEye : varyColour(PALETTE.rex, predator.id * 17, 0.03, 0.1)
+  const belly = boss ? PALETTE.oldOneEyeScar : varyColour(PALETTE.rexBelly, predator.id * 17 + 3, 0.02, 0.08)
   const zTex = useMemo(() => makeSnoreTexture(), [])
 
   useFrame((_, dt) => {
@@ -289,6 +291,8 @@ function TyrannosaurRig({ predator }: Props) {
 /* ---------------------------------------------------------------- raptor */
 
 function RaptorRig({ predator }: Props) {
+  // A pack of five identical raptors reads as a bug. These are siblings.
+  const hide = varyColour(PALETTE.raptor, predator.id * 23, 0.035, 0.12)
   const root = useRef<THREE.Group>(null)
   const body = useRef<THREE.Group>(null)
   const tail = useRef<THREE.Group>(null)
@@ -322,7 +326,7 @@ function RaptorRig({ predator }: Props) {
   return (
     <group ref={root}>
       <group ref={body} position={[0, RAPTOR_BODY_Y, 0]}>
-        <Part geo={GEO.sphere()} color={PALETTE.raptor} scale={[0.66, 0.66, 1.4]} outlineThickness={0.9} />
+        <Part geo={GEO.sphere()} color={hide} scale={[0.66, 0.66, 1.4]} outlineThickness={0.9} />
         {/* the stripes are what let you count a pack at a glance */}
         {[-0.34, 0.0, 0.34].map((z) => (
           <Part
@@ -337,12 +341,12 @@ function RaptorRig({ predator }: Props) {
         {/* Chest, neck and head as a continuous run of masses — the same
             lesson as the rex: a head on a thin stalk reads as a detached prop
             floating in front of the animal. */}
-        <Part geo={GEO.sphere()} color={PALETTE.raptor} position={[0, 0.14, 0.62]} scale={[0.58, 0.58, 0.7]} outline={false} />
-        <Part geo={GEO.sphere()} color={PALETTE.raptor} position={[0, 0.36, 0.94]} scale={[0.4, 0.4, 0.5]} outline={false} />
-        <Part geo={GEO.sphere()} color={PALETTE.raptor} position={[0, 0.5, 1.18]} scale={[0.34, 0.34, 0.42]} outline={false} />
+        <Part geo={GEO.sphere()} color={hide} position={[0, 0.14, 0.62]} scale={[0.58, 0.58, 0.7]} outline={false} />
+        <Part geo={GEO.sphere()} color={hide} position={[0, 0.36, 0.94]} scale={[0.4, 0.4, 0.5]} outline={false} />
+        <Part geo={GEO.sphere()} color={hide} position={[0, 0.5, 1.18]} scale={[0.34, 0.34, 0.42]} outline={false} />
 
         {/* skull */}
-        <Part geo={GEO.sphere()} color={PALETTE.raptor} position={[0, 0.56, 1.5]} scale={[0.34, 0.32, 0.8]} outlineThickness={0.9} />
+        <Part geo={GEO.sphere()} color={hide} position={[0, 0.56, 1.5]} scale={[0.34, 0.32, 0.8]} outlineThickness={0.9} />
         <Part geo={GEO.sphere()} color={PALETTE.raptorStripe} position={[0, 0.5, 1.86]} scale={[0.24, 0.2, 0.3]} outline={false} />
         {[-1, 1].map((sx) => (
           <Part
@@ -360,7 +364,7 @@ function RaptorRig({ predator }: Props) {
 
       {/* A long counterweight tail — this is the fast one. */}
       <group ref={tail} position={[0, RAPTOR_BODY_Y - 0.02, -0.66]}>
-        <Part geo={GEO.taper()} color={PALETTE.raptor} position={[0, 0, -0.55]} rotation={[Math.PI * 0.5, 0, 0]} scale={[0.4, 1.1, 0.4]} outlineThickness={0.8} />
+        <Part geo={GEO.taper()} color={hide} position={[0, 0, -0.55]} rotation={[Math.PI * 0.5, 0, 0]} scale={[0.4, 1.1, 0.4]} outlineThickness={0.8} />
         <Part geo={GEO.taper()} color={PALETTE.raptorStripe} position={[0, 0.02, -1.42]} rotation={[Math.PI * 0.48, 0, 0]} scale={[0.16, 0.9, 0.16]} outline={false} />
       </group>
 
@@ -372,8 +376,8 @@ function RaptorRig({ predator }: Props) {
           }}
           position={[x, RAPTOR_BODY_Y - 0.12, -0.05]}
         >
-          <Part geo={GEO.sphere()} color={PALETTE.raptor} position={[0, -0.16, -0.06]} scale={[0.32, 0.56, 0.5]} outline={false} />
-          <Part geo={GEO.taper()} color={PALETTE.raptor} position={[0, -0.6, 0.02]} scale={[0.19, 0.6, 0.19]} outlineThickness={0.7} />
+          <Part geo={GEO.sphere()} color={hide} position={[0, -0.16, -0.06]} scale={[0.32, 0.56, 0.5]} outline={false} />
+          <Part geo={GEO.taper()} color={hide} position={[0, -0.6, 0.02]} scale={[0.19, 0.6, 0.19]} outlineThickness={0.7} />
           <Part geo={GEO.box()} color={PALETTE.raptorStripe} position={[0, -0.9, 0.1]} scale={[0.2, 0.1, 0.42]} outline={false} />
           {/* the one big claw, which never actually takes a head */}
           <Part

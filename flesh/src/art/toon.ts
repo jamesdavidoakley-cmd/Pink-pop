@@ -20,11 +20,19 @@ import * as THREE from 'three'
 
 let gradientCache: THREE.DataTexture | null = null
 
-/** The step function: three flat bands, dark teal-ward through to full light. */
+/**
+ * The step function: three flat bands, shadow through to full light.
+ *
+ * The spacing matters more than the count. The first version used 88/108/255,
+ * where the dark and mid bands are within 8% of each other — so in practice it
+ * was a two-band ramp with a hard cliff, and anything facing away from the key
+ * light went to mud. These three are evenly spread, which is what makes a
+ * rounded animal read as rounded instead of as a lit half and a black half.
+ */
 export function toonGradient(): THREE.DataTexture {
   if (gradientCache) return gradientCache
   // Three texels, nearest-filtered. Shading snaps between them.
-  const data = new Uint8Array([88, 108, 255])
+  const data = new Uint8Array([96, 172, 255])
   const tex = new THREE.DataTexture(data, data.length, 1, THREE.RedFormat)
   tex.minFilter = THREE.NearestFilter
   tex.magFilter = THREE.NearestFilter

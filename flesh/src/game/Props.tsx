@@ -4,7 +4,6 @@ import * as THREE from 'three'
 import { PALETTE } from '@/art/palette'
 import { GEO, flatMaterial, outlineMaterial, toonMaterial } from '@/art/toon'
 import { Part } from '@/art/Part'
-import { hash2, smoothstep } from '@/core/math'
 import { WORLD } from '@/core/tuning'
 import type { Obstacle, Terrain } from '@/world/terrain'
 import type { World } from '@/sim/types'
@@ -16,99 +15,6 @@ import type { World } from '@/sim/types'
  * every rock. The alternative — a mesh per prop — is what actually costs the
  * frame budget in a scene like this, long before the dinosaurs do.
  */
-
-/* ---------------------------------------------------------------- ferns */
-
-/** A fern: half a dozen splayed blades, merged into one geometry to instance. */
-function buildFernGeometry(): THREE.BufferGeometry {
-  const blades: THREE.BufferGeometry[] = []
-  for (let i = 0; i < 5; i++) {
-    const a = (i / 5) * Math.PI * 2
-    const blade = new THREE.ConeGeometry(0.16, 1.5, 4)
-    blade.translate(0, 0.75, 0)
-    blade.rotateX(0.55)
-    blade.rotateY(a)
-    blade.translate(Math.sin(a) * 0.12, 0, Math.cos(a) * 0.12)
-    blades.push(blade)
-  }
-  return mergeGeometries(blades)
-}
-
-/** Minimal merge: position + normal only, which is all a toon material needs. */
-function mergeGeometries(list: THREE.BufferGeometry[]): THREE.BufferGeometry {
-  let vertexCount = 0
-  let indexCount = 0
-  for (const g of list) {
-    vertexCount += g.attributes.position!.count
-    indexCount += g.index ? g.index.count : g.attributes.position!.count
-  }
-  const positions = new Float32Array(vertexCount * 3)
-  const normals = new Float32Array(vertexCount * 3)
-  const indices = new Uint32Array(indexCount)
-  let vo = 0
-  let io = 0
-  for (const g of list) {
-    const p = g.attributes.position as THREE.BufferAttribute
-    const n = g.attributes.normal as THREE.BufferAttribute
-    positions.set(p.array as Float32Array, vo * 3)
-    normals.set(n.array as Float32Array, vo * 3)
-    if (g.index) {
-      for (let i = 0; i < g.index.count; i++) indices[io++] = g.index.getX(i) + vo
-    } else {
-      for (let i = 0; i < p.count; i++) indices[io++] = i + vo
-    }
-    vo += p.count
-    g.dispose()
-  }
-  const out = new THREE.BufferGeometry()
-  out.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-  out.setAttribute('normal', new THREE.BufferAttribute(normals, 3))
-  out.setIndex(new THREE.BufferAttribute(indices, 1))
-  return out
-}
-
-const FERN_COUNT = 1000
-
-export function Foliage({ terrain }: { terrain: Terrain }) {
-  const geo = useMemo(buildFernGeometry, [])
-  const mat = useMemo(() => toonMaterial(PALETTE.fern), [])
-  const ref = useRef<THREE.InstancedMesh>(null)
-
-  useLayoutEffect(() => {
-    const mesh = ref.current
-    if (!mesh) return
-    const b = terrain.def.bounds
-    const m = new THREE.Matrix4()
-    const q = new THREE.Quaternion()
-    const pos = new THREE.Vector3()
-    const scale = new THREE.Vector3()
-    let placed = 0
-    // Deterministic scatter from the same hash the obstacles use, so a level
-    // looks identical every time it is loaded.
-    for (let i = 0; placed < FERN_COUNT && i < FERN_COUNT * 4; i++) {
-      const x = b.minX + hash2(i, terrain.def.seed) * (b.maxX - b.minX)
-      const z = b.minZ + hash2(terrain.def.seed, i * 7 + 3) * (b.maxZ - b.minZ)
-      if (terrain.waterDepth(x, z) > 0.1) continue
-      if (terrain.slope(x, z) > 0.45) continue
-      const y = terrain.height(x, z)
-      // Ferns cluster off the trail; the graded corridor is trodden bare.
-      const route = terrain.routeInfo(x, z)
-      const density = smoothstep(terrain.def.corridorWidth * 0.3, terrain.def.corridorWidth, route.dist)
-      if (hash2(i * 13, i * 31) > density * 0.85 + 0.1) continue
-      const s = 0.65 + hash2(i * 3, i * 5) * 0.9
-      pos.set(x, y, z)
-      q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), hash2(i, i * 2) * Math.PI * 2)
-      scale.set(s, s * (0.8 + hash2(i, 9) * 0.6), s)
-      m.compose(pos, q, scale)
-      mesh.setMatrixAt(placed++, m)
-    }
-    mesh.count = placed
-    mesh.instanceMatrix.needsUpdate = true
-    mesh.frustumCulled = false
-  }, [terrain])
-
-  return <instancedMesh ref={ref} args={[geo, mat, FERN_COUNT]} />
-}
 
 /* ---------------------------------------------------------------- rocks */
 
@@ -172,7 +78,7 @@ function RockSet({
   if (items.length === 0) return null
   return (
     <>
-      <instancedMesh ref={body} args={[geo, mat, items.length]} />
+      <instancedMesh ref={body} args={[geo, mat, items.length]} castShadow receiveShadow />
       <instancedMesh ref={ink} args={[geo, inkMat, items.length]} />
     </>
   )
@@ -289,10 +195,13 @@ function Gate({ world }: { world: World }) {
       <Part geo={GEO.box()} color={PALETTE.corpWhite} position={[0, 10.4, 0]} scale={[width * 2.1, 2.4, 0.4]} />
       <Part geo={GEO.box()} color={PALETTE.corpBlue} position={[0, 10.4, 0.26]} scale={[width * 1.9, 1.5, 0.1]} outline={false} />
 
+      {/* The beams are deliberately fat. At a hundred metres a twelve
+          centimetre cylinder is a sub-pixel line and the fence — which is the
+          thing telling you whether the drive can end — simply is not there. */}
       <group ref={beams}>
-        {[2.5, 4.2, 5.9, 7.6].map((h) => (
+        {[2.2, 3.9, 5.6, 7.3, 9.0].map((h) => (
           <mesh key={h} position={[0, h, 0]} rotation={[0, 0, Math.PI / 2]} material={flatMaterial(PALETTE.stunBeam, { opacity: 0.5 })}>
-            <cylinderGeometry args={[0.12, 0.12, width * 2, 6]} />
+            <cylinderGeometry args={[0.34, 0.34, width * 2, 6]} />
           </mesh>
         ))}
       </group>

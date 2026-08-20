@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "ci": "npm run typecheck && npm run test && vite build"
+    "test:smoke": "node scripts/smoke.mjs",
+    "test:e2e": "node scripts/e2e.mjs",
+    "ci": "npm run typecheck && npm run test && vite build && npm run test:smoke && npm run test:e2e"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",

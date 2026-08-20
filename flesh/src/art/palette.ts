@@ -69,6 +69,54 @@ export const PALETTE = {
 
 export type PaletteKey = keyof typeof PALETTE
 
+/**
+ * Deterministic per-individual colour variation.
+ *
+ * Twelve animals sharing one hex value read as twelve copies of one animal, and
+ * the herd stops looking like a herd. A small hue and lightness jitter keyed off
+ * the animal's id fixes that for nothing — the toon material caches per colour,
+ * so a dozen shades cost a dozen cached materials and not one extra draw call
+ * beyond what each mesh already needed.
+ *
+ * Kept deliberately narrow. Wide enough and they stop reading as one species.
+ */
+export function varyColour(hex: string, seed: number, hue = 0.022, light = 0.09): string {
+  const h = (Math.imul(seed | 0, 0x9e3779b9) >>> 0) / 4294967296
+  const g = (Math.imul((seed + 977) | 0, 0x85ebca6b) >>> 0) / 4294967296
+
+  const n = parseInt(hex.slice(1), 16)
+  const r = ((n >> 16) & 255) / 255
+  const gr = ((n >> 8) & 255) / 255
+  const b = (n & 255) / 255
+
+  const max = Math.max(r, gr, b)
+  const min = Math.min(r, gr, b)
+  let hh = 0
+  const l = (max + min) / 2
+  const d = max - min
+  const s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1))
+  if (d !== 0) {
+    if (max === r) hh = ((gr - b) / d) % 6
+    else if (max === gr) hh = (b - r) / d + 2
+    else hh = (r - gr) / d + 4
+    hh /= 6
+    if (hh < 0) hh += 1
+  }
+
+  const nh = (hh + (h - 0.5) * hue * 2 + 1) % 1
+  const nl = Math.max(0.06, Math.min(0.94, l + (g - 0.5) * light * 2))
+
+  const c = (1 - Math.abs(2 * nl - 1)) * s
+  const x = c * (1 - Math.abs(((nh * 6) % 2) - 1))
+  const m = nl - c / 2
+  const seg = Math.floor(nh * 6) % 6
+  const rgb =
+    seg === 0 ? [c, x, 0] : seg === 1 ? [x, c, 0] : seg === 2 ? [0, c, x]
+      : seg === 3 ? [0, x, c] : seg === 4 ? [x, 0, c] : [c, 0, x]
+  const out = rgb.map((v) => Math.round((v + m) * 255))
+  return `#${out.map((v) => v.toString(16).padStart(2, '0')).join('')}`
+}
+
 /** Herd-state colours, matching the HUD bar to the animals in §6. */
 export const MOOD_COLOUR = {
   GRAZING: '#7fbf3f',
