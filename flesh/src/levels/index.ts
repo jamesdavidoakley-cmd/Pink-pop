@@ -106,7 +106,10 @@ export const LEVELS: LevelDef[] = [
       seed: 3131,
       amplitude: 7.5,
       featureScale: 62,
-      corridorWidth: 26,
+      // Wide enough for twelve head at six-metre spacing to walk it without
+      // falling off simply by existing. The stampede is the danger here, not
+      // the geometry.
+      corridorWidth: 34,
       route: [
         { x: 0, z: 0, label: 'GULCH HEAD' },
         { x: 34, z: -140, label: 'THE NARROWS' },
@@ -116,7 +119,7 @@ export const LEVELS: LevelDef[] = [
       ],
       water: [],
       tar: [],
-      gulch: { side: 1, offset: 17, depth: 58, from: 0.16, to: 0.84 },
+      gulch: { side: 1, offset: 26, depth: 58, from: 0.16, to: 0.84 },
       bounds: { minX: -240, maxX: 240, minZ: -700, maxZ: 110 },
     },
     spawns: [

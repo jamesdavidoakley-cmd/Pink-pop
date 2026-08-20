@@ -10,7 +10,7 @@
  */
 
 import { BIKE, PLAYER } from '@/core/tuning'
-import { approachAngle, clamp, headingOf, len2 } from '@/core/math'
+import { approachAngle, clamp, dist2, headingOf, len2 } from '@/core/math'
 import type { Obstacle } from '@/world/terrain'
 import type { InputFrame, World } from './types'
 
@@ -154,12 +154,30 @@ function stepBike(world: World, input: InputFrame, dt: number): void {
   p.grounded = true
   p.vel.y = 0
   p.sprinting = false
+  // The bike is wherever Reagan is while he is on it.
+  world.bikePos.x = p.pos.x
+  world.bikePos.z = p.pos.z
+  world.bikePos.y = ground
+}
+
+/** True when Reagan is close enough to the parked bike to get on it. */
+export function canMountBike(world: World): boolean {
+  const p = world.player
+  return !p.onBike && dist2(p.pos, world.bikePos) < BIKE.mountRange
 }
 
 export function tryToggleBike(world: World): void {
   const p = world.player
   if (p.mountTimer > 0) return
+  // The bike stays where it was left. Walking back to it is part of the cost of
+  // having ridden off on it, and it stops F from conjuring one out of nowhere.
+  if (!p.onBike && !canMountBike(world)) return
   p.mountTimer = 0.4
+  if (p.onBike) {
+    world.bikePos.x = p.pos.x
+    world.bikePos.z = p.pos.z
+    world.bikePos.y = world.terrain.height(p.pos.x, p.pos.z)
+  }
   p.onBike = !p.onBike
   p.bikeSpeed = p.onBike ? len2(p.vel.x, p.vel.z) : 0
   if (!p.onBike) {
@@ -169,7 +187,9 @@ export function tryToggleBike(world: World): void {
   world.events.push({ t: 'mount', on: p.onBike })
   world.events.push({
     t: 'toast',
-    text: p.onBike ? 'On the bike. The herd will not love you for it.' : 'Back on your feet.',
+    text: p.onBike
+      ? 'On the bike. The herd will not love you for it.'
+      : 'Back on your feet. The bike stays where you left it.',
   })
 }
 

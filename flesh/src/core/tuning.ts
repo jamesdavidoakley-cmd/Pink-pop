@@ -184,6 +184,23 @@ export const DRONE = {
 
 /* ---------------------------------------------------------------- Predators */
 
+/**
+ * How long each kind will keep at it before breaking off.
+ *
+ * Without this, spawn waves accumulate: nothing ever removes a raptor that
+ * cannot take a head, so by the back half of the Ash Plains there were fifteen
+ * threats on the map at once and no herd survived it. Patience turns waves back
+ * into waves.
+ */
+export const PATIENCE: Record<string, number> = {
+  rex: 105,
+  raptor: 68,
+  pteranodon: 78,
+  phobosuchus: Infinity, // it lives in the water and never leaves it
+  bighungry: Infinity,
+  oldoneeye: Infinity, // she is the level
+}
+
 export const REX = {
   speed: 8.6,
   chargeSpeed: 12.4,

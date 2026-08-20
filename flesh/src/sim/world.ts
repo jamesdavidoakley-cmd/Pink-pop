@@ -99,6 +99,7 @@ export function createWorld(opts: WorldOptions): World {
     mood: 'GRAZING',
     herdCentroid: { x: pen.x, y: terrain.height(pen.x, pen.z), z: pen.z },
     herdCalmAverage: HERD.calm.max,
+    bikePos: { x: pen.x + 9, y: terrain.height(pen.x + 9, pen.z + 6), z: pen.z + 6 },
     stormTimer: level.storm ? level.storm.interval : 0,
     stormFlash: 0,
     droneActive: opts.upgrades?.drone ?? false,
@@ -222,6 +223,11 @@ function fixedStep(world: World, input: InputFrame, dt: number): void {
   updateScripts(world)
   updateBeacons(world)
   updateDelivery(world, dt)
+
+  // Nothing left to deliver. The drive is over whatever the beacons say.
+  if (livingHerd(world).length === 0 && world.phase === 'playing') {
+    finishRun(world)
+  }
 }
 
 /* ------------------------------------------------------------- the storm */
@@ -298,10 +304,43 @@ function updateScripts(world: World): void {
   if (script && !world.scriptFlags.stampede) {
     if (herdProgress(world) >= script.atProgress) {
       world.scriptFlags.stampede = true
-      // The Bone Gulch set piece. Everything bolts at once, on the shelf,
-      // with the drop on the right. This is the moment people remember.
+      /*
+       * The Bone Gulch set piece. Everything bolts at once, on the shelf, with
+       * the drop on the right.
+       *
+       * It forces PANICKED outright rather than nudging calm below the
+       * threshold, because a single well-timed whoop restores fifteen calm and
+       * would otherwise defuse the whole thing before it started. Bolting at
+       * zero calm means the first whoop is not enough on its own: you have to
+       * get out there and shoulder them off the edge line.
+       */
+      const gulch = world.terrain.def.gulch
       for (const a of livingHerd(world)) {
-        a.calm = Math.min(a.calm, HERD.calm.panicThreshold - 6)
+        a.calm = 0
+        a.state = 'PANICKED'
+        a.panicTimer = HERD.calm.panicDuration
+        const route = world.terrain.routeInfo(a.pos.x, a.pos.z)
+        // Along the trail, but leaning toward the drop. That lean is the thing
+        // the player has to correct, and correcting it is the whole level.
+        const ahead = world.level.terrain.route[Math.min(world.beaconIndex, world.level.terrain.route.length - 1)]!
+        let fx = ahead.x - a.pos.x
+        let fz = ahead.z - a.pos.z
+        const fl = Math.hypot(fx, fz) || 1
+        fx /= fl
+        fz /= fl
+        if (gulch) {
+          // Perpendicular to the trail, on the side the ground gives out.
+          const side = gulch.side
+          a.panicDir.x = fx * 0.62 + -fz * side * 0.78
+          a.panicDir.z = fz * 0.62 + fx * side * 0.78
+        } else {
+          a.panicDir.x = fx
+          a.panicDir.z = fz
+        }
+        const l = Math.hypot(a.panicDir.x, a.panicDir.z) || 1
+        a.panicDir.x /= l
+        a.panicDir.z /= l
+        void route
       }
       world.shake = Math.max(world.shake, 1)
       world.events.push({ t: 'thunder' })

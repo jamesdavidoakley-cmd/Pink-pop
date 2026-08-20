@@ -47,9 +47,6 @@ export function Scene({ world, input, camera, paused, hat, droneActive, onEvent,
   // list on a key change is cheap and keeps React out of the per-frame path.
   const roster = useCallback(() => world.predators.map((p) => p.id).join(','), [world])
 
-  // Where the bike sits when Reagan is not on it: by the pen, at the start.
-  const pen = world.level.terrain.route[0]!
-  const bikePark = { x: pen.x + 9, y: world.terrain.height(pen.x + 9, pen.z + 6), z: pen.z + 6 }
 
   useEffect(() => {
     setPredatorKey(roster())
@@ -90,7 +87,7 @@ export function Scene({ world, input, camera, paused, hat, droneActive, onEvent,
       </group>
 
       <ReaganRig player={world.player} hat={hat} goadSwing={goadSwing.current} whoopSwing={whoopSwing.current} />
-      <HoverBikeRig player={world.player} parked={bikePark} />
+      <HoverBikeRig player={world.player} parked={world.bikePos} />
       {droneActive && <SpotterDrone world={world} />}
 
       <Effects />

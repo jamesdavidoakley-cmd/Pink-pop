@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest'
 import { HERD } from '@/core/tuning'
 import { dist2 } from '@/core/math'
 import { findMatriarch, livingHerd } from '@/sim/herd'
-import { isInBlindCone } from '@/sim/combat'
+import { isInBlindCone, neckPoint } from '@/sim/combat'
 import {
   aimAt,
   driveHerd,
@@ -222,13 +222,12 @@ describe('§16 — Old One Eye', () => {
       const input = idle()
 
       if (boss.state === 'STAGGERED') {
-        // Neck is exposed. Three shots into it.
-        aimAt(world, { x: boss.pos.x, y: boss.pos.y + 4.6 * 0.82, z: boss.pos.z }, input)
+        // Neck is exposed. Three shots into it, from in front where it shows.
         const fx = Math.sin(boss.heading)
         const fz = Math.cos(boss.heading)
-        world.player.pos.x = boss.pos.x + fx * 6
-        world.player.pos.z = boss.pos.z + fz * 6
-        aimAt(world, { x: boss.pos.x + fx * 5.4, y: boss.pos.y + 3.77, z: boss.pos.z + fz * 5.4 }, input)
+        world.player.pos.x = boss.pos.x + fx * 8
+        world.player.pos.z = boss.pos.z + fz * 8
+        aimAt(world, neckPoint(boss), input)
         input.aim = true
         input.fire = true
       } else {

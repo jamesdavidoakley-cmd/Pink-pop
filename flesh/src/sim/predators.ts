@@ -14,6 +14,7 @@
 import {
   BIG_HUNGRY,
   HERD,
+  PATIENCE,
   OLD_ONE_EYE,
   PHOBOSUCHUS,
   PTERANODON,
@@ -60,6 +61,7 @@ export function makePredator(world: World, kind: PredatorKind, x: number, z: num
     spooked: 0,
     marked: false,
     alive: true,
+    age: 0,
     altitude: kind === 'pteranodon' ? PTERANODON.cruiseHeight : 0,
     repath: 0,
     anchor: { x, y, z },
@@ -102,6 +104,15 @@ export function stepPredators(world: World, dt: number): void {
 
     if (p.lastSoundTimer > 0) p.lastSoundTimer -= dt
     p.stateTimer -= dt
+    p.age += dt
+
+    // Out of patience: break off and go. A rex that has spent nearly two
+    // minutes failing to get a head is not going to get one.
+    const patience = PATIENCE[p.kind] ?? Infinity
+    if (p.age > patience && p.state !== 'GRAB' && p.state !== 'FLEE' && p.state !== 'DOWN') {
+      p.state = 'FLEE'
+      p.stateTimer = 18
+    }
     // Kinds that do not implement a back-off still need the timer to expire.
     if (p.spooked > 0 && (p.kind === 'pteranodon' || p.kind === 'bighungry' || p.kind === 'oldoneeye')) {
       p.spooked -= dt

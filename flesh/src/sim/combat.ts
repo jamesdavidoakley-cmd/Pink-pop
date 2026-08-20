@@ -85,6 +85,23 @@ function hitVolumes(p: Predator): { part: HitPart; x: number; y: number; z: numb
   return out
 }
 
+/**
+ * Where the exposed neck actually is, in world space.
+ *
+ * Exported because the rig, the hit volumes and the tests all have to agree
+ * about it. When they drifted apart, shooting the neck the player could plainly
+ * see hit nothing, and the Old One Eye fight became unwinnable for reasons
+ * invisible on screen.
+ */
+export function neckPoint(p: Predator): V3 {
+  const reach = p.radius * 1.75
+  return {
+    x: p.pos.x + Math.sin(p.heading) * reach * 0.55,
+    y: p.pos.y + headHeightFor(p) * 0.82,
+    z: p.pos.z + Math.cos(p.heading) * reach * 0.55,
+  }
+}
+
 export function headHeightFor(p: Predator): number {
   switch (p.kind) {
     case 'rex':

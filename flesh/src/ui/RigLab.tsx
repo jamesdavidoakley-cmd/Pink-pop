@@ -178,6 +178,7 @@ function makePredator(kind: PredatorKind): Predator {
     lastSoundTimer: 0,
     spooked: 0,
     marked: false,
+    age: 0,
     alive: true,
     altitude: kind === 'pteranodon' ? 6 : 0,
     repath: 0,

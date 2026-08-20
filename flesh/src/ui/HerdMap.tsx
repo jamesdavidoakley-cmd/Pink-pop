@@ -96,10 +96,21 @@ export function HerdMap({ world, camera }: { world: World; camera: CameraState }
       })
 
       /* -------------------------------------------------------- threats */
+      /* Without the spotter drone the map only shows threats close enough to
+         you or the herd that a trail boss would plausibly know about them.
+         The drone is what "marks predators through terrain" actually buys:
+         everything on the map, including the ambushers, long before they
+         commit. */
+      const droned = world.upgrades.drone
       for (const p of world.predators) {
         if (!p.alive) continue
-        // A hidden ambusher only shows if the drone has painted it.
-        if (p.state === 'HIDDEN' && !world.upgrades.drone) continue
+        if (p.state === 'HIDDEN' && !droned) continue
+        if (!droned) {
+          const known =
+            Math.hypot(p.pos.x - world.player.pos.x, p.pos.z - world.player.pos.z) < 55 ||
+            Math.hypot(p.pos.x - world.herdCentroid.x, p.pos.z - world.herdCentroid.z) < 45
+          if (!known) continue
+        }
         const asleep = p.state === 'DOWN'
         ctx.fillStyle = asleep ? 'rgba(232,220,192,0.35)' : PALETTE.corpRed
         const size = p.kind === 'oldoneeye' || p.kind === 'bighungry' ? 11 : p.kind === 'raptor' ? 5 : 8
@@ -113,6 +124,14 @@ export function HerdMap({ world, camera }: { world: World; camera: CameraState }
           ctx.fillStyle = PALETTE.corpWhite
           ctx.font = 'bold 11px monospace'
           ctx.fillText('z', px(p.pos.x) + size, pz(p.pos.z) - size)
+        }
+        // Winding up to a lunge: the ring is the warning the drone is sold on.
+        if (p.state === 'TELEGRAPH' || p.state === 'LUNGE') {
+          ctx.strokeStyle = PALETTE.corpRed
+          ctx.lineWidth = 2
+          ctx.beginPath()
+          ctx.arc(px(p.pos.x), pz(p.pos.z), size + 6 + Math.sin(performance.now() / 90) * 3, 0, Math.PI * 2)
+          ctx.stroke()
         }
       }
 
@@ -196,6 +215,7 @@ export function HerdMap({ world, camera }: { world: World; camera: CameraState }
           <Key colour={PALETTE.corpWhite} label="Head" />
           <Key colour={PALETTE.corpRed} label="Straggler / threat" />
           <Key colour={PALETTE.stunBeam} label="You" />
+          {!world.upgrades.drone && <span className="opacity-50">No drone — near threats only</span>}
           <span className="ml-auto">
             {stragglers > 0 ? (
               <span className="text-corp-red">

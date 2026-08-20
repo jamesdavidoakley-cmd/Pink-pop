@@ -3,7 +3,7 @@ import { HERD, PLAYER, RIFLE, WHOOP } from '@/core/tuning'
 import { angleDelta, clamp, dist2, headingOf } from '@/core/math'
 import { MOOD_COLOUR } from '@/art/palette'
 import { closeoutProgress, currentBeacon, gateLocked, isFinalBeacon } from '@/sim/world'
-import { maxStamina } from '@/sim/player'
+import { canMountBike, maxStamina } from '@/sim/player'
 import type { CameraState } from '@/game/CameraRig'
 import type { World } from '@/sim/types'
 import { useGame } from '@/state/store'
@@ -39,6 +39,7 @@ export function HUD({ world, camera }: { world: World; camera: CameraState }) {
   const bossRef = useRef<HTMLDivElement>(null)
   const closeout = useRef<HTMLDivElement>(null)
   const gateWarn = useRef<HTMLDivElement>(null)
+  const bikePrompt = useRef<HTMLDivElement>(null)
 
   const upgrades = world.upgrades
 
@@ -155,6 +156,11 @@ export function HUD({ world, camera }: { world: World; camera: CameraState }) {
           )
         }
         edges.current.innerHTML = marks.join('')
+      }
+
+      /* --------------------------------------------- the hover bike */
+      if (bikePrompt.current) {
+        bikePrompt.current.style.display = canMountBike(world) ? 'block' : 'none'
       }
 
       /* ---------------------------------------------- boss progress */
@@ -275,6 +281,16 @@ export function HUD({ world, camera }: { world: World; camera: CameraState }) {
       {/* Directional threat marks. This matters more than usual here, because
           the job forces you to look away from the thing hunting you. */}
       <div ref={edges} className="absolute inset-0" />
+
+      <div
+        ref={bikePrompt}
+        className="absolute bottom-40 left-1/2 -translate-x-1/2 text-center"
+        style={{ display: 'none' }}
+      >
+        <div className="panel px-3 py-1.5 text-xs tracking-[0.22em]">
+          <span className="text-corp-yellow">F</span> — TAKE THE BIKE
+        </div>
+      </div>
 
       <div ref={gateWarn} className="absolute left-1/2 top-24 -translate-x-1/2 text-center" style={{ display: 'none' }}>
         <div className="panel border-corp-red px-4 py-2 text-sm tracking-[0.22em] text-corp-red">

@@ -78,10 +78,18 @@ export function findMatriarch(world: World): HerdAnimal | null {
 function ensureMatriarch(world: World): HerdAnimal | null {
   let m = findMatriarch(world)
   if (m) return m
+  /* Pick the calmest adult that is furthest along the route. Choosing purely on
+     calm can hand the lead to an animal that has drifted back down the trail,
+     and the rest of the herd then dutifully follows her the wrong way. */
   let best: HerdAnimal | null = null
+  let bestScore = -Infinity
   for (const a of world.herd) {
     if (a.lost || a.delivered || a.juvenile) continue
-    if (!best || a.calm > best.calm) best = a
+    const score = world.terrain.routeInfo(a.pos.x, a.pos.z).progress * 220 + a.calm
+    if (score > bestScore) {
+      bestScore = score
+      best = a
+    }
   }
   if (!best) {
     // Nothing but juveniles left. One of them has to lead.
@@ -204,8 +212,9 @@ export function stepHerd(world: World, dt: number): void {
     if (matriarch && matriarch !== a) {
       if (!a.straggler && distToLead > leash) {
         a.straggler = true
-      } else if (a.straggler && distToLead < leash * 0.72) {
-        // Hysteresis, so an animal on the boundary does not flicker.
+      } else if (a.straggler && distToLead < leash * 0.9) {
+        // Only enough hysteresis to stop an animal on the boundary flickering.
+        // Making rejoining hard punishes the retrieval twice over.
         a.straggler = false
       }
     } else {
@@ -276,6 +285,13 @@ export function stepHerd(world: World, dt: number): void {
 /** How long travelling momentum outlives the reason for it. */
 const MOVE_HOLD = 2.5
 
+/**
+ * How hard the trail boss can lean on an animal that is already bolting.
+ * Enough to turn it over a few strides, not enough to stop it — turning a
+ * stampede should take running and shouldering, not one button.
+ */
+const PANIC_STEER = 1.5
+
 /** How far a follower will let the matriarch get before it bestirs itself. */
 const FOLLOW_COMFORT = 13
 
@@ -299,13 +315,15 @@ function travelReason(
     if (distSq2(a.pos, p.pos) < HERD.radii.predator * HERD.radii.predator) return 'SKITTISH'
   }
 
-  // A straggler has stopped believing in the herd. It grazes where it stands.
-  if (a.straggler) return 'GRAZING'
-
+  /* Being shoved by the trail boss, or called. Both of these have to outrank
+     having given up on the herd, or a straggler ambles back at grazing pace and
+     retrieving one animal costs the better part of a minute — which in practice
+     means the drive stops dead and never reaches the gate. */
   if (a.whoopTimer > 0) return 'MOVING'
-
-  // Being shoved by the trail boss. This is the push that drives the whole game.
   if (distSq2(a.pos, world.player.pos) < HERD.radii.player * HERD.radii.player) return 'MOVING'
+
+  // Otherwise a straggler has stopped believing in the herd, and grazes.
+  if (a.straggler) return 'GRAZING'
 
   if (matriarch && matriarch !== a) {
     if (dist2(a.pos, matriarch.pos) > FOLLOW_COMFORT) return 'MOVING'
@@ -420,11 +438,39 @@ function steer(
   matriarch: HerdAnimal | null,
   threats: Predator[],
 ): Steer {
-  // A bolting animal is not steering. That is the whole point of a bolt: it
-  // ignores cohesion, ignores obstacles, and runs straight at whatever is in
-  // front of it — including, on Bone Gulch, a sixty metre drop.
+  /*
+   * A bolting animal ignores the herd entirely — no cohesion, no alignment, no
+   * grazing, and crucially no edge avoidance, which is why Bone Gulch is
+   * dangerous. But it does not ignore a man shouldering into it at close
+   * range. The brief says panic ignores *cohesion*; if it ignored the trail
+   * boss as well then a stampede could only be waited out, never steered, and
+   * the whole set piece on the shelf would be a cutscene you watch.
+   */
   if (a.state === 'PANICKED') {
-    return { x: a.panicDir.x, z: a.panicDir.z, urgency: 1 }
+    let px = a.panicDir.x
+    let pz = a.panicDir.z
+    const dx = a.pos.x - world.player.pos.x
+    const dz = a.pos.z - world.player.pos.z
+    const d = len2(dx, dz)
+    if (d < HERD.radii.player && d > 1e-3) {
+      const push = PANIC_STEER * (1 - d / HERD.radii.player)
+      px += (dx / d) * push
+      pz += (dz / d) * push
+    }
+    // It will still not run head-first into a boulder.
+    const obstacles = world.terrain.obstaclesNear(a.pos.x, a.pos.z, HERD.radii.obstacle, scratchObstacles)
+    for (const o of obstacles) {
+      const ox = a.pos.x - o.x
+      const oz = a.pos.z - o.z
+      const od = len2(ox, oz)
+      const r = o.radius + HERD.radius * a.scale + 1.5
+      if (od < r && od > 1e-3) {
+        px += (ox / od) * (1 - od / r)
+        pz += (oz / od) * (1 - od / r)
+      }
+    }
+    const l = len2(px, pz) || 1
+    return { x: px / l, z: pz / l, urgency: 1 }
   }
 
   const W = HERD.weights
@@ -619,7 +665,6 @@ function desiredSpeed(world: World, a: HerdAnimal): number {
   const S = HERD.speed
   let base: number
   if (a.state === 'PANICKED') base = S.panic
-  else if (a.straggler) base = S.graze
   else if (a.state === 'GRAZING') base = S.graze
   else if (a.state === 'SKITTISH') base = S.skittish
   else base = S.move
@@ -660,12 +705,29 @@ function integrate(world: World, a: HerdAnimal, dt: number): void {
     a.heading = approachAngle(a.heading, target, HERD.turnRate * dt * (a.state === 'PANICKED' ? 2 : 1))
   }
 
-  /* -------- the two ways the trail takes an animal off you for good ------ */
+  /* ------------------------------------------------------- the boundary */
 
+  /* An animal that bolts into the edge of the map has simply run out of world.
+     It pulls up and turns back rather than being written off — losing head to
+     an invisible line is not a mechanic anybody can learn, and the drive
+     already has a rule for animals that wander: they are lost at the next
+     beacon if they are still adrift. */
+  const b = t.def.bounds
+  const margin = 6
   if (!t.inBounds(a.pos.x, a.pos.z)) {
-    loseAnimal(world, a, 'strayed')
-    return
+    a.pos.x = clamp(a.pos.x, b.minX + margin, b.maxX - margin)
+    a.pos.z = clamp(a.pos.z, b.minZ + margin, b.maxZ - margin)
+    a.vel.x *= -0.2
+    a.vel.z *= -0.2
+    if (a.state === 'PANICKED') {
+      a.state = 'SKITTISH'
+      a.panicTimer = 0
+      a.calm = Math.max(a.calm, HERD.calm.panicThreshold + 5)
+    }
   }
+
+  /* The one place the ground itself takes an animal: over the edge at Bone
+     Gulch. That one is visible, learnable, and the whole point of the level. */
   if (t.fallDepth(a.pos.x, a.pos.z) > 14) {
     loseAnimal(world, a, 'fell')
   }

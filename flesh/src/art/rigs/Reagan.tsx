@@ -256,7 +256,9 @@ export function HoverBikeRig({ player, parked }: { player: Player; parked?: { x:
       g.rotation.x = -player.bikeSpeed * 0.006
     } else if (parked) {
       g.position.set(parked.x, parked.y + 1.1, parked.z)
-      g.rotation.set(0, 0.6, 0)
+      g.rotation.y += (0.6 - g.rotation.y) * 0.08
+      g.rotation.x *= 0.9
+      g.rotation.z *= 0.9
     }
     g.position.y += Math.sin(state.clock.elapsedTime * 3) * 0.06
     if (rider.current) rider.current.visible = player.onBike

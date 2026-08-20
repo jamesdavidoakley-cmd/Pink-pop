@@ -107,6 +107,8 @@ export interface Predator {
   /** Set once a drone has painted it. */
   marked: boolean
   alive: boolean
+  /** Seconds since it arrived. Past its patience it breaks off and leaves. */
+  age: number
   /** Pteranodons cruise, dive, and climb again. */
   altitude: number
   repath: number
@@ -272,6 +274,8 @@ export interface World {
   /** Ash Plains lightning. */
   stormTimer: number
   stormFlash: number
+  /** Where the hover bike is parked. It stays where you left it. */
+  bikePos: V3
   /** Set by the drone upgrade. */
   droneActive: boolean
   upgrades: ActiveUpgrades

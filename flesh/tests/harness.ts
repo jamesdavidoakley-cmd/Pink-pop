@@ -152,6 +152,52 @@ export function herderBot(): Bot {
 }
 
 /**
+ * A competent player. Herds, goads what it can reach, and reaches for the rifle
+ * when the goad is on cooldown and something is still on the herd. This is the
+ * bot the level tests use, because the pacifist herder is a bonus objective
+ * rather than the way the levels are meant to be beaten.
+ */
+export function pragmaticBot(): Bot {
+  const herd = herderBot()
+  return (world, t) => {
+    const threat = nearestPredator(world, 55)
+    const onHerd =
+      threat &&
+      len2(threat.pos.x - world.herdCentroid.x, threat.pos.z - world.herdCentroid.z) < 32 &&
+      threat.spooked <= 0 &&
+      threat.state !== 'DOWN'
+
+    if (onHerd && threat) {
+      const d = len2(threat.pos.x - world.player.pos.x, threat.pos.z - world.player.pos.z)
+      const input = idle()
+      aimAt(world, { x: threat.pos.x, y: threat.pos.y + 2.2, z: threat.pos.z }, input)
+      if (d < 3.2 && world.player.goadTimer <= 0) {
+        moveToward(world, threat.pos, input)
+        world.player.heading = input.aimYaw
+        input.goad = true
+        return input
+      }
+      // Far enough from the herd that the shot does not cost them calm.
+      const clearOfHerd =
+        len2(
+          world.player.pos.x - world.herdCentroid.x,
+          world.player.pos.z - world.herdCentroid.z,
+        ) > 16
+      if (world.player.ammo > 0 && clearOfHerd) {
+        input.aim = true
+        input.fire = true
+        return input
+      }
+      moveToward(world, threat.pos, input)
+      input.sprint = true
+      return input
+    }
+
+    return herd(world, t)
+  }
+}
+
+/**
  * The shared driving behaviour: stand behind the matriarch on the line from the
  * next beacon and push, going to fetch stragglers when there are any.
  */
@@ -170,13 +216,20 @@ export function driveHerd(world: World, input: InputFrame): InputFrame {
   )
   const straggler = stragglers[0]
   if (straggler) {
-    const away = {
-      x: straggler.pos.x + (straggler.pos.x - lead.pos.x) * 0.22,
-      z: straggler.pos.z + (straggler.pos.z - lead.pos.z) * 0.22,
-    }
-    moveToward(world, away, input)
+    /* Stand just behind it on the line back to the herd — close enough to be
+       inside the eight-metre repulsion radius, which is the whole mechanism.
+       Offsetting by a fraction of the distance puts the player thirteen metres
+       away from an animal sixty metres adrift, where the push does nothing at
+       all and the bot stands there indefinitely. */
+    let dx = straggler.pos.x - lead.pos.x
+    let dz = straggler.pos.z - lead.pos.z
+    const d = len2(dx, dz) || 1
+    dx /= d
+    dz /= d
+    const behind = { x: straggler.pos.x + dx * 3.5, z: straggler.pos.z + dz * 3.5 }
+    moveToward(world, behind, input)
     input.sprint = true
-    input.aimYaw = headingOf(lead.pos.x - world.player.pos.x, lead.pos.z - world.player.pos.z)
+    input.aimYaw = headingOf(-dx, -dz)
     return input
   }
 
