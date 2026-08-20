@@ -173,7 +173,12 @@ function GameShell() {
               // triangle budget. Software rendering cannot tell us the frame
               // rate on real hardware, but it can tell us what we are asking of
               // it, and that is the number worth watching.
-              ;(window as unknown as { __flesh?: unknown }).__flesh = { gl, scene, cam }
+              ;(window as unknown as { __flesh?: unknown }).__flesh = {
+                gl,
+                scene,
+                cam,
+                store: useGame,
+              }
             }}
           >
             <Scene

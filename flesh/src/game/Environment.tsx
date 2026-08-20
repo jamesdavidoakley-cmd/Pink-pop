@@ -42,12 +42,24 @@ const SKY_FRAG = /* glsl */ `
   uniform vec3 high;
   uniform vec3 low;
   uniform float flash;
+  uniform float time;
   varying vec3 vDir;
   void main() {
     float t = clamp(vDir.y * 0.5 + 0.5, 0.0, 1.0);
+
+    /* Heat shimmer. Rather than distorting the frame in a post pass — which
+       costs a full-screen draw for an effect nobody would look at twice — the
+       band of sky right on the horizon ripples, which is where you would
+       actually see it over hot ground. */
+    float horizon = 1.0 - smoothstep(0.0, 0.09, abs(vDir.y));
+    float ripple = sin(vDir.x * 42.0 + time * 2.1) * sin(vDir.z * 37.0 - time * 1.7);
+    t += ripple * 0.012 * horizon;
+
     float banded = floor(t * 7.0) / 7.0;
     t = mix(t, banded, 0.55);
     vec3 c = mix(low, high, t);
+    // A little of the ground's heat bleeding up into the first band of sky.
+    c += horizon * 0.05 * (0.5 + ripple * 0.5);
     c += flash * 0.65;
     gl_FragColor = vec4(c, 1.0);
   }
@@ -61,6 +73,7 @@ export function Sky({ level, flash }: { level: LevelDef; flash: React.RefObject<
           high: { value: new THREE.Color(level.mood.sky) },
           low: { value: new THREE.Color(PALETTE.skyLow) },
           flash: { value: 0 },
+          time: { value: 0 },
         },
         vertexShader: SKY_VERT,
         fragmentShader: SKY_FRAG,
@@ -71,8 +84,9 @@ export function Sky({ level, flash }: { level: LevelDef; flash: React.RefObject<
     [level.mood.sky],
   )
 
-  useFrame(() => {
+  useFrame((state) => {
     mat.uniforms.flash!.value = flash.current ?? 0
+    mat.uniforms.time!.value = state.clock.elapsedTime
   })
 
   return (

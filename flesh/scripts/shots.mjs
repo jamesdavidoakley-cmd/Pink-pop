@@ -106,6 +106,37 @@ await page.keyboard.press('Escape')
 await page.waitForTimeout(400)
 await shot('pause')
 
+// The pay slip and the log. Reaching these honestly means completing a whole
+// drive, so they are driven through the store instead.
+await page.evaluate(() => {
+  const store = window.__flesh?.store
+  if (!store) return
+  store.setState({
+    screen: 'results',
+    result: {
+      levelId: 'bone-gulch',
+      levelIndex: 2,
+      levelName: 'BONE GULCH',
+      passed: true,
+      headDelivered: 9,
+      headStart: 12,
+      headLost: 3,
+      headPrime: 8,
+      stragglersLost: 0,
+      shotsFired: 0,
+      time: 401,
+      credits: 1550,
+      par: 480,
+    },
+  })
+})
+await page.waitForTimeout(600)
+await shot('results')
+
+await page.evaluate(() => window.__flesh?.store?.setState({ screen: 'log' }))
+await page.waitForTimeout(500)
+await shot('log')
+
 await browser.close()
 server.close()
 if (errors.length) {

@@ -244,7 +244,7 @@ function BoardPanel({ onClose }: { onClose: () => void }) {
                     {String(i + 1).padStart(2, '0')} {level.name}
                   </span>
                   {rec && rec.attempts > 0 && (
-                    <span className="ml-2 text-[11px] text-ink/50">{rec.attempts} attempts</span>
+                    <span className="ml-2 text-[11px] text-ink/50">{rec.attempts} {rec.attempts === 1 ? 'attempt' : 'attempts'}</span>
                   )}
                 </div>
                 <div className="flex items-center gap-3 text-[11px] tracking-[0.12em] text-ink/70">

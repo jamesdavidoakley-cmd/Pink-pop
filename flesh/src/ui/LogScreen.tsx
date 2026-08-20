@@ -70,7 +70,7 @@ export function LogScreen() {
                         <span>{rec.bestHead}/{level.herd.count} HEAD</span>
                         <span>{rec.bestCredits.toLocaleString('en-GB')} FC</span>
                         <span>{rec.bestTime > 0 ? formatTime(rec.bestTime) : '—'}</span>
-                        <span>{rec.attempts} ATTEMPTS</span>
+                        <span>{rec.attempts} {rec.attempts === 1 ? 'ATTEMPT' : 'ATTEMPTS'}</span>
                       </>
                     ) : (
                       <span className="text-paper/35">NOT RUN</span>
