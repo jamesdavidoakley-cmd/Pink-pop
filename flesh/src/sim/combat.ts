@@ -9,7 +9,7 @@
  * true rather than to make shooting satisfying at the herd's expense.
  */
 
-import { GOAD, HERD, NET_GUN, RIFLE, SONIC_BOOMER, WHOOP } from '@/core/tuning'
+import { GOAD, HERD, NET_GUN, OLD_ONE_EYE, RIFLE, SONIC_BOOMER, WHOOP } from '@/core/tuning'
 import { angleDelta, clamp, dist2, headingOf, len2, type V3 } from '@/core/math'
 import { applyWhoop, isThreatening, shockHerd } from './herd'
 import { SPOOK_SECONDS } from './predators'
@@ -60,7 +60,10 @@ function hitVolumes(p: Predator): { part: HitPart; x: number; y: number; z: numb
     { part: 'body', x: p.pos.x, y: p.pos.y + bodyH, z: p.pos.z, r: p.radius * 1.05 },
   ]
   if (p.kind === 'rex' || p.kind === 'oldoneeye' || p.kind === 'bighungry') {
-    const reach = p.radius * 1.5
+    // Matched by hand to where the rig actually puts the skull. If these drift
+    // apart the player shoots what they can see and hits nothing, which on the
+    // Old One Eye fight would make the neck window unusable.
+    const reach = p.radius * 1.75
     const headY = p.pos.y + headHeightFor(p)
     out.push({
       part: 'neck',
@@ -85,9 +88,9 @@ function hitVolumes(p: Predator): { part: HitPart; x: number; y: number; z: numb
 export function headHeightFor(p: Predator): number {
   switch (p.kind) {
     case 'rex':
-      return 4.6 * p.scale
+      return 4.2 * p.scale
     case 'oldoneeye':
-      return 4.6 * p.scale
+      return 4.2 * p.scale
     case 'raptor':
       return 1.6 * p.scale
     case 'pteranodon':
@@ -368,13 +371,19 @@ function goadOldOneEye(world: World, p: Predator): boolean {
   return true
 }
 
-/** True if `at` sits inside the 90-degree cone she cannot see out of. */
+/**
+ * True if `at` sits inside the 90-degree cone she cannot see out of.
+ *
+ * Forward is (sin h, 0, cos h) and up is +Y, so her left hand — up x forward —
+ * points along +X, which is a relative bearing of +PI/2. That has to agree with
+ * the rig, because the dead white eye on that side is the only thing that ever
+ * tells the player the mechanic exists.
+ */
 export function isInBlindCone(p: Predator, at: V3): boolean {
   const toTarget = headingOf(at.x - p.pos.x, at.z - p.pos.z)
   const rel = angleDelta(p.heading, toTarget)
-  // Her blind side is her left: the quarter-turn centred 90 degrees to that side.
-  const centre = -Math.PI / 2
-  return Math.abs(angleDelta(centre, rel)) <= Math.PI / 4
+  const centre = OLD_ONE_EYE.blindSideSign * (Math.PI / 2)
+  return Math.abs(angleDelta(centre, rel)) <= OLD_ONE_EYE.blindConeHalfAngle
 }
 
 /* -------------------------------------------------------------- the whoop */

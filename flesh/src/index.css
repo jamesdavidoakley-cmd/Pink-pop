@@ -1,0 +1,158 @@
+@import 'tailwindcss';
+
+/*
+ * Tailwind is for the HUD and menus only, never for anything in the world.
+ * The look is 1977 newsprint: heavy black rules, flat blocks of spot colour,
+ * and a monospaced face that reads as a dot-matrix printout from a company
+ * that files a body count as a logistics line item.
+ */
+
+@theme {
+  --color-ink: #0b0705;
+  --color-paper: #e8dcc0;
+  --color-dust: #b1834c;
+  --color-corp-white: #f2f4f6;
+  --color-corp-blue: #1b4fd8;
+  --color-corp-yellow: #ffd21f;
+  --color-corp-red: #e02020;
+  --color-teal: #1d4a4a;
+  --color-graze: #7fbf3f;
+  --color-skittish: #ffb020;
+
+  --font-hud: 'Courier New', 'Courier', ui-monospace, monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: #0b0705;
+  color: var(--color-paper);
+  font-family: var(--font-hud);
+  overflow: hidden;
+  -webkit-font-smoothing: none;
+}
+
+canvas {
+  display: block;
+  touch-action: none;
+}
+
+/* ------------------------------------------------------------- newsprint */
+
+/*
+ * "a fine grain overlay and slight chromatic offset at the screen edges to
+ * suggest cheap 1977 newsprint colour separation. Do not overdo the last one."
+ * So: the grain is real but faint, and the colour separation only appears in
+ * the corners, where a cheap press would actually have lost registration.
+ */
+.fx-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.09;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='120' height='120' filter='url(%23n)'/></svg>");
+  animation: grain-shift 0.6s steps(3) infinite;
+}
+
+@keyframes grain-shift {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(-2%, 1%); }
+  66% { transform: translate(1%, -2%); }
+  100% { transform: translate(0, 0); }
+}
+
+.fx-separation {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.16;
+  background:
+    radial-gradient(ellipse at 8% 50%, rgba(255, 40, 40, 0.5) 0%, transparent 42%),
+    radial-gradient(ellipse at 92% 50%, rgba(40, 120, 255, 0.5) 0%, transparent 42%);
+}
+
+.fx-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 52%, rgba(11, 7, 5, 0.55) 100%);
+}
+
+.fx-flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: #fff;
+  opacity: 0;
+}
+
+/* ------------------------------------------------------------------ chrome */
+
+.panel {
+  background: rgba(11, 7, 5, 0.82);
+  border: 2px solid var(--color-paper);
+  box-shadow: 4px 4px 0 rgba(11, 7, 5, 0.7);
+}
+
+.corp-panel {
+  background: var(--color-corp-white);
+  color: var(--color-ink);
+  border: 3px solid var(--color-ink);
+  box-shadow: 6px 6px 0 var(--color-ink);
+}
+
+.btn {
+  border: 2px solid var(--color-paper);
+  padding: 0.5rem 1.1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: background 90ms steps(2), color 90ms steps(2), transform 90ms steps(2);
+  cursor: pointer;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  transform: translate(-1px, -1px);
+}
+
+.btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.btn-corp {
+  border-color: var(--color-ink);
+  background: var(--color-corp-yellow);
+  color: var(--color-ink);
+}
+
+.btn-corp:hover:not(:disabled) {
+  background: var(--color-corp-white);
+  color: var(--color-ink);
+}
+
+/* Slab of colour behind a heading, like a printed masthead. */
+.masthead {
+  background: var(--color-corp-red);
+  color: var(--color-paper);
+  padding: 0.1em 0.5em;
+  display: inline-block;
+}
+
+.hud-shadow {
+  text-shadow: 2px 2px 0 rgba(11, 7, 5, 0.9);
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-dust) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-grain { animation: none; }
+}

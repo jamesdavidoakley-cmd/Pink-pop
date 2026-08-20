@@ -49,7 +49,9 @@ export const HERD = {
     cohesionMatriarch: 2.5,
   },
   radii: {
-    separation: 4.2,
+    // Larger than it looks: an animal is about five metres nose to tail, so a
+    // four-metre separation radius lets the herd pile through itself.
+    separation: 6.0,
     cohesion: 22,
     alignment: 14,
     player: 8, // "repulsion from Reagan (weight 2.0, radius 8m)"
@@ -68,7 +70,7 @@ export const HERD = {
   },
   accel: 7.0,
   turnRate: 3.2,
-  radius: 2.0,
+  radius: 2.6,
   juvenileScale: 0.6, // "a few juveniles at 60% scale"
 
   calm: {

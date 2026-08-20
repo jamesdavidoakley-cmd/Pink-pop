@@ -233,7 +233,7 @@ describe('§16 — Old One Eye', () => {
         input.fire = true
       } else {
         // Circle to her dead left side and shove.
-        const blindAngle = boss.heading - Math.PI / 2
+        const blindAngle = boss.heading + Math.PI / 2
         world.player.pos.x = boss.pos.x + Math.sin(blindAngle) * 2.4
         world.player.pos.z = boss.pos.z + Math.cos(blindAngle) * 2.4
         world.player.heading = blindAngle + Math.PI
@@ -257,10 +257,11 @@ describe('§16 — Old One Eye', () => {
       z: boss.pos.z + Math.cos(angle) * r,
     })
 
-    expect(isInBlindCone(boss, at(-Math.PI / 2))).toBe(true) // dead on her left
-    expect(isInBlindCone(boss, at(-Math.PI / 2 + 0.7))).toBe(true) // inside the cone
+    // Facing +Z with up +Y, her left hand points along +X: a bearing of +PI/2.
+    expect(isInBlindCone(boss, at(Math.PI / 2))).toBe(true) // dead on her left
+    expect(isInBlindCone(boss, at(Math.PI / 2 - 0.7))).toBe(true) // inside the cone
     expect(isInBlindCone(boss, at(0))).toBe(false) // straight ahead
-    expect(isInBlindCone(boss, at(Math.PI / 2))).toBe(false) // her good side
+    expect(isInBlindCone(boss, at(-Math.PI / 2))).toBe(false) // her good side
     expect(isInBlindCone(boss, at(Math.PI))).toBe(false) // behind
   })
 })

@@ -9,12 +9,12 @@ import type { LevelDef } from './types'
  */
 
 const PALETTE = {
-  badlands: { sky: '#d9642a', fog: '#c97a4b', ground: '#b98b52', fogDensity: 0.0035 },
-  flats: { sky: '#e07a33', fog: '#cf8a55', ground: '#c19a5c', fogDensity: 0.0028 },
-  gulch: { sky: '#b8492a', fog: '#a86445', ground: '#a97a4c', fogDensity: 0.0042 },
-  tar: { sky: '#c4703a', fog: '#8d7a5e', ground: '#7d6a4a', fogDensity: 0.006 },
+  badlands: { sky: '#d9642a', fog: '#c97a4b', ground: '#b98b52', fogDensity: 0.0062 },
+  flats: { sky: '#e07a33', fog: '#cf8a55', ground: '#c19a5c', fogDensity: 0.0052 },
+  gulch: { sky: '#b8492a', fog: '#a86445', ground: '#a97a4c', fogDensity: 0.0068 },
+  tar: { sky: '#c4703a', fog: '#8d7a5e', ground: '#7d6a4a', fogDensity: 0.0088 },
   ash: { sky: '#6b5a52', fog: '#8a7d74', ground: '#8b8074', fogDensity: 0.014 },
-  base: { sky: '#c25a2f', fog: '#a86a48', ground: '#b0824f', fogDensity: 0.005 },
+  base: { sky: '#c25a2f', fog: '#a86a48', ground: '#b0824f', fogDensity: 0.0072 },
 }
 
 export const LEVELS: LevelDef[] = [
