@@ -1,3 +1,8 @@
+> **On this branch (`claude/flesh-long-drive-game-sbwqi6`) the deliverable is
+> [`flesh/`](flesh/) — _FLESH: The Long Drive_, a separate game with its own
+> README, dependencies and tests. Everything below describes _Max & the Star
+> Fossils_, which lives at this repository's root and is untouched by that work.**
+
 # Max & the Star Fossils
 
 A joyful, fully-voiced 3D collect-a-thon platformer for ages 7–8, starring Max the blue T-Rex. Real KS2 (Years 3–4) science, maths, and engineering tasks earn Star Fossils; boss personalities emerge from a trait-driven utility AI. 100% original IP, offline, no accounts, no ads.

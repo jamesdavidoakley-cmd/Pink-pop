@@ -29,6 +29,14 @@ interface Props {
 /** Hip height. He is about 1.8m to the crown of the hat. */
 const HIP = 0.86
 
+/**
+ * Reagan is built from parts a quarter of a metre thick, and the outline hull
+ * is pushed out far enough at gameplay range to be comparable to that — which
+ * leaves a wireframe box hanging around him where the swollen copy escapes its
+ * own geometry. Everything on him gets a thinner line than the dinosaurs do.
+ */
+const INK = 0.55
+
 export function ReaganRig({ player, hat, goadSwing, whoopSwing }: Props) {
   const root = useRef<THREE.Group>(null)
   const torso = useRef<THREE.Group>(null)
@@ -117,7 +125,8 @@ export function ReaganRig({ player, hat, goadSwing, whoopSwing }: Props) {
     <group ref={root}>
       <group ref={torso} position={[0, HIP, 0]}>
         {/* shirt under a heavy trail coat */}
-        <Part geo={GEO.box()} color={PALETTE.shirt} position={[0, 0.3, 0]} scale={[0.46, 0.6, 0.3]} />
+        <Part
+            outlineThickness={INK} geo={GEO.box()} color={PALETTE.shirt} position={[0, 0.3, 0]} scale={[0.46, 0.6, 0.3]} />
         <Part geo={GEO.box()} color={PALETTE.coat} position={[0, 0.3, -0.02]} scale={[0.52, 0.56, 0.36]} outlineThickness={1.1} />
         {/* Trans-Time badge: the corporation's colours on his own chest */}
         <Part geo={GEO.box()} color={PALETTE.corpBlue} position={[0.16, 0.4, 0.19]} scale={[0.11, 0.11, 0.02]} outline={false} />
@@ -133,7 +142,8 @@ export function ReaganRig({ player, hat, goadSwing, whoopSwing }: Props) {
 
         {/* --------------------------------------------------------- head */}
         <group ref={head} position={[0, 0.76, 0]}>
-          <Part geo={GEO.box()} color={PALETTE.skin} scale={[0.28, 0.3, 0.26]} />
+          <Part
+            outlineThickness={INK} geo={GEO.box()} color={PALETTE.skin} scale={[0.28, 0.3, 0.26]} />
           <Part geo={GEO.box()} color="#120e0a" position={[-0.07, 0.02, 0.14]} scale={[0.06, 0.06, 0.02]} outline={false} />
           <Part geo={GEO.box()} color="#120e0a" position={[0.07, 0.02, 0.14]} scale={[0.06, 0.06, 0.02]} outline={false} />
           {/* the moustache of a man who has been doing this too long */}
@@ -143,7 +153,8 @@ export function ReaganRig({ player, hat, goadSwing, whoopSwing }: Props) {
 
         {/* ---------------------------------------------------- right arm */}
         <group ref={armR} position={[0.31, 0.5, 0]}>
-          <Part geo={GEO.box()} color={PALETTE.coat} position={[0, -0.24, 0]} scale={[0.15, 0.5, 0.15]} />
+          <Part
+            outlineThickness={INK} geo={GEO.box()} color={PALETTE.coat} position={[0, -0.24, 0]} scale={[0.15, 0.5, 0.15]} />
           <Part geo={GEO.box()} color={PALETTE.skin} position={[0, -0.5, 0]} scale={[0.13, 0.12, 0.13]} outline={false} />
 
           {/* The goad, always in his hand, angled forward and down. It is the
@@ -164,7 +175,8 @@ export function ReaganRig({ player, hat, goadSwing, whoopSwing }: Props) {
 
         {/* ----------------------------------------------------- left arm */}
         <group ref={armL} position={[-0.31, 0.5, 0]}>
-          <Part geo={GEO.box()} color={PALETTE.coat} position={[0, -0.24, 0]} scale={[0.15, 0.5, 0.15]} />
+          <Part
+            outlineThickness={INK} geo={GEO.box()} color={PALETTE.coat} position={[0, -0.24, 0]} scale={[0.15, 0.5, 0.15]} />
           <Part geo={GEO.box()} color={PALETTE.skin} position={[0, -0.5, 0]} scale={[0.13, 0.12, 0.13]} outline={false} />
         </group>
 
@@ -194,7 +206,8 @@ export function ReaganRig({ player, hat, goadSwing, whoopSwing }: Props) {
           }}
           position={[x, HIP, 0]}
         >
-          <Part geo={GEO.box()} color={PALETTE.denim} position={[0, -HIP * 0.5, 0]} scale={[0.19, HIP, 0.19]} />
+          <Part
+            outlineThickness={INK} geo={GEO.box()} color={PALETTE.denim} position={[0, -HIP * 0.5, 0]} scale={[0.19, HIP, 0.19]} />
           <Part geo={GEO.box()} color={PALETTE.boot} position={[0, -HIP + 0.07, 0.05]} scale={[0.21, 0.15, 0.3]} outline={false} />
         </group>
       ))}
@@ -226,8 +239,10 @@ function Hat({ kind }: { kind: HatKind }) {
 
   return (
     <group position={[0, 0.19, 0]}>
-      <Part geo={GEO.cylinder()} color={spec.colour} scale={[spec.brim, 0.05, spec.brim]} />
-      <Part geo={GEO.cylinder()} color={spec.colour} position={[0, spec.height * 0.5, 0]} scale={[spec.crown, spec.height, spec.crown]} />
+      <Part
+            outlineThickness={INK} geo={GEO.cylinder()} color={spec.colour} scale={[spec.brim, 0.05, spec.brim]} />
+      <Part
+            outlineThickness={INK} geo={GEO.cylinder()} color={spec.colour} position={[0, spec.height * 0.5, 0]} scale={[spec.crown, spec.height, spec.crown]} />
       <Part
         geo={GEO.cylinder()}
         color={spec.band}
@@ -272,15 +287,20 @@ export function HoverBikeRig({ player, parked }: { player: Player; parked?: { x:
       {/* the thruster pods, and their glow */}
       {[-1, 1].map((s) => (
         <group key={s} position={[0.62 * s, -0.1, -0.5]}>
-          <Part geo={GEO.cylinder()} color={PALETTE.corpWhite} rotation={[Math.PI * 0.5, 0, 0]} scale={[0.28, 1.3, 0.28]} />
+          <Part
+            outlineThickness={INK} geo={GEO.cylinder()} color={PALETTE.corpWhite} rotation={[Math.PI * 0.5, 0, 0]} scale={[0.28, 1.3, 0.28]} />
           <Part geo={GEO.disc()} color={PALETTE.stunBeam} position={[0, -0.24, 0]} rotation={[Math.PI * 0.5, 0, 0]} scale={0.42} flat outline={false} opacity={0.75} />
         </group>
       ))}
       <group ref={rider} position={[0, 0.55, -0.15]}>
-        <Part geo={GEO.box()} color={PALETTE.coat} scale={[0.55, 0.6, 0.36]} />
-        <Part geo={GEO.box()} color={PALETTE.skin} position={[0, 0.5, 0]} scale={[0.32, 0.34, 0.3]} />
-        <Part geo={GEO.cylinder()} color={PALETTE.hat} position={[0, 0.7, 0]} scale={[0.6, 0.05, 0.6]} />
-        <Part geo={GEO.cylinder()} color={PALETTE.hat} position={[0, 0.82, 0]} scale={[0.3, 0.24, 0.3]} />
+        <Part
+            outlineThickness={INK} geo={GEO.box()} color={PALETTE.coat} scale={[0.55, 0.6, 0.36]} />
+        <Part
+            outlineThickness={INK} geo={GEO.box()} color={PALETTE.skin} position={[0, 0.5, 0]} scale={[0.32, 0.34, 0.3]} />
+        <Part
+            outlineThickness={INK} geo={GEO.cylinder()} color={PALETTE.hat} position={[0, 0.7, 0]} scale={[0.6, 0.05, 0.6]} />
+        <Part
+            outlineThickness={INK} geo={GEO.cylinder()} color={PALETTE.hat} position={[0, 0.82, 0]} scale={[0.3, 0.24, 0.3]} />
       </group>
     </group>
   )

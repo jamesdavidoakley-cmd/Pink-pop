@@ -24,15 +24,16 @@ import type { Player } from '@/sim/types'
 
 export type Station = 'counter' | 'board' | 'jukebox' | null
 
-const ROOM = { width: 26, depth: 20, height: 6 }
+const ROOM = { width: 26, depth: 21, height: 7 }
 
 const STATIONS: { id: Exclude<Station, null>; x: number; z: number; label: string }[] = [
-  { id: 'counter', x: -8, z: -8.2, label: 'VENDING' },
-  { id: 'board', x: 8, z: -8.2, label: 'MISSION BOARD' },
-  { id: 'jukebox', x: 11, z: 4, label: 'JUKEBOX' },
+  { id: 'counter', x: -8, z: -8.6, label: 'VENDING' },
+  { id: 'board', x: 8, z: -8.6, label: 'MISSION BOARD' },
+  { id: 'jukebox', x: 10.5, z: 3, label: 'JUKEBOX' },
 ]
 
-const REACH = 3.4
+/** Generous, because walking a cowboy into a counter is not the game. */
+const REACH = 5.5
 
 export function CommissaryCanvas({
   hat,
@@ -128,14 +129,16 @@ function CommissaryRoom({
     }
 
     /* --------------------------------------------------------- camera */
-    // A fixed-ish arcade camera that drifts with him, rather than a chase cam:
-    // this is a room, not a level, and the whole room should stay readable.
-    const targetX = player.pos.x * 0.45
-    const targetZ = player.pos.z * 0.35 + 15
+    /* A fixed-ish arcade camera that drifts with him, rather than a chase cam:
+       this is a room, not a level, and the whole room should stay readable.
+       Kept below the wall line — at seven and a half metres it looked straight
+       over the back wall into the void beyond. */
+    const targetX = player.pos.x * 0.42
+    const targetZ = player.pos.z * 0.3 + 12.5
     camera.position.x = damp(camera.position.x, targetX, 4, dt)
-    camera.position.y = damp(camera.position.y, 7.5, 4, dt)
+    camera.position.y = damp(camera.position.y, 5.2, 4, dt)
     camera.position.z = damp(camera.position.z, targetZ, 4, dt)
-    camera.lookAt(player.pos.x * 0.5, 1.6, player.pos.z * 0.4 - 2)
+    camera.lookAt(player.pos.x * 0.45, 1.9, player.pos.z * 0.35 - 2.5)
   })
 
   return (
@@ -209,20 +212,22 @@ function RoomShell() {
         <Part key={x} geo={GEO.box()} color={PALETTE.corpYellow} position={[x, 0.02, 0]} scale={[0.3, 0.02, ROOM.depth]} outline={false} />
       ))}
 
-      {/* walls */}
+      {/* walls, and a ceiling — without one the camera sees straight over the
+          back wall into the clear colour, which reads as the room having no top */}
       <Part geo={GEO.box()} color={PALETTE.corpWhite} position={[0, ROOM.height / 2, -ROOM.depth / 2]} scale={[ROOM.width, ROOM.height, 0.6]} />
       <Part geo={GEO.box()} color="#dfe3e8" position={[-ROOM.width / 2, ROOM.height / 2, 0]} scale={[0.6, ROOM.height, ROOM.depth]} />
       <Part geo={GEO.box()} color="#dfe3e8" position={[ROOM.width / 2, ROOM.height / 2, 0]} scale={[0.6, ROOM.height, ROOM.depth]} />
+      <Part geo={GEO.box()} color="#b8bec6" position={[0, ROOM.height, 0]} scale={[ROOM.width, 0.5, ROOM.depth]} outline={false} />
       {/* cobalt band at waist height, all the way round */}
       <Part geo={GEO.box()} color={PALETTE.corpBlue} position={[0, 1.4, -ROOM.depth / 2 + 0.32]} scale={[ROOM.width, 0.5, 0.06]} outline={false} />
 
-      {/* strip lights */}
+      {/* strip lights, flush to the ceiling */}
       {[-6, 0, 6].map((z) => (
-        <Part key={z} geo={GEO.box()} color="#fffbe8" position={[0, ROOM.height - 0.4, z]} scale={[10, 0.16, 0.7]} flat outline={false} />
+        <Part key={z} geo={GEO.box()} color="#fffbe8" position={[0, ROOM.height - 0.3, z]} scale={[9, 0.12, 0.6]} flat outline={false} />
       ))}
 
       {/* The window: the only view of outside, and it is orange. */}
-      <group position={[0, 3.1, -ROOM.depth / 2 + 0.35]}>
+      <group position={[0, 3.4, -ROOM.depth / 2 + 0.35]}>
         <Part geo={GEO.box()} color={PALETTE.hat} scale={[9.4, 3.2, 0.14]} />
         <Part geo={GEO.box()} color={PALETTE.skyLow} position={[0, 0, 0.09]} scale={[8.8, 2.7, 0.05]} flat outline={false} />
         {/* a distant herd, painted on */}
@@ -244,7 +249,7 @@ function RoomShell() {
 
 function VendingCounter() {
   return (
-    <group position={[-8, 0, -8.2]}>
+    <group position={[-8, 0, -8.6]}>
       <Part geo={GEO.box()} color={PALETTE.corpWhite} position={[0, 0.6, 0]} scale={[5.5, 1.2, 1.6]} />
       <Part geo={GEO.box()} color={PALETTE.corpBlue} position={[0, 1.25, 0]} scale={[5.6, 0.12, 1.7]} outline={false} />
       <Part geo={GEO.box()} color="#2a2a30" position={[0, 2.6, -0.6]} scale={[5.2, 2.4, 0.5]} />
@@ -266,7 +271,7 @@ function VendingCounter() {
 
 function MissionBoard() {
   return (
-    <group position={[8, 0, -8.2]}>
+    <group position={[8, 0, -8.6]}>
       <Part geo={GEO.box()} color={PALETTE.coatDark} position={[0, 2.6, 0]} scale={[5.4, 3.6, 0.3]} />
       <Part geo={GEO.box()} color="#3c3228" position={[0, 2.6, 0.17]} scale={[5.0, 3.2, 0.05]} outline={false} />
       {/* pinned dispatch sheets */}
@@ -300,7 +305,7 @@ function Jukebox() {
     }
   })
   return (
-    <group position={[11, 0, 4]} rotation={[0, -Math.PI / 2, 0]}>
+    <group position={[10.5, 0, 3]} rotation={[0, -Math.PI / 2, 0]}>
       <Part geo={GEO.box()} color={PALETTE.corpRed} position={[0, 1.3, 0]} scale={[2.2, 2.6, 1.1]} />
       <Part geo={GEO.cylinder()} color={PALETTE.corpYellow} position={[0, 2.65, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[1.1, 1.1, 1.1]} />
       <Part geo={GEO.box()} color="#1a1a22" position={[0, 1.5, 0.58]} scale={[1.5, 1.0, 0.06]} outline={false} />
@@ -321,15 +326,15 @@ function StationMarker({ x, z, label, player }: { x: number; z: number; label: s
     if (!g) return
     const d = Math.hypot(player.pos.x - x, player.pos.z - z)
     const active = d < REACH
-    g.position.y = 4.6 + Math.sin(state.clock.elapsedTime * 2 + x) * 0.1
+    g.position.y = 4.3 + Math.sin(state.clock.elapsedTime * 2 + x) * 0.1
     g.scale.setScalar(active ? 1.15 : 0.9)
     const mat = (g.children[0] as THREE.Sprite).material as THREE.SpriteMaterial
     mat.opacity = active ? 1 : 0.4
   })
 
   return (
-    <group ref={group} position={[x, 4.6, z]}>
-      <sprite scale={[5, 1.25, 1]}>
+    <group ref={group} position={[x, 4.3, z]}>
+      <sprite scale={[4.2, 1.05, 1]}>
         <spriteMaterial map={sprite} transparent depthTest={false} />
       </sprite>
     </group>
