@@ -63,8 +63,22 @@ export class InputManager {
   private lookX = 0
   private lookY = 0
   private attached: HTMLElement | null = null
+  private dragButton = -1
+  private dragDistance = 0
+  /** Frames of fire left to deliver from a tap, in drag-to-look mode. */
+  private tapFire = 0
+  private lockProbe = 0
   /** Set while the pointer is locked; otherwise the mouse does not turn the camera. */
   locked = false
+  /**
+   * Whether this page is allowed to lock the pointer at all.
+   *
+   * In a sandboxed iframe — which is where an embedded build ends up — the
+   * request is simply refused, and a game that assumes it succeeded has no
+   * camera. When it is refused the manager falls back to drag-to-look: hold a
+   * button and move to turn, and a left click that did not drag is a shot.
+   */
+  lockAvailable = true
   /**
    * False whenever a menu is up.
    *
@@ -93,6 +107,7 @@ export class InputManager {
     window.addEventListener('mousemove', this.onMouseMove)
     el.addEventListener('contextmenu', this.onContextMenu)
     document.addEventListener('pointerlockchange', this.onPointerLockChange)
+    document.addEventListener('pointerlockerror', this.onPointerLockError)
   }
 
   detach(): void {
@@ -103,6 +118,8 @@ export class InputManager {
     window.removeEventListener('mouseup', this.onMouseUp)
     window.removeEventListener('mousemove', this.onMouseMove)
     document.removeEventListener('pointerlockchange', this.onPointerLockChange)
+    document.removeEventListener('pointerlockerror', this.onPointerLockError)
+    window.clearTimeout(this.lockProbe)
     if (el) {
       el.removeEventListener('mousedown', this.onMouseDown)
       el.removeEventListener('contextmenu', this.onContextMenu)
@@ -125,8 +142,28 @@ export class InputManager {
   }
 
   requestLock(): void {
-    if (!this.enabled) return
-    this.attached?.requestPointerLock?.()
+    if (!this.enabled || !this.attached) return
+    try {
+      /* Modern browsers return a promise here, and a refusal inside a sandboxed
+         frame arrives as a rejection rather than a throw — so without this it
+         surfaces as an unhandled rejection in the console and the flag never
+         flips. */
+      const pending = this.attached.requestPointerLock?.() as unknown as Promise<void> | undefined
+      if (pending && typeof pending.catch === 'function') {
+        pending.catch(() => {
+          this.lockAvailable = false
+        })
+      }
+    } catch {
+      this.lockAvailable = false
+      return
+    }
+    // A refusal in an iframe arrives as an error event, or as nothing at all.
+    // Either way, if we are not locked shortly after asking, we are not getting it.
+    window.clearTimeout(this.lockProbe)
+    this.lockProbe = window.setTimeout(() => {
+      if (!this.locked) this.lockAvailable = false
+    }, 900)
   }
 
   exitLock(): void {
@@ -153,10 +190,20 @@ export class InputManager {
   private onBlur = () => {
     // Alt-tabbing away must not leave him sprinting into a canyon.
     this.held.clear()
+    this.dragButton = -1
   }
 
   private onMouseDown = (e: MouseEvent) => {
     if (!this.enabled) return
+
+    // Drag-to-look, for pages that are not allowed to lock the pointer.
+    if (!this.locked && !this.lockAvailable) {
+      this.dragButton = e.button
+      this.dragDistance = 0
+      if (e.button === 2) this.held.add('aim')
+      return
+    }
+
     if (e.button === 0) {
       this.held.add('fire')
       this.edges.add('fire')
@@ -166,14 +213,34 @@ export class InputManager {
   }
 
   private onMouseUp = (e: MouseEvent) => {
+    if (this.dragButton >= 0) {
+      // A left press that barely moved was a shot, not a look.
+      if (e.button === 0 && this.dragDistance < 8) this.tapFire = 1
+      if (e.button === 2) this.held.delete('aim')
+      this.dragButton = -1
+      return
+    }
     if (e.button === 0) this.held.delete('fire')
     if (e.button === 2) this.held.delete('aim')
   }
 
   private onMouseMove = (e: MouseEvent) => {
-    if (!this.locked || !this.enabled) return
+    if (!this.enabled) return
+    if (this.locked) {
+      this.lookX += e.movementX
+      this.lookY += e.movementY
+      return
+    }
+    if (this.dragButton < 0) return
+    // Ignore the jump that comes from the cursor re-entering the window.
+    if (Math.abs(e.movementX) > 180 || Math.abs(e.movementY) > 180) return
+    this.dragDistance += Math.abs(e.movementX) + Math.abs(e.movementY)
     this.lookX += e.movementX
     this.lookY += e.movementY
+  }
+
+  private onPointerLockError = () => {
+    this.lockAvailable = false
   }
 
   private onContextMenu = (e: Event) => {
@@ -182,7 +249,8 @@ export class InputManager {
 
   private onPointerLockChange = () => {
     this.locked = document.pointerLockElement === this.attached
-    if (!this.locked) this.held.clear()
+    if (this.locked) this.lockAvailable = true
+    else this.held.clear()
   }
 
   /* -------------------------------------------------------------- output */
@@ -211,7 +279,7 @@ export class InputManager {
   }
 
   isHeld(action: Action): boolean {
-    if (action === 'fire' && this.touchFire) return true
+    if (action === 'fire' && (this.touchFire || this.tapFire > 0)) return true
     if (action === 'aim' && this.touchAim) return true
     return this.held.has(action)
   }
@@ -219,6 +287,7 @@ export class InputManager {
   /** Call once per rendered frame, after building the input frame. */
   endFrame(): void {
     this.edges.clear()
+    if (this.tapFire > 0) this.tapFire--
   }
 
   /**

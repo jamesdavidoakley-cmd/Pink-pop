@@ -113,6 +113,12 @@ function GameShell() {
   const begin = useCallback(() => {
     setBriefing(false)
     lockGrace.current = performance.now() + 1800
+    /* Enable before asking. React has not re-rendered yet, so the effect that
+       normally lifts the overlay lock has not run — and a disabled manager
+       silently drops the request, which meant the pointer was only ever
+       acquired on the player's first click in the world, and a page that is
+       going to refuse it did not get the chance to say so until then. */
+    input.setEnabled(true)
     audio.ensure()
     audio.resume()
     audio.setMuted(save.muted)
@@ -142,7 +148,18 @@ function GameShell() {
       if (briefing) return
       if (e.code === 'Tab') {
         e.preventDefault()
-        setMapOpen(!useGame.getState().mapOpen)
+        const opening = !useGame.getState().mapOpen
+        /* Opening the map releases the pointer so the cursor comes back, and
+           that release is indistinguishable from the player alt-tabbing away —
+           without this grace, Tab opened the map *and* paused the game behind
+           it, and closing the map left you staring at the pause screen. */
+        lockGrace.current = performance.now() + 1200
+        setMapOpen(opening)
+        if (!opening) {
+          window.setTimeout(() => {
+            if (useGame.getState().screen === 'playing') input.requestLock()
+          }, 30)
+        }
       }
       if (e.code === 'Escape') {
         setScreen(useGame.getState().screen === 'paused' ? 'playing' : 'paused')
@@ -153,7 +170,7 @@ function GameShell() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [playing, briefing, setMapOpen, setScreen])
+  }, [playing, briefing, setMapOpen, setScreen, input])
 
   // Losing the pointer lock means the player has tabbed away or hit Escape.
   // Carrying on simulating a twelve-animal herd they cannot see is not fair.
@@ -161,6 +178,12 @@ function GameShell() {
     if (!playing) return
     const onLockChange = () => {
       if (performance.now() < lockGrace.current) return
+      // On a page that is not allowed to lock the pointer at all — an embed in
+      // a sandboxed frame — losing the lock is the permanent state of affairs,
+      // not the player walking away, and pausing on it would end the drive.
+      if (!input.lockAvailable) return
+      // An overlay we opened ourselves is not the player walking away either.
+      if (useGame.getState().mapOpen) return
       if (!document.pointerLockElement && !briefing && useGame.getState().screen === 'playing') {
         setScreen('paused')
       }
@@ -173,11 +196,12 @@ function GameShell() {
       document.removeEventListener('pointerlockchange', onLockChange)
       document.removeEventListener('pointerlockerror', onLockError)
     }
-  }, [playing, briefing, setScreen])
+  }, [playing, briefing, setScreen, input])
 
   const resume = useCallback(() => {
     setScreen('playing')
     lockGrace.current = performance.now() + 1800
+    input.setEnabled(true)
     if (container.current) input.attach(container.current)
     /* Ask now, and again twice over the next second. The first request usually
        lands, but if the player left with Escape the browser will refuse it for
@@ -240,12 +264,8 @@ function GameShell() {
               // triangle budget. Software rendering cannot tell us the frame
               // rate on real hardware, but it can tell us what we are asking of
               // it, and that is the number worth watching.
-              ;(window as unknown as { __flesh?: unknown }).__flesh = {
-                gl,
-                scene,
-                cam,
-                store: useGame,
-              }
+              const handle = ((window as unknown as { __flesh?: Record<string, unknown> }).__flesh ??= {})
+              Object.assign(handle, { gl, scene, cam, camera, input, store: useGame })
             }}
           >
             <Scene
@@ -260,7 +280,7 @@ function GameShell() {
             />
           </Canvas>
 
-          {!briefing && !mapOpen && <HUD world={world} camera={camera} />}
+          {!briefing && !mapOpen && <HUD world={world} camera={camera} input={input} />}
           {mapOpen && <HerdMap world={world} camera={camera} />}
           <TouchControls input={input} active={!briefing && screen === 'playing'} />
 

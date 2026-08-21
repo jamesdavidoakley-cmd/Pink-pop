@@ -19,7 +19,15 @@ import { useGame } from '@/state/store'
 
 const EDGE_WARN_RANGE = 30
 
-export function HUD({ world, camera }: { world: World; camera: CameraState }) {
+export function HUD({
+  world,
+  camera,
+  input,
+}: {
+  world: World
+  camera: CameraState
+  input?: { lockAvailable: boolean }
+}) {
   const headRef = useRef<HTMLDivElement>(null)
   const headIcons = useRef<HTMLDivElement>(null)
   const calmBar = useRef<HTMLDivElement>(null)
@@ -40,6 +48,7 @@ export function HUD({ world, camera }: { world: World; camera: CameraState }) {
   const closeout = useRef<HTMLDivElement>(null)
   const gateWarn = useRef<HTMLDivElement>(null)
   const bikePrompt = useRef<HTMLDivElement>(null)
+  const dragHint = useRef<HTMLDivElement>(null)
 
   const upgrades = world.upgrades
 
@@ -158,6 +167,14 @@ export function HUD({ world, camera }: { world: World; camera: CameraState }) {
         edges.current.innerHTML = marks.join('')
       }
 
+      /* ------------------------------------------- the look control */
+      if (dragHint.current) {
+        // Only shown where the page cannot lock the pointer, and only for the
+        // first few seconds — after that the player already knows.
+        const needed = input ? !input.lockAvailable && world.time < 14 : false
+        dragHint.current.style.display = needed ? 'block' : 'none'
+      }
+
       /* --------------------------------------------- the hover bike */
       if (bikePrompt.current) {
         bikePrompt.current.style.display = canMountBike(world) ? 'block' : 'none'
@@ -198,7 +215,7 @@ export function HUD({ world, camera }: { world: World; camera: CameraState }) {
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [world, camera, upgrades])
+  }, [world, camera, upgrades, input])
 
   return (
     <div className="pointer-events-none absolute inset-0 select-none text-paper">
@@ -281,6 +298,16 @@ export function HUD({ world, camera }: { world: World; camera: CameraState }) {
       {/* Directional threat marks. This matters more than usual here, because
           the job forces you to look away from the thing hunting you. */}
       <div ref={edges} className="absolute inset-0" />
+
+      <div
+        ref={dragHint}
+        className="absolute left-1/2 top-16 -translate-x-1/2 text-center"
+        style={{ display: 'none' }}
+      >
+        <div className="panel px-3 py-1.5 text-xs tracking-[0.18em]">
+          DRAG TO LOOK <span className="opacity-60">·</span> CLICK TO FIRE
+        </div>
+      </div>
 
       <div
         ref={bikePrompt}
