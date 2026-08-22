@@ -44,3 +44,17 @@ Dev conveniences: `?level=<id>` boots straight into a level (e.g. `?level=playgr
 | `node scripts/playtest-w1.mjs <url>` | the spoken warm failure loop (wrong → hint → teach → fresh values) |
 | `node scripts/bruno-check.mjs <url>` | Bruno beatable on Explorer by a cautious button-masher |
 | `node scripts/cogwheel-check.mjs <url>` | shield gimmick → gear puzzle → victory → café fills |
+
+---
+
+## Also in this repo: Shoot The Day
+
+`shoot-the-day/` is a separate, self-contained browser game — a reportage wedding photography
+trainer (React + TypeScript + Tailwind, everything drawn procedurally on a 2D canvas). It has its
+own `package.json` and does not touch the platformer above.
+
+```bash
+cd shoot-the-day && npm install && npm run dev
+```
+
+See [`shoot-the-day/README.md`](shoot-the-day/README.md).

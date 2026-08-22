@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #14110d;
+  --color-paper: #efe7da;
+  --color-warm: #d9cdbb;
+  --color-accent: #c4614e;
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: #14110d;
+  color: #efe7da;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+}
