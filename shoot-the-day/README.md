@@ -20,6 +20,7 @@ npm run dev        # → http://localhost:5174
 | `npm run ci` | typecheck + test + build |
 | `npm run shots -- <url> <dir>` | Headless play-through; screenshots each stage, fails on any console error |
 | `npm run scenes -- <url> <dir>` | One screenshot per scene from a good vantage point |
+| `npm run bundle` | Folds the build into one self-contained `dist-single/shoot-the-day.html` — no external requests, droppable anywhere |
 
 ## The screen
 

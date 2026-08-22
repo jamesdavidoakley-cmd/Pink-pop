@@ -7,7 +7,9 @@
   --color-accent: #c4614e;
 }
 
-html, body, #root { height: 100%; }
+html, body { height: 100%; }
+/* fixed rather than 100% height: the game fills whatever frame it is dropped into */
+#root { position: fixed; inset: 0; }
 body {
   margin: 0;
   background: #14110d;
