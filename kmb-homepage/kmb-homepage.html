@@ -259,6 +259,54 @@
     line-height: 1.6;
   }
 
+  /* ================= SUPPORTERS ================= */
+
+  .kmb-supporters {
+    background: var(--kmb-ground);
+    border-bottom: 1px solid var(--kmb-tint);
+    padding-block: 2.6rem 2.8rem;
+    text-align: center;
+  }
+  .kmb-supporters .kmb-eyebrow { color: var(--kmb-body); }
+  .kmb-logo-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1.4rem clamp(2rem, 5vw, 4.5rem);
+    margin-top: 1.8rem;
+  }
+  .kmb-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 76px;
+  }
+  .kmb-logo img {
+    max-height: 64px;
+    max-width: 150px;
+    width: auto;
+    border-radius: 10px;
+    /* Grayscale keeps mismatched logos visually in sync; colour returns on hover */
+    filter: grayscale(1);
+    opacity: 0.6;
+    transition: filter .25s ease, opacity .25s ease;
+  }
+  .kmb-logo:hover img { filter: grayscale(0); opacity: 1; }
+  /* Shown automatically only while a logo image is missing */
+  .kmb-logo-name {
+    font-family: var(--kmb-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--kmb-body);
+    border: 1px dashed var(--kmb-tint);
+    border-radius: 999px;
+    padding: 0.9em 1.6em;
+    white-space: nowrap;
+  }
+  @media (prefers-reduced-motion: reduce) { .kmb-logo img { transition: none; } }
+
   /* ================= LIGHT SECTIONS ================= */
 
   .kmb-section { padding-block: clamp(64px, 8vw, 104px); }
@@ -522,6 +570,38 @@
         <div class="kmb-stat">
           <div class="kmb-stat-num">100%</div>
           <div class="kmb-stat-label">Of donations fund the research</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SUPPORTERS ============
+       Upload each logo to WordPress (Media → Library → Add New),
+       click it, copy its File URL, and paste it into the matching
+       src="" below. Until then a neat named chip shows in its place. -->
+  <section class="kmb-supporters" aria-label="Our supporters">
+    <div class="kmb-wrap">
+      <p class="kmb-eyebrow">Proud to be supported by</p>
+      <div class="kmb-logo-row">
+        <div class="kmb-logo">
+          <img src="/wp-content/uploads/REPLACE-sussex-business-awards.png" alt="Sussex Business Awards 2026"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
+          <span class="kmb-logo-name" style="display:none">Sussex Business Awards</span>
+        </div>
+        <div class="kmb-logo">
+          <img src="/wp-content/uploads/REPLACE-tesco-community-grants.png" alt="Tesco Community Grants"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
+          <span class="kmb-logo-name" style="display:none">Tesco Community Grants</span>
+        </div>
+        <div class="kmb-logo">
+          <img src="/wp-content/uploads/REPLACE-the-body-shop.png" alt="The Body Shop"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
+          <span class="kmb-logo-name" style="display:none">The Body Shop</span>
+        </div>
+        <div class="kmb-logo">
+          <img src="/wp-content/uploads/REPLACE-penny-farthing-club.png" alt="Penny Farthing Club"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
+          <span class="kmb-logo-name" style="display:none">Penny Farthing Club</span>
         </div>
       </div>
     </div>
