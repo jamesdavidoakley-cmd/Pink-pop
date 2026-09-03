@@ -10,6 +10,30 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 
 <style>
+  /* ---- SITE HEADER (theme menu): tighter + sticky ----
+     These rules target the standard Elementor / WordPress header
+     wrappers. If your header uses different markup they simply do
+     nothing — delete this block to undo. */
+  .elementor-location-header,
+  header.site-header,
+  #masthead {
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    background: #ffffff;
+    box-shadow: 0 1px 14px rgba(0, 48, 135, 0.08);
+  }
+  body.admin-bar .elementor-location-header,
+  body.admin-bar header.site-header,
+  body.admin-bar #masthead { top: 32px; }
+  .elementor-location-header .e-con,
+  .elementor-location-header .elementor-section > .elementor-container {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    min-height: 0;
+  }
+  .elementor-location-header img { max-height: 64px; width: auto; }
+
   .kmb-home {
     /* ---- Brand tokens: edit colours here in one place ---- */
     --kmb-night:     #003087;  /* NHS dark blue — hero / closing band */
@@ -291,6 +315,16 @@
   .kmb-logo--tesco img    { max-height: 80px; }  /* file has internal padding */
   .kmb-logo--bodyshop img { max-height: 68px; }
   .kmb-logo--pfc img      { max-height: 56px; border-radius: 50%; }
+  /* Larger logos on desktop screens */
+  @media (min-width: 1100px) {
+    .kmb-logo { height: 108px; }
+    .kmb-logo img { max-height: 84px; max-width: 200px; }
+    .kmb-logo--sussex img   { max-height: 74px; }
+    .kmb-logo--tesco img    { max-height: 104px; }
+    .kmb-logo--bodyshop img { max-height: 88px; }
+    .kmb-logo--pfc img      { max-height: 74px; }
+    .kmb-press-img { max-height: 54px; max-width: 170px; }
+  }
   .kmb-logo img {
     max-height: 64px;
     max-width: 150px;
