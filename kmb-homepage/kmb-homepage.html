@@ -93,6 +93,9 @@
   .kmb-btn--solid:hover { background: #d6ecfb; color: var(--kmb-blue-deep); }
   .kmb-btn--ghost { border: 1.5px solid rgba(255, 255, 255, 0.5); color: #ffffff; }
   .kmb-btn--ghost:hover { border-color: var(--kmb-trace); color: #ffffff; background: rgba(65, 182, 230, 0.15); }
+  /* Blue button for light sections */
+  .kmb-btn--blue { background: var(--kmb-blue); color: #ffffff; }
+  .kmb-btn--blue:hover { background: var(--kmb-blue-deep); color: #ffffff; }
 
   /* ================= HERO — night ================= */
 
@@ -383,6 +386,15 @@
   }
   .kmb-project h3 { font-size: 1.45rem; font-weight: 600; margin-top: 0.9rem; }
   .kmb-project p { margin-top: 0.9rem; font-size: 1rem; }
+  .kmb-project-note {
+    margin-top: 1.2rem;
+    font-family: var(--kmb-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--kmb-blue);
+  }
   .kmb-project-tag {
     display: inline-block;
     font-family: var(--kmb-mono);
@@ -447,6 +459,23 @@
   .kmb-help-card h3::after { content: " →"; color: var(--kmb-blue); }
   .kmb-help-card p { margin-top: 0.7rem; font-size: 0.94rem; color: var(--kmb-body); }
   @media (prefers-reduced-motion: reduce) { .kmb-help-card:hover { transform: none; } }
+
+  /* ================= NEWSLETTER ================= */
+
+  .kmb-newsletter {
+    background: var(--kmb-card);
+    border-top: 1px solid var(--kmb-tint);
+    text-align: center;
+  }
+  .kmb-newsletter .kmb-wrap { padding-block: clamp(56px, 7vw, 84px); }
+  .kmb-newsletter h2 {
+    font-size: clamp(1.7rem, 3vw, 2.2rem);
+    font-weight: 600;
+    max-width: 22em;
+    margin: 1rem auto 0;
+  }
+  .kmb-newsletter p { max-width: 36em; margin: 1rem auto 0; }
+  .kmb-newsletter .kmb-btn { margin-top: 1.8rem; }
 
   /* ================= CLOSING BAND ================= */
 
@@ -666,21 +695,24 @@
           <span class="kmb-project-tag">Treatment</span>
           <h3>The Breathing Pacemaker</h3>
           <p>
-            A fully implantable phrenic-nerve pacing system — the world&rsquo;s first
-            treatment designed specifically for CCHS. Like a cardiac pacemaker for
-            breathing, it will sense what the body needs and adjust the rate and
-            depth of every breath automatically, with no wires and no external kit.
+            A fully implantable biofeedback phrenic-nerve pacing system — the
+            world&rsquo;s first treatment designed specifically for CCHS. Like a
+            cardiac pacemaker for breathing, it will sense what the body needs and
+            adjust the rate and depth of every breath automatically — no wires, no
+            external kit, no mechanical ventilator.
           </p>
+          <p class="kmb-project-note">First patent filed</p>
         </article>
         <article class="kmb-project">
           <span class="kmb-project-tag">Monitoring</span>
           <h3>VENTO</h3>
           <p>
-            A pioneering wearable, non-invasive CO&#8322; monitor. VENTO is built to
-            read the one signal that matters most to a child with CCHS — carbon
-            dioxide — continuously, comfortably and without needles or hospital
-            hardware.
+            The world&rsquo;s smallest portable, non-invasive CO&#8322; wearable —
+            built by Keep Me Breathing. VENTO reads the one signal that matters most
+            to a child with CCHS — carbon dioxide — continuously, comfortably and
+            without needles or hospital hardware.
           </p>
+          <p class="kmb-project-note">Patent filed</p>
         </article>
       </div>
       <div class="kmb-arrow-links">
@@ -707,9 +739,10 @@
           <h2>Casper &amp; Beau</h2>
           <p class="kmb-section-lede">
             Keep Me Breathing was set up by Casper&rsquo;s parents after he was born
-            with CCHS. Casper from Hove, Beau from Arundel — and every child like
-            them around the world — are who this research is for. When our mission
-            is complete, their lives will be transformed.
+            with CCHS and a complex neuroblastoma. Casper from Hove, Beau from
+            Arundel — and every child like them around the world — are who this
+            research is for. When our mission is complete, their lives will be
+            transformed.
           </p>
           <div class="kmb-arrow-links">
             <a class="kmb-arrow-link" href="/caspersstory/">Read Casper&rsquo;s story</a>
@@ -746,6 +779,23 @@
     </div>
   </section>
 
+  <!-- ============ NEWSLETTER ============
+       If you already have a signup form (Mailchimp, MC4WP shortcode,
+       etc.), keep this band for the heading and place your existing
+       form block or shortcode in a separate block directly BELOW this
+       Custom HTML block — shortcodes don't run inside Custom HTML. -->
+  <section class="kmb-newsletter">
+    <div class="kmb-wrap">
+      <p class="kmb-eyebrow">Stay in the loop</p>
+      <h2>Sign up and receive the latest KMB treatment updates</h2>
+      <p>
+        Research milestones, technology updates and news from the Keep Me
+        Breathing team — straight to your inbox.
+      </p>
+      <a class="kmb-btn kmb-btn--blue" href="/updates/">Get the latest updates</a>
+    </div>
+  </section>
+
   <!-- ============ CLOSING ============ -->
   <section class="kmb-close">
     <div class="kmb-wrap">
@@ -760,6 +810,12 @@
         <a href="/keep-me-breathing-team-and-advisory-board/">Meet the team</a> &nbsp;·&nbsp;
         <a href="/events/">Events</a> &nbsp;·&nbsp;
         <a href="/keep-me-breathing-press/">Press</a>
+        <br>
+        <a href="https://www.facebook.com/keepmebreathingfb">Facebook</a> &nbsp;·&nbsp;
+        <a href="https://www.instagram.com/keepmebreathinginsta/">Instagram</a> &nbsp;·&nbsp;
+        <a href="https://twitter.com/keepmebreathtwt">X / Twitter</a> &nbsp;·&nbsp;
+        <a href="https://www.youtube.com/channel/UCkoubPAcZGiVuyfKIxGU27Q">YouTube</a> &nbsp;·&nbsp;
+        <a href="https://uk.linkedin.com/company/keep-me-breathing">LinkedIn</a>
       </p>
     </div>
   </section>
@@ -776,7 +832,13 @@
   "url": "https://keepmebreathing.com/",
   "description": "Keep Me Breathing is a UK registered charity (no. 1201757) driving research for CCHS (Congenital Central Hypoventilation Syndrome) treatment worldwide. 100% of donations fund research.",
   "foundingLocation": "Brighton, UK",
-  "sameAs": ["https://uk.linkedin.com/company/keep-me-breathing"]
+  "sameAs": [
+    "https://uk.linkedin.com/company/keep-me-breathing",
+    "https://www.facebook.com/keepmebreathingfb",
+    "https://www.instagram.com/keepmebreathinginsta/",
+    "https://twitter.com/keepmebreathtwt",
+    "https://www.youtube.com/channel/UCkoubPAcZGiVuyfKIxGU27Q"
+  ]
 }
 </script>
 
