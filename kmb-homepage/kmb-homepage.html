@@ -12,18 +12,18 @@
 <style>
   .kmb-home {
     /* ---- Brand tokens: edit colours here in one place ---- */
-    --kmb-night:     #111533;  /* hero / closing band  */
-    --kmb-night-2:   #1a1f45;  /* stat strip on night  */
-    --kmb-ink:       #262a45;  /* headings on light    */
-    --kmb-body:      #4a4e68;  /* body text on light   */
-    --kmb-ground:    #fdf6f9;  /* blush page ground    */
-    --kmb-card:      #ffffff;
-    --kmb-rose:      #f3d7e3;  /* soft borders / tints */
-    --kmb-pink:      #e6217e;  /* KMB pink             */
-    --kmb-pink-deep: #c11367;
-    --kmb-trace:     #7fe3d2;  /* CO2 monitor trace    */
-    --kmb-light:     #f7eef4;  /* text on night        */
-    --kmb-light-mut: #b9bcd6;  /* muted text on night  */
+    --kmb-night:     #003087;  /* NHS dark blue — hero / closing band */
+    --kmb-night-2:   #00276e;  /* stat strip on night  */
+    --kmb-ink:       #14264e;  /* headings on light    */
+    --kmb-body:      #3f5372;  /* body text on light   */
+    --kmb-ground:    #ffffff;  /* white page ground    */
+    --kmb-card:      #f3f8fd;  /* light blue card tint */
+    --kmb-tint:      #d3e2f2;  /* soft borders / tints */
+    --kmb-blue:      #005eb8;  /* KMB / NHS blue       */
+    --kmb-blue-deep: #004b96;
+    --kmb-trace:     #41b6e6;  /* NHS light blue — CO2 monitor trace */
+    --kmb-light:     #f2f7fd;  /* text on night        */
+    --kmb-light-mut: #b6cbe8;  /* muted text on night  */
 
     --kmb-serif: "Fraunces", Georgia, "Times New Roman", serif;
     --kmb-sans:  "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -62,10 +62,11 @@
   .kmb-home a { text-decoration: none; }
   .kmb-home a:focus-visible,
   .kmb-home .kmb-btn:focus-visible {
-    outline: 3px solid var(--kmb-pink);
+    outline: 3px solid var(--kmb-blue);
     outline-offset: 3px;
     border-radius: 4px;
   }
+  .kmb-hero a:focus-visible, .kmb-close a:focus-visible { outline-color: #ffffff; }
 
   .kmb-eyebrow {
     font-family: var(--kmb-mono);
@@ -73,7 +74,7 @@
     font-weight: 500;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--kmb-pink);
+    color: var(--kmb-blue);
   }
 
   .kmb-btn {
@@ -87,18 +88,19 @@
     transition: background-color .18s ease, color .18s ease, transform .18s ease;
   }
   .kmb-btn:hover { transform: translateY(-2px); }
-  .kmb-btn--solid { background: var(--kmb-pink); color: #ffffff; }
-  .kmb-btn--solid:hover { background: var(--kmb-pink-deep); color: #ffffff; }
-  .kmb-btn--ghost { border: 1.5px solid rgba(247, 238, 244, 0.45); color: var(--kmb-light); }
-  .kmb-btn--ghost:hover { border-color: var(--kmb-trace); color: var(--kmb-trace); }
+  /* Solid buttons sit on the dark blue bands: white keeps them loudest */
+  .kmb-btn--solid { background: #ffffff; color: var(--kmb-blue); }
+  .kmb-btn--solid:hover { background: #d6ecfb; color: var(--kmb-blue-deep); }
+  .kmb-btn--ghost { border: 1.5px solid rgba(255, 255, 255, 0.5); color: #ffffff; }
+  .kmb-btn--ghost:hover { border-color: var(--kmb-trace); color: #ffffff; background: rgba(65, 182, 230, 0.15); }
 
   /* ================= HERO — night ================= */
 
   .kmb-hero {
     position: relative;
     background:
-      radial-gradient(1100px 520px at 82% 18%, rgba(230, 33, 126, 0.16), transparent 62%),
-      radial-gradient(900px 600px at 8% 90%, rgba(127, 227, 210, 0.07), transparent 60%),
+      radial-gradient(1100px 520px at 82% 18%, rgba(0, 114, 206, 0.45), transparent 62%),
+      radial-gradient(900px 600px at 8% 90%, rgba(65, 182, 230, 0.12), transparent 60%),
       var(--kmb-night);
   }
 
@@ -121,7 +123,7 @@
   }
   .kmb-hero h1 em {
     font-style: italic;
-    color: var(--kmb-pink);
+    color: var(--kmb-trace);
   }
 
   .kmb-hero-lede {
@@ -145,14 +147,14 @@
     gap: 12px;
     margin-top: 2.4rem;
     padding-top: 1.6rem;
-    border-top: 1px solid rgba(247, 238, 244, 0.14);
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
     max-width: 38em;
   }
   .kmb-hero-pledge .kmb-pledge-num {
     font-family: var(--kmb-serif);
     font-weight: 700;
     font-size: 1.9rem;
-    color: var(--kmb-pink);
+    color: #ffffff;
     white-space: nowrap;
   }
   .kmb-hero-pledge p { font-size: 0.98rem; color: var(--kmb-light-mut); }
@@ -175,12 +177,12 @@
     animation: kmb-inhale 4.8s ease-in-out infinite;
   }
   .kmb-breath::before {
-    border: 1.5px solid rgba(127, 227, 210, 0.55);
-    box-shadow: 0 0 70px rgba(127, 227, 210, 0.13), inset 0 0 50px rgba(127, 227, 210, 0.07);
+    border: 1.5px solid rgba(65, 182, 230, 0.6);
+    box-shadow: 0 0 70px rgba(65, 182, 230, 0.16), inset 0 0 50px rgba(65, 182, 230, 0.08);
   }
   .kmb-breath::after {
     inset: 14%;
-    border: 1px solid rgba(230, 33, 126, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.45);
     animation-delay: -0.35s;
   }
   .kmb-breath-label {
@@ -188,7 +190,7 @@
     font-size: 0.72rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: rgba(247, 238, 244, 0.55);
+    color: rgba(255, 255, 255, 0.6);
     text-align: center;
     line-height: 2;
   }
@@ -227,7 +229,7 @@
 
   .kmb-stats {
     background: var(--kmb-night-2);
-    border-top: 1px solid rgba(247, 238, 244, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
   }
   .kmb-stats-grid {
     display: grid;
@@ -236,7 +238,7 @@
   }
   .kmb-stat {
     padding: 1.9rem clamp(12px, 2vw, 28px);
-    border-left: 1px solid rgba(247, 238, 244, 0.08);
+    border-left: 1px solid rgba(255, 255, 255, 0.14);
   }
   .kmb-stat:first-child { border-left: none; }
   .kmb-stat-num {
@@ -246,7 +248,7 @@
     font-size: clamp(1.6rem, 2.6vw, 2.2rem);
     color: var(--kmb-light);
   }
-  .kmb-stat-num sup { font-size: 0.55em; color: var(--kmb-pink); }
+  .kmb-stat-num sup { font-size: 0.55em; color: var(--kmb-trace); }
   .kmb-stat-label {
     font-family: var(--kmb-mono);
     font-size: 0.72rem;
@@ -289,7 +291,7 @@
   }
   .kmb-fact {
     background: var(--kmb-card);
-    border: 1px solid var(--kmb-rose);
+    border: 1px solid var(--kmb-tint);
     border-radius: 14px;
     padding: 1.2rem 1.4rem;
     font-size: 0.98rem;
@@ -301,7 +303,7 @@
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--kmb-pink);
+    color: var(--kmb-blue);
     margin-bottom: 0.35rem;
   }
   .kmb-arrow-links {
@@ -312,13 +314,13 @@
   }
   .kmb-arrow-link {
     font-weight: 600;
-    color: var(--kmb-pink);
+    color: var(--kmb-blue);
   }
   .kmb-arrow-link::after { content: " →"; }
-  .kmb-arrow-link:hover { color: var(--kmb-pink-deep); text-decoration: underline; }
+  .kmb-arrow-link:hover { color: var(--kmb-blue-deep); text-decoration: underline; }
 
   /* Research cards */
-  .kmb-research { background: var(--kmb-card); border-block: 1px solid var(--kmb-rose); }
+  .kmb-research { background: var(--kmb-card); border-block: 1px solid var(--kmb-tint); }
   .kmb-projects {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -327,7 +329,7 @@
   }
   .kmb-project {
     background: var(--kmb-ground);
-    border: 1px solid var(--kmb-rose);
+    border: 1px solid var(--kmb-tint);
     border-radius: 18px;
     padding: clamp(1.6rem, 3vw, 2.4rem);
   }
@@ -341,7 +343,7 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--kmb-night);
-    background: var(--kmb-rose);
+    background: var(--kmb-tint);
     border-radius: 999px;
     padding: 0.45em 1em;
   }
@@ -350,7 +352,7 @@
   .kmb-story blockquote {
     margin: 0;
     padding: 0 0 0 clamp(20px, 3vw, 34px);
-    border-left: 3px solid var(--kmb-pink);
+    border-left: 3px solid var(--kmb-blue);
     align-self: center;
   }
   .kmb-story blockquote p {
@@ -383,18 +385,18 @@
   .kmb-help-card {
     display: block;
     background: var(--kmb-card);
-    border: 1px solid var(--kmb-rose);
+    border: 1px solid var(--kmb-tint);
     border-radius: 16px;
     padding: 1.6rem 1.5rem 1.7rem;
     transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
   }
   .kmb-help-card:hover {
-    border-color: var(--kmb-pink);
+    border-color: var(--kmb-blue);
     transform: translateY(-4px);
-    box-shadow: 0 14px 34px rgba(38, 42, 69, 0.09);
+    box-shadow: 0 14px 34px rgba(0, 48, 135, 0.12);
   }
   .kmb-help-card h3 { font-size: 1.22rem; font-weight: 600; }
-  .kmb-help-card h3::after { content: " →"; color: var(--kmb-pink); }
+  .kmb-help-card h3::after { content: " →"; color: var(--kmb-blue); }
   .kmb-help-card p { margin-top: 0.7rem; font-size: 0.94rem; color: var(--kmb-body); }
   @media (prefers-reduced-motion: reduce) { .kmb-help-card:hover { transform: none; } }
 
@@ -402,7 +404,7 @@
 
   .kmb-close {
     background:
-      radial-gradient(900px 460px at 50% 120%, rgba(230, 33, 126, 0.2), transparent 65%),
+      radial-gradient(900px 460px at 50% 120%, rgba(0, 114, 206, 0.5), transparent 65%),
       var(--kmb-night);
     text-align: center;
   }
@@ -441,7 +443,7 @@
     .kmb-breath { display: none; }
     .kmb-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .kmb-stat:nth-child(3) { border-left: none; }
-    .kmb-stat { border-top: 1px solid rgba(247, 238, 244, 0.08); }
+    .kmb-stat { border-top: 1px solid rgba(255, 255, 255, 0.14); }
     .kmb-stat:nth-child(-n+2) { border-top: none; }
     .kmb-cols { grid-template-columns: 1fr; }
     .kmb-projects { grid-template-columns: 1fr; }
@@ -451,7 +453,7 @@
     .kmb-help-grid { grid-template-columns: 1fr; }
     .kmb-stats-grid { grid-template-columns: 1fr; }
     .kmb-stat { border-left: none; }
-    .kmb-stat:nth-child(2) { border-top: 1px solid rgba(247, 238, 244, 0.08); }
+    .kmb-stat:nth-child(2) { border-top: 1px solid rgba(255, 255, 255, 0.14); }
   }
 </style>
 
@@ -490,7 +492,7 @@
     <div class="kmb-trace" aria-hidden="true">
       <svg viewBox="0 0 2880 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <path id="kmb-wave" fill="none" stroke="#7fe3d2" stroke-width="1.5"
+          <path id="kmb-wave" fill="none" stroke="#41b6e6" stroke-width="1.5"
                 d="M0,72 h64 l14,-46 96,-6 14,52 h52 l14,-46 96,-6 14,52 h52 l14,-46 96,-6 14,52 h52 l14,-46 96,-6 14,52 h64" />
         </defs>
         <use href="#kmb-wave" x="0" />
