@@ -1,0 +1,715 @@
+<!-- ============================================================
+     KEEP ME BREATHING — HOMEPAGE
+     Paste this entire file into a WordPress "Custom HTML" block
+     on the homepage (use a full-width page template and hide the
+     theme's page title — see notes at the bottom of this file).
+     All styles are scoped under .kmb-home and will not affect
+     the rest of your theme.
+     ============================================================ -->
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  .kmb-home {
+    /* ---- Brand tokens: edit colours here in one place ---- */
+    --kmb-night:     #111533;  /* hero / closing band  */
+    --kmb-night-2:   #1a1f45;  /* stat strip on night  */
+    --kmb-ink:       #262a45;  /* headings on light    */
+    --kmb-body:      #4a4e68;  /* body text on light   */
+    --kmb-ground:    #fdf6f9;  /* blush page ground    */
+    --kmb-card:      #ffffff;
+    --kmb-rose:      #f3d7e3;  /* soft borders / tints */
+    --kmb-pink:      #e6217e;  /* KMB pink             */
+    --kmb-pink-deep: #c11367;
+    --kmb-trace:     #7fe3d2;  /* CO2 monitor trace    */
+    --kmb-light:     #f7eef4;  /* text on night        */
+    --kmb-light-mut: #b9bcd6;  /* muted text on night  */
+
+    --kmb-serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --kmb-sans:  "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --kmb-mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Consolas, monospace;
+
+    /* Full-bleed breakout: if your page template is already
+       full-width these two lines compute to ~0 and do nothing. */
+    margin-left:  calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+
+    font-family: var(--kmb-sans);
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--kmb-body);
+    background: var(--kmb-ground);
+    overflow: hidden;
+  }
+
+  .kmb-home *, .kmb-home *::before, .kmb-home *::after { box-sizing: border-box; }
+
+  .kmb-wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-inline: clamp(20px, 5vw, 48px);
+  }
+
+  .kmb-home h1, .kmb-home h2, .kmb-home h3 {
+    font-family: var(--kmb-serif);
+    color: var(--kmb-ink);
+    line-height: 1.12;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .kmb-home p { margin: 0; }
+  .kmb-home a { text-decoration: none; }
+  .kmb-home a:focus-visible,
+  .kmb-home .kmb-btn:focus-visible {
+    outline: 3px solid var(--kmb-pink);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .kmb-eyebrow {
+    font-family: var(--kmb-mono);
+    font-size: 0.76rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--kmb-pink);
+  }
+
+  .kmb-btn {
+    display: inline-block;
+    font-family: var(--kmb-sans);
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 1.05em 1.9em;
+    border-radius: 999px;
+    transition: background-color .18s ease, color .18s ease, transform .18s ease;
+  }
+  .kmb-btn:hover { transform: translateY(-2px); }
+  .kmb-btn--solid { background: var(--kmb-pink); color: #ffffff; }
+  .kmb-btn--solid:hover { background: var(--kmb-pink-deep); color: #ffffff; }
+  .kmb-btn--ghost { border: 1.5px solid rgba(247, 238, 244, 0.45); color: var(--kmb-light); }
+  .kmb-btn--ghost:hover { border-color: var(--kmb-trace); color: var(--kmb-trace); }
+
+  /* ================= HERO — night ================= */
+
+  .kmb-hero {
+    position: relative;
+    background:
+      radial-gradient(1100px 520px at 82% 18%, rgba(230, 33, 126, 0.16), transparent 62%),
+      radial-gradient(900px 600px at 8% 90%, rgba(127, 227, 210, 0.07), transparent 60%),
+      var(--kmb-night);
+  }
+
+  .kmb-hero-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    align-items: center;
+    gap: clamp(24px, 4vw, 64px);
+    padding-block: clamp(64px, 9vw, 120px) clamp(48px, 6vw, 88px);
+  }
+
+  .kmb-hero .kmb-eyebrow { color: var(--kmb-trace); }
+
+  .kmb-hero h1 {
+    color: var(--kmb-light);
+    font-size: clamp(2.5rem, 5.6vw, 4rem);
+    font-weight: 600;
+    margin-top: 1.1rem;
+  }
+  .kmb-hero h1 em {
+    font-style: italic;
+    color: var(--kmb-pink);
+  }
+
+  .kmb-hero-lede {
+    max-width: 34em;
+    margin-top: 1.4rem;
+    font-size: 1.13rem;
+    color: var(--kmb-light-mut);
+  }
+  .kmb-hero-lede strong { color: var(--kmb-light); font-weight: 600; }
+
+  .kmb-hero-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 2.2rem;
+  }
+
+  .kmb-hero-pledge {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 2.4rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid rgba(247, 238, 244, 0.14);
+    max-width: 38em;
+  }
+  .kmb-hero-pledge .kmb-pledge-num {
+    font-family: var(--kmb-serif);
+    font-weight: 700;
+    font-size: 1.9rem;
+    color: var(--kmb-pink);
+    white-space: nowrap;
+  }
+  .kmb-hero-pledge p { font-size: 0.98rem; color: var(--kmb-light-mut); }
+
+  /* Breathing ring — one calm resting-breath cycle */
+  .kmb-breath {
+    position: relative;
+    justify-self: center;
+    width: min(300px, 32vw);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+  }
+  .kmb-breath::before,
+  .kmb-breath::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    animation: kmb-inhale 4.8s ease-in-out infinite;
+  }
+  .kmb-breath::before {
+    border: 1.5px solid rgba(127, 227, 210, 0.55);
+    box-shadow: 0 0 70px rgba(127, 227, 210, 0.13), inset 0 0 50px rgba(127, 227, 210, 0.07);
+  }
+  .kmb-breath::after {
+    inset: 14%;
+    border: 1px solid rgba(230, 33, 126, 0.5);
+    animation-delay: -0.35s;
+  }
+  .kmb-breath-label {
+    font-family: var(--kmb-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(247, 238, 244, 0.55);
+    text-align: center;
+    line-height: 2;
+  }
+  @keyframes kmb-inhale {
+    0%, 100% { transform: scale(0.9);  opacity: 0.55; }
+    50%      { transform: scale(1.06); opacity: 1; }
+  }
+
+  /* Capnography trace — the CO2 waveform VENTO is built to read */
+  .kmb-trace {
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 90px;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  .kmb-trace svg {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 100%;
+    width: 2880px;
+    animation: kmb-drift 26s linear infinite;
+  }
+  @keyframes kmb-drift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-1440px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kmb-breath::before, .kmb-breath::after, .kmb-trace svg { animation: none; }
+    .kmb-btn:hover { transform: none; }
+  }
+
+  /* ================= STAT STRIP ================= */
+
+  .kmb-stats {
+    background: var(--kmb-night-2);
+    border-top: 1px solid rgba(247, 238, 244, 0.08);
+  }
+  .kmb-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+  }
+  .kmb-stat {
+    padding: 1.9rem clamp(12px, 2vw, 28px);
+    border-left: 1px solid rgba(247, 238, 244, 0.08);
+  }
+  .kmb-stat:first-child { border-left: none; }
+  .kmb-stat-num {
+    font-family: var(--kmb-serif);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+    color: var(--kmb-light);
+  }
+  .kmb-stat-num sup { font-size: 0.55em; color: var(--kmb-pink); }
+  .kmb-stat-label {
+    font-family: var(--kmb-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--kmb-light-mut);
+    margin-top: 0.5rem;
+    line-height: 1.6;
+  }
+
+  /* ================= LIGHT SECTIONS ================= */
+
+  .kmb-section { padding-block: clamp(64px, 8vw, 104px); }
+
+  .kmb-section h2 {
+    font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+    font-weight: 600;
+    margin-top: 1rem;
+  }
+
+  .kmb-section-lede {
+    max-width: 40em;
+    margin-top: 1.2rem;
+    font-size: 1.08rem;
+  }
+  .kmb-section-lede + .kmb-section-lede { margin-top: 1rem; }
+
+  .kmb-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(28px, 4vw, 56px);
+    align-items: start;
+  }
+
+  /* What is CCHS */
+  .kmb-cchs-facts {
+    display: grid;
+    gap: 14px;
+    margin-top: 0.4rem;
+  }
+  .kmb-fact {
+    background: var(--kmb-card);
+    border: 1px solid var(--kmb-rose);
+    border-radius: 14px;
+    padding: 1.2rem 1.4rem;
+    font-size: 0.98rem;
+  }
+  .kmb-fact strong {
+    display: block;
+    font-family: var(--kmb-mono);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--kmb-pink);
+    margin-bottom: 0.35rem;
+  }
+  .kmb-arrow-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    margin-top: 1.8rem;
+  }
+  .kmb-arrow-link {
+    font-weight: 600;
+    color: var(--kmb-pink);
+  }
+  .kmb-arrow-link::after { content: " →"; }
+  .kmb-arrow-link:hover { color: var(--kmb-pink-deep); text-decoration: underline; }
+
+  /* Research cards */
+  .kmb-research { background: var(--kmb-card); border-block: 1px solid var(--kmb-rose); }
+  .kmb-projects {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(20px, 3vw, 32px);
+    margin-top: 2.6rem;
+  }
+  .kmb-project {
+    background: var(--kmb-ground);
+    border: 1px solid var(--kmb-rose);
+    border-radius: 18px;
+    padding: clamp(1.6rem, 3vw, 2.4rem);
+  }
+  .kmb-project h3 { font-size: 1.45rem; font-weight: 600; margin-top: 0.9rem; }
+  .kmb-project p { margin-top: 0.9rem; font-size: 1rem; }
+  .kmb-project-tag {
+    display: inline-block;
+    font-family: var(--kmb-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--kmb-night);
+    background: var(--kmb-rose);
+    border-radius: 999px;
+    padding: 0.45em 1em;
+  }
+
+  /* Casper & Beau */
+  .kmb-story blockquote {
+    margin: 0;
+    padding: 0 0 0 clamp(20px, 3vw, 34px);
+    border-left: 3px solid var(--kmb-pink);
+    align-self: center;
+  }
+  .kmb-story blockquote p {
+    font-family: var(--kmb-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+    line-height: 1.45;
+    color: var(--kmb-ink);
+  }
+  .kmb-story cite {
+    display: block;
+    font-style: normal;
+    font-family: var(--kmb-mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--kmb-body);
+    margin-top: 1.4rem;
+  }
+  .kmb-story-copy p + p { margin-top: 1rem; }
+
+  /* How you can help */
+  .kmb-help-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(14px, 2vw, 22px);
+    margin-top: 2.6rem;
+  }
+  .kmb-help-card {
+    display: block;
+    background: var(--kmb-card);
+    border: 1px solid var(--kmb-rose);
+    border-radius: 16px;
+    padding: 1.6rem 1.5rem 1.7rem;
+    transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+  }
+  .kmb-help-card:hover {
+    border-color: var(--kmb-pink);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 34px rgba(38, 42, 69, 0.09);
+  }
+  .kmb-help-card h3 { font-size: 1.22rem; font-weight: 600; }
+  .kmb-help-card h3::after { content: " →"; color: var(--kmb-pink); }
+  .kmb-help-card p { margin-top: 0.7rem; font-size: 0.94rem; color: var(--kmb-body); }
+  @media (prefers-reduced-motion: reduce) { .kmb-help-card:hover { transform: none; } }
+
+  /* ================= CLOSING BAND ================= */
+
+  .kmb-close {
+    background:
+      radial-gradient(900px 460px at 50% 120%, rgba(230, 33, 126, 0.2), transparent 65%),
+      var(--kmb-night);
+    text-align: center;
+  }
+  .kmb-close .kmb-wrap { padding-block: clamp(72px, 9vw, 116px); }
+  .kmb-close h2 {
+    color: var(--kmb-light);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 600;
+    max-width: 17em;
+    margin-inline: auto;
+  }
+  .kmb-close h2 em { font-style: italic; color: var(--kmb-trace); }
+  .kmb-close-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 2.4rem;
+  }
+  .kmb-close-meta {
+    font-family: var(--kmb-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--kmb-light-mut);
+    margin-top: 3.2rem;
+    line-height: 2.1;
+  }
+  .kmb-close-meta a { color: var(--kmb-light); }
+  .kmb-close-meta a:hover { color: var(--kmb-trace); }
+
+  /* ================= RESPONSIVE ================= */
+
+  @media (max-width: 900px) {
+    .kmb-hero-inner { grid-template-columns: 1fr; }
+    .kmb-breath { display: none; }
+    .kmb-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .kmb-stat:nth-child(3) { border-left: none; }
+    .kmb-stat { border-top: 1px solid rgba(247, 238, 244, 0.08); }
+    .kmb-stat:nth-child(-n+2) { border-top: none; }
+    .kmb-cols { grid-template-columns: 1fr; }
+    .kmb-projects { grid-template-columns: 1fr; }
+    .kmb-help-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 540px) {
+    .kmb-help-grid { grid-template-columns: 1fr; }
+    .kmb-stats-grid { grid-template-columns: 1fr; }
+    .kmb-stat { border-left: none; }
+    .kmb-stat:nth-child(2) { border-top: 1px solid rgba(247, 238, 244, 0.08); }
+  }
+</style>
+
+<div class="kmb-home">
+
+  <!-- ============ HERO ============ -->
+  <section class="kmb-hero">
+    <div class="kmb-wrap">
+      <div class="kmb-hero-inner">
+        <div>
+          <p class="kmb-eyebrow">Registered charity no. 1201757 · Brighton, UK</p>
+          <h1>Driving research for <em>CCHS</em> treatment worldwide</h1>
+          <p class="kmb-hero-lede">
+            Children born with Congenital Central Hypoventilation Syndrome (CCHS)
+            stop breathing when they fall asleep. There is no cure and no treatment
+            beyond artificial ventilation — <strong>yet</strong>. Keep Me Breathing
+            exists to change that, by funding the research and technology that will
+            let every child with CCHS sleep safely.
+          </p>
+          <div class="kmb-hero-ctas">
+            <a class="kmb-btn kmb-btn--solid" href="/contribute/">Donate to the research</a>
+            <a class="kmb-btn kmb-btn--ghost" href="/caspersstory/">Read Casper&rsquo;s story</a>
+          </div>
+          <div class="kmb-hero-pledge">
+            <span class="kmb-pledge-num">100%</span>
+            <p>of every donation goes directly to discovering and developing
+               treatments for CCHS. Not a penny is spent on administration.</p>
+          </div>
+        </div>
+        <div class="kmb-breath" aria-hidden="true">
+          <span class="kmb-breath-label">Inhale<br>· · ·<br>Exhale</span>
+        </div>
+      </div>
+    </div>
+    <!-- Capnography (CO2) trace — the waveform our VENTO monitor reads -->
+    <div class="kmb-trace" aria-hidden="true">
+      <svg viewBox="0 0 2880 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <path id="kmb-wave" fill="none" stroke="#7fe3d2" stroke-width="1.5"
+                d="M0,72 h64 l14,-46 96,-6 14,52 h52 l14,-46 96,-6 14,52 h52 l14,-46 96,-6 14,52 h52 l14,-46 96,-6 14,52 h64" />
+        </defs>
+        <use href="#kmb-wave" x="0" />
+        <use href="#kmb-wave" x="720" />
+        <use href="#kmb-wave" x="1440" />
+        <use href="#kmb-wave" x="2160" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============ STATS ============ -->
+  <section class="kmb-stats" aria-label="Keep Me Breathing in numbers">
+    <div class="kmb-wrap">
+      <div class="kmb-stats-grid">
+        <div class="kmb-stat">
+          <div class="kmb-stat-num">&pound;500k<sup>+</sup></div>
+          <div class="kmb-stat-label">Invested in research &amp; development</div>
+        </div>
+        <div class="kmb-stat">
+          <div class="kmb-stat-num">130<sup>+</sup></div>
+          <div class="kmb-stat-label">Doctors &amp; scientists behind our plan</div>
+        </div>
+        <div class="kmb-stat">
+          <div class="kmb-stat-num">1 : 120,000</div>
+          <div class="kmb-stat-label">Live births affected by CCHS</div>
+        </div>
+        <div class="kmb-stat">
+          <div class="kmb-stat-num">100%</div>
+          <div class="kmb-stat-label">Of donations fund the research</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT IS CCHS ============ -->
+  <section class="kmb-section" id="what-is-cchs">
+    <div class="kmb-wrap">
+      <div class="kmb-cols">
+        <div>
+          <p class="kmb-eyebrow">The condition</p>
+          <h2>What is CCHS?</h2>
+          <p class="kmb-section-lede">
+            Congenital Central Hypoventilation Syndrome is an ultra-rare genetic
+            condition, caused by a mutation in the PHOX2B gene, that disrupts the
+            brain&rsquo;s automatic control of breathing. When a child with CCHS falls
+            asleep, their body simply forgets to breathe.
+          </p>
+          <p class="kmb-section-lede">
+            Every night of their lives, they depend on mechanical ventilation —
+            through a tracheostomy or a mask — to keep them alive until morning.
+          </p>
+          <div class="kmb-arrow-links">
+            <a class="kmb-arrow-link" href="/cchs-for-patients-and-parents/">CCHS for patients &amp; parents</a>
+            <a class="kmb-arrow-link" href="/cchs-for-professionals/">CCHS for professionals</a>
+          </div>
+        </div>
+        <div class="kmb-cchs-facts">
+          <div class="kmb-fact">
+            <strong>Also known as</strong>
+            Ondine&rsquo;s curse — a failure of the body&rsquo;s drive to breathe,
+            because it cannot sense oxygen and carbon dioxide levels.
+          </div>
+          <div class="kmb-fact">
+            <strong>Life support</strong>
+            Lifelong ventilation every time they sleep — and for some children,
+            when they are awake too.
+          </div>
+          <div class="kmb-fact">
+            <strong>Treatment today</strong>
+            None. There is no cure and no therapeutic option beyond artificial
+            life support. That is what we are here to change.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESEARCH ============ -->
+  <section class="kmb-section kmb-research">
+    <div class="kmb-wrap">
+      <p class="kmb-eyebrow">Our mission</p>
+      <h2>The research we&rsquo;re funding</h2>
+      <p class="kmb-section-lede">
+        Keep Me Breathing is delivering an accelerated five-year plan — backed by
+        over 130 doctors, scientists and medical professionals — to fund, develop
+        and bring the world&rsquo;s first CCHS-specific treatments to the children
+        who need them.
+      </p>
+      <div class="kmb-projects">
+        <article class="kmb-project">
+          <span class="kmb-project-tag">Treatment</span>
+          <h3>The Breathing Pacemaker</h3>
+          <p>
+            A fully implantable phrenic-nerve pacing system — the world&rsquo;s first
+            treatment designed specifically for CCHS. Like a cardiac pacemaker for
+            breathing, it will sense what the body needs and adjust the rate and
+            depth of every breath automatically, with no wires and no external kit.
+          </p>
+        </article>
+        <article class="kmb-project">
+          <span class="kmb-project-tag">Monitoring</span>
+          <h3>VENTO</h3>
+          <p>
+            A pioneering wearable, non-invasive CO&#8322; monitor. VENTO is built to
+            read the one signal that matters most to a child with CCHS — carbon
+            dioxide — continuously, comfortably and without needles or hospital
+            hardware.
+          </p>
+        </article>
+      </div>
+      <div class="kmb-arrow-links">
+        <a class="kmb-arrow-link" href="/technology-update/">Read the latest technology update</a>
+        <a class="kmb-arrow-link" href="/partners/">Our research partners</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CASPER & BEAU ============ -->
+  <section class="kmb-section">
+    <div class="kmb-wrap">
+      <div class="kmb-cols">
+        <blockquote class="kmb-story kmb-story-quote">
+          <p>
+            &ldquo;These children and their families deserve a normal life, deserve
+            to be independent and deserve to be happy. We won&rsquo;t ever stop
+            until we achieve that.&rdquo;
+          </p>
+          <cite>Steph &amp; James Oakley · Casper&rsquo;s parents, founders</cite>
+        </blockquote>
+        <div class="kmb-story kmb-story-copy">
+          <p class="kmb-eyebrow">Why we exist</p>
+          <h2>Casper &amp; Beau</h2>
+          <p class="kmb-section-lede">
+            Keep Me Breathing was set up by Casper&rsquo;s parents after he was born
+            with CCHS. Casper from Hove, Beau from Arundel — and every child like
+            them around the world — are who this research is for. When our mission
+            is complete, their lives will be transformed.
+          </p>
+          <div class="kmb-arrow-links">
+            <a class="kmb-arrow-link" href="/caspersstory/">Read Casper&rsquo;s story</a>
+            <a class="kmb-arrow-link" href="/product/order-nowdreaming-of-breathing-the-adventures-of-casper-beau/">The Adventures of Casper &amp; Beau — the book</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW YOU CAN HELP ============ -->
+  <section class="kmb-section kmb-help" style="padding-top: 0;">
+    <div class="kmb-wrap">
+      <p class="kmb-eyebrow">Join us</p>
+      <h2>How you can help</h2>
+      <div class="kmb-help-grid">
+        <a class="kmb-help-card" href="/contribute/">
+          <h3>Donate</h3>
+          <p>Every penny goes straight to CCHS research — nothing to admin. One-off or monthly.</p>
+        </a>
+        <a class="kmb-help-card" href="/sm-version-fundraising/">
+          <h3>Fundraise</h3>
+          <p>Run, ride, bake or climb — set up a JustGiving page and choose Keep Me Breathing.</p>
+        </a>
+        <a class="kmb-help-card" href="/volunteer-network/">
+          <h3>Volunteer</h3>
+          <p>Lend your skills and time to our volunteer network and events across the year.</p>
+        </a>
+        <a class="kmb-help-card" href="/partners/">
+          <h3>Partner with us</h3>
+          <p>Bring your organisation alongside a high-impact charity with a clear mission.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLOSING ============ -->
+  <section class="kmb-close">
+    <div class="kmb-wrap">
+      <p class="kmb-eyebrow">Keep Me Breathing</p>
+      <h2>Until every child with CCHS can fall asleep <em>safely</em>.</h2>
+      <div class="kmb-close-ctas">
+        <a class="kmb-btn kmb-btn--solid" href="/contribute/">Donate now</a>
+        <a class="kmb-btn kmb-btn--ghost" href="/updates/">Latest updates</a>
+      </div>
+      <p class="kmb-close-meta">
+        Registered charity no. 1201757 &nbsp;·&nbsp;
+        <a href="/keep-me-breathing-team-and-advisory-board/">Meet the team</a> &nbsp;·&nbsp;
+        <a href="/events/">Events</a> &nbsp;·&nbsp;
+        <a href="/keep-me-breathing-press/">Press</a>
+      </p>
+    </div>
+  </section>
+
+</div>
+
+<!-- OPTIONAL: structured data for search engines. If Yoast/RankMath
+     already outputs Organization schema for the site, delete this block. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NGO",
+  "name": "Keep Me Breathing",
+  "url": "https://keepmebreathing.com/",
+  "description": "Keep Me Breathing is a UK registered charity (no. 1201757) driving research for CCHS (Congenital Central Hypoventilation Syndrome) treatment worldwide. 100% of donations fund research.",
+  "foundingLocation": "Brighton, UK",
+  "sameAs": ["https://uk.linkedin.com/company/keep-me-breathing"]
+}
+</script>
+
+<!-- ============================================================
+     HOW TO INSTALL (keep this comment or delete it — it renders
+     as nothing either way):
+     1. Edit your homepage in WordPress → add a "Custom HTML" block
+        → paste this whole file into it.
+     2. Delete the old page content, but DO NOT touch the page's
+        SEO title or meta description (Yoast/RankMath panel) —
+        those carry your existing SEO and this block keeps the
+        same H1 phrase and CCHS keywords in the copy.
+     3. Set the page to a full-width template if available, and
+        hide the theme's page title on this page (so the page has
+        exactly one H1 — the one in this block).
+     4. Colours can be changed in one place: the token list at the
+        very top of the <style> block.
+     ============================================================ -->
