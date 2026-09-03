@@ -548,30 +548,51 @@
     color: var(--kmb-body);
     white-space: nowrap;
   }
+  .kmb-press-item { display: inline-flex; align-items: center; }
+  .kmb-press-img {
+    max-height: 44px;
+    max-width: 140px;
+    width: auto;
+    border-radius: 8px;
+    filter: grayscale(1);
+    opacity: 0.65;
+    transition: filter .25s ease, opacity .25s ease;
+  }
+  .kmb-press-item:hover .kmb-press-img { filter: grayscale(0); opacity: 1; }
+
+  /* Contact email cards */
+  .kmb-contact-cards { display: grid; gap: 14px; }
+  .kmb-contact-card {
+    display: block;
+    background: var(--kmb-card);
+    border: 1px solid var(--kmb-tint);
+    border-radius: 16px;
+    padding: 22px 26px;
+    transition: border-color .18s ease;
+  }
+  .kmb-contact-card:hover { border-color: var(--kmb-blue); }
+  .kmb-contact-card strong {
+    display: block;
+    font-family: var(--kmb-mono);
+    font-size: 11.8px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--kmb-body);
+    margin-bottom: 6px;
+  }
+  .kmb-contact-card span {
+    font-family: var(--kmb-serif);
+    font-weight: 600;
+    font-size: clamp(18px, 16px + 0.4vw, 23px);
+    color: var(--kmb-blue);
+    word-break: break-all;
+  }
+  .kmb-contact-card:hover span { text-decoration: underline; }
   .kmb-press .kmb-arrow-link { display: inline-block; margin-top: 22.4px; }
 
   /* Contact */
   .kmb-contact { border-top: 1px solid var(--kmb-tint); }
-  .kmb-form-slot {
-    display: grid;
-    place-items: center;
-    text-align: center;
-    gap: 10px;
-    min-height: 300px;
-    padding: 35.2px;
-    background: var(--kmb-card);
-    border: 2px dashed var(--kmb-tint);
-    border-radius: 18px;
-  }
-  .kmb-form-slot strong {
-    font-family: var(--kmb-mono);
-    font-size: 12.2px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--kmb-blue);
-  }
-  .kmb-form-slot p { font-size: 15.2px; max-width: 26em; }
 
   /* ================= NEWSLETTER ================= */
 
@@ -746,6 +767,55 @@
           <span class="kmb-logo-name" style="display:none">Penny Farthing Club</span>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ============ PRESS ============
+       Each outlet shows as a styled name. To show its logo instead:
+       upload the logo to Media Library, copy its URL, and paste it
+       over the matching REPLACE-... in src="" below — the logo then
+       automatically appears in place of the text, sized to match. -->
+  <section class="kmb-press" aria-label="As featured in">
+    <div class="kmb-wrap">
+      <p class="kmb-eyebrow">As featured in</p>
+      <div class="kmb-press-row">
+        <span class="kmb-press-item">
+          <img class="kmb-press-img" src="/wp-content/uploads/REPLACE-the-times.png" alt="The Times"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+          <span class="kmb-press-name" style="display:none">The Times</span>
+        </span>
+        <span class="kmb-press-item">
+          <img class="kmb-press-img" src="/wp-content/uploads/REPLACE-daily-mirror.png" alt="Daily Mirror"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+          <span class="kmb-press-name" style="display:none">Daily Mirror</span>
+        </span>
+        <span class="kmb-press-item">
+          <img class="kmb-press-img" src="/wp-content/uploads/REPLACE-bbc-south.png" alt="BBC South"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+          <span class="kmb-press-name" style="display:none">BBC South</span>
+        </span>
+        <span class="kmb-press-item">
+          <img class="kmb-press-img" src="/wp-content/uploads/REPLACE-itv-gmb.png" alt="ITV1 Good Morning Britain"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+          <span class="kmb-press-name" style="display:none">ITV1 Good Morning Britain</span>
+        </span>
+        <span class="kmb-press-item">
+          <img class="kmb-press-img" src="/wp-content/uploads/REPLACE-bbc-radio-sussex.png" alt="BBC Radio Sussex"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+          <span class="kmb-press-name" style="display:none">BBC Radio Sussex</span>
+        </span>
+        <span class="kmb-press-item">
+          <img class="kmb-press-img" src="/wp-content/uploads/REPLACE-greatest-hits-radio.png" alt="Greatest Hits Radio"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+          <span class="kmb-press-name" style="display:none">Greatest Hits Radio</span>
+        </span>
+        <span class="kmb-press-item">
+          <img class="kmb-press-img" src="/wp-content/uploads/REPLACE-sussexworld.png" alt="SussexWorld"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+          <span class="kmb-press-name" style="display:none">SussexWorld</span>
+        </span>
+      </div>
+      <a class="kmb-arrow-link" href="https://keepmebreathing.com/keep-me-breathing-press/">See our press &amp; media coverage</a>
     </div>
   </section>
 
@@ -924,23 +994,6 @@
     </div>
   </section>
 
-  <!-- ============ PRESS ============ -->
-  <section class="kmb-press" aria-label="As featured in">
-    <div class="kmb-wrap">
-      <p class="kmb-eyebrow">As featured in</p>
-      <div class="kmb-press-row">
-        <span class="kmb-press-name">The Times</span>
-        <span class="kmb-press-name">Daily Mirror</span>
-        <span class="kmb-press-name">BBC South</span>
-        <span class="kmb-press-name">ITV1 Good Morning Britain</span>
-        <span class="kmb-press-name">BBC Radio Sussex</span>
-        <span class="kmb-press-name">Greatest Hits Radio</span>
-        <span class="kmb-press-name">SussexWorld</span>
-      </div>
-      <a class="kmb-arrow-link" href="https://keepmebreathing.com/keep-me-breathing-press/">See our press &amp; media coverage</a>
-    </div>
-  </section>
-
   <!-- ============ HOW YOU CAN HELP ============ -->
   <section class="kmb-section kmb-help">
     <div class="kmb-wrap">
@@ -968,12 +1021,9 @@
   </section>
 
   <!-- ============ CONTACT ============
-       The dashed panel below marks where your contact form goes. Your
-       current form is an Elementor/plugin form — shortcodes and form
-       widgets don't run inside a Custom HTML block, so either:
-       a) paste your form plugin's raw HTML embed code over the panel, or
-       b) delete the panel and place your existing form block in a
-          separate block directly below this Custom HTML block. -->
+       Works as-is: both cards open a pre-addressed email. If you later
+       want your contact form plugin here instead, place its block
+       directly below this Custom HTML block. -->
   <section class="kmb-section kmb-contact">
     <div class="kmb-wrap">
       <div class="kmb-cols">
@@ -987,31 +1037,34 @@
             love to hear from you.
           </p>
         </div>
-        <div class="kmb-form-slot">
-          <strong>Your contact form goes here</strong>
-          <p>
-            Replace this panel with your existing contact form embed, or place
-            your form block directly below this section in WordPress.
-          </p>
+        <div class="kmb-contact-cards">
+          <a class="kmb-contact-card" href="mailto:info@keepmebreathing.com">
+            <strong>General enquiries</strong>
+            <span>info@keepmebreathing.com</span>
+          </a>
+          <a class="kmb-contact-card" href="mailto:sarah@keepmebreathing.com">
+            <strong>Speak to Sarah</strong>
+            <span>sarah@keepmebreathing.com</span>
+          </a>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ============ NEWSLETTER ============
-       If you already have a signup form (Mailchimp, MC4WP shortcode,
-       etc.), keep this band for the heading and place your existing
-       form block or shortcode in a separate block directly BELOW this
-       Custom HTML block — shortcodes don't run inside Custom HTML. -->
+       Works as-is: the button opens an email to info@ asking to join
+       the list. If you later add a proper signup form plugin, place
+       its block directly below this Custom HTML block. -->
   <section class="kmb-newsletter">
     <div class="kmb-wrap">
       <p class="kmb-eyebrow">Stay in the loop</p>
       <h2>Sign up and receive the latest KMB treatment updates</h2>
       <p>
         Research milestones, technology updates and news from the Keep Me
-        Breathing team — straight to your inbox.
+        Breathing team — straight to your inbox. One click and we&rsquo;ll add
+        you to the list.
       </p>
-      <a class="kmb-btn kmb-btn--blue" href="https://keepmebreathing.com/updates/">Get the latest updates</a>
+      <a class="kmb-btn kmb-btn--blue" href="mailto:info@keepmebreathing.com?subject=Please%20sign%20me%20up%20for%20KMB%20treatment%20updates&amp;body=Hi%20Keep%20Me%20Breathing%20team%2C%0A%0APlease%20add%20me%20to%20the%20treatment%20updates%20list.%0A%0AThank%20you!">Sign me up by email</a>
     </div>
   </section>
 
