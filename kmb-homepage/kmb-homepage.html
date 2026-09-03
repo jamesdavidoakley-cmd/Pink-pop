@@ -600,6 +600,41 @@
   }
   .kmb-press-item:hover .kmb-press-img { filter: grayscale(0); opacity: 1; }
 
+  /* Photo mosaic */
+  .kmb-gallery { background: var(--kmb-ground); padding-bottom: clamp(64px, 8vw, 104px); }
+  .kmb-gallery .kmb-eyebrow { display: block; text-align: center; margin-bottom: 26px; }
+  .kmb-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    align-items: start;
+  }
+  .kmb-photo {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 18px;
+    height: 320px;
+    background: var(--kmb-card);
+  }
+  .kmb-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .35s ease;
+  }
+  .kmb-photo:hover img { transform: scale(1.045); }
+  @media (min-width: 901px) {
+    /* staggered rhythm: every second photo sits a step lower */
+    .kmb-photo:nth-child(even) { margin-top: 30px; }
+  }
+  @media (max-width: 900px) {
+    .kmb-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .kmb-photo { height: 220px; border-radius: 14px; }
+  }
+  @media (max-width: 540px) { .kmb-photo { height: 170px; } }
+  @media (prefers-reduced-motion: reduce) { .kmb-photo img { transition: none; } .kmb-photo:hover img { transform: none; } }
+
   /* Contact email cards */
   .kmb-contact-cards { display: grid; gap: 14px; }
   .kmb-contact-card {
@@ -1030,6 +1065,31 @@
             <a class="kmb-arrow-link" href="https://keepmebreathing.com/product/dreaming-of-breathing/">The Adventures of Casper &amp; Beau — the book</a>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHOTOS ============ -->
+  <section class="kmb-gallery" aria-label="Keep Me Breathing in pictures">
+    <div class="kmb-wrap">
+      <span class="kmb-eyebrow">In pictures</span>
+      <div class="kmb-gallery-grid">
+        <figure class="kmb-photo">
+          <img src="https://keepmebreathing.com/wp-content/uploads/2022/10/Screenshot_2022-10-26_at_13.21.05_41.png" alt="" loading="lazy"
+               onerror="this.closest('figure').style.display='none'">
+        </figure>
+        <figure class="kmb-photo">
+          <img src="https://keepmebreathing.com/wp-content/uploads/2023/02/5.jpg" alt="" loading="lazy"
+               onerror="this.closest('figure').style.display='none'">
+        </figure>
+        <figure class="kmb-photo">
+          <img src="https://keepmebreathing.com/wp-content/uploads/2023/03/WhatsApp-Image-2023-03-21-at-16.23.05.jpeg" alt="" loading="lazy"
+               onerror="this.closest('figure').style.display='none'">
+        </figure>
+        <figure class="kmb-photo">
+          <img src="https://keepmebreathing.com/wp-content/uploads/2023/03/118.jpg" alt="" loading="lazy"
+               onerror="this.closest('figure').style.display='none'">
+        </figure>
       </div>
     </div>
   </section>
