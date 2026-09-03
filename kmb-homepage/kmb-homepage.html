@@ -284,8 +284,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 76px;
+    height: 84px;
   }
+  /* Per-logo optical balance — different shapes tuned to equal visual weight */
+  .kmb-logo--sussex img   { max-height: 56px; border-radius: 12px; }
+  .kmb-logo--tesco img    { max-height: 80px; }  /* file has internal padding */
+  .kmb-logo--bodyshop img { max-height: 68px; }
+  .kmb-logo--pfc img      { max-height: 56px; border-radius: 50%; }
   .kmb-logo img {
     max-height: 64px;
     max-width: 150px;
@@ -746,23 +751,23 @@
     <div class="kmb-wrap">
       <p class="kmb-eyebrow">Proud to be supported by</p>
       <div class="kmb-logo-row">
-        <div class="kmb-logo">
-          <img src="/wp-content/uploads/REPLACE-sussex-business-awards.png" alt="Sussex Business Awards 2026"
+        <div class="kmb-logo kmb-logo--sussex">
+          <img src="https://keepmebreathing.com/wp-content/uploads/2026/09/SUSSEX2026BANNER-USE-THIS.png" alt="Sussex Business Awards 2026"
                onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
           <span class="kmb-logo-name" style="display:none">Sussex Business Awards</span>
         </div>
-        <div class="kmb-logo">
-          <img src="/wp-content/uploads/REPLACE-tesco-community-grants.png" alt="Tesco Community Grants"
+        <div class="kmb-logo kmb-logo--tesco">
+          <img src="https://keepmebreathing.com/wp-content/uploads/2026/09/3_tesco-community-grants-logo459x294.png" alt="Tesco Community Grants"
                onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
           <span class="kmb-logo-name" style="display:none">Tesco Community Grants</span>
         </div>
-        <div class="kmb-logo">
-          <img src="/wp-content/uploads/REPLACE-the-body-shop.png" alt="The Body Shop"
+        <div class="kmb-logo kmb-logo--bodyshop">
+          <img src="https://keepmebreathing.com/wp-content/uploads/2026/09/The_Body_Shop_logo_green-scaled.png" alt="The Body Shop"
                onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
           <span class="kmb-logo-name" style="display:none">The Body Shop</span>
         </div>
-        <div class="kmb-logo">
-          <img src="/wp-content/uploads/REPLACE-penny-farthing-club.png" alt="Penny Farthing Club"
+        <div class="kmb-logo kmb-logo--pfc">
+          <img src="https://keepmebreathing.com/wp-content/uploads/2026/09/images-1.jpeg" alt="Penny Farthing Club"
                onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
           <span class="kmb-logo-name" style="display:none">Penny Farthing Club</span>
         </div>
