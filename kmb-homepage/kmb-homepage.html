@@ -460,6 +460,118 @@
   .kmb-help-card p { margin-top: 0.7rem; font-size: 0.94rem; color: var(--kmb-body); }
   @media (prefers-reduced-motion: reduce) { .kmb-help-card:hover { transform: none; } }
 
+  /* Research programme checklist */
+  .kmb-scope {
+    list-style: none;
+    margin: 2.4rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 40px;
+  }
+  .kmb-scope li {
+    position: relative;
+    padding-left: 1.7em;
+    font-size: 0.98rem;
+  }
+  .kmb-scope li::before {
+    content: "\2713";
+    position: absolute;
+    left: 0;
+    color: var(--kmb-blue);
+    font-weight: 700;
+  }
+
+  /* Video panel — links to YouTube until the real embed is swapped in */
+  .kmb-video {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    aspect-ratio: 16 / 9;
+    background:
+      radial-gradient(560px 300px at 70% 20%, rgba(0, 114, 206, 0.5), transparent 65%),
+      var(--kmb-night);
+    border-radius: 18px;
+    text-align: center;
+    padding: 1.5rem;
+  }
+  .kmb-video-play {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: grid;
+    place-items: center;
+    transition: transform .18s ease;
+  }
+  .kmb-video-play::after {
+    content: "";
+    border-left: 18px solid var(--kmb-blue);
+    border-top: 11px solid transparent;
+    border-bottom: 11px solid transparent;
+    margin-left: 5px;
+  }
+  .kmb-video:hover .kmb-video-play { transform: scale(1.08); }
+  .kmb-video-label {
+    font-family: var(--kmb-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+  @media (prefers-reduced-motion: reduce) { .kmb-video:hover .kmb-video-play { transform: none; } }
+
+  /* Press band */
+  .kmb-press {
+    background: var(--kmb-card);
+    border-block: 1px solid var(--kmb-tint);
+    text-align: center;
+    padding-block: 2.4rem 2.6rem;
+  }
+  .kmb-press .kmb-eyebrow { color: var(--kmb-body); }
+  .kmb-press-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: 0.8rem 2.4rem;
+    margin-top: 1.3rem;
+  }
+  .kmb-press-name {
+    font-family: var(--kmb-serif);
+    font-weight: 600;
+    font-size: 1.08rem;
+    color: var(--kmb-body);
+    white-space: nowrap;
+  }
+  .kmb-press .kmb-arrow-link { display: inline-block; margin-top: 1.4rem; }
+
+  /* Contact */
+  .kmb-contact { border-top: 1px solid var(--kmb-tint); }
+  .kmb-form-slot {
+    display: grid;
+    place-items: center;
+    text-align: center;
+    gap: 10px;
+    min-height: 300px;
+    padding: 2.2rem;
+    background: var(--kmb-card);
+    border: 2px dashed var(--kmb-tint);
+    border-radius: 18px;
+  }
+  .kmb-form-slot strong {
+    font-family: var(--kmb-mono);
+    font-size: 0.76rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--kmb-blue);
+  }
+  .kmb-form-slot p { font-size: 0.95rem; max-width: 26em; }
+
   /* ================= NEWSLETTER ================= */
 
   .kmb-newsletter {
@@ -657,6 +769,15 @@
             <a class="kmb-arrow-link" href="/cchs-for-patients-and-parents/">CCHS for patients &amp; parents</a>
             <a class="kmb-arrow-link" href="/cchs-for-professionals/">CCHS for professionals</a>
           </div>
+          <!-- Swap this panel for your existing YouTube embed: replace the
+               whole <a> below with
+               <iframe src="https://www.youtube.com/embed/VIDEO_ID"
+                 style="width:100%;aspect-ratio:16/9;border:0;border-radius:18px;margin-top:2rem"
+                 allowfullscreen loading="lazy" title="What is CCHS"></iframe> -->
+          <a class="kmb-video" style="margin-top:2rem" href="https://www.youtube.com/channel/UCkoubPAcZGiVuyfKIxGU27Q">
+            <span class="kmb-video-play" aria-hidden="true"></span>
+            <span class="kmb-video-label">Watch: What is CCHS?</span>
+          </a>
         </div>
         <div class="kmb-cchs-facts">
           <div class="kmb-fact">
@@ -668,6 +789,12 @@
             <strong>Life support</strong>
             Lifelong ventilation every time they sleep — and for some children,
             when they are awake too.
+          </div>
+          <div class="kmb-fact">
+            <strong>Not just breathing</strong>
+            CCHS is not just a respiratory disease. 50% of children with specific
+            types of CCHS are born with or go on to develop tumours such as
+            neuroblastoma, a type of cancer.
           </div>
           <div class="kmb-fact">
             <strong>Treatment today</strong>
@@ -685,10 +812,10 @@
       <p class="kmb-eyebrow">Our mission</p>
       <h2>The research we&rsquo;re funding</h2>
       <p class="kmb-section-lede">
-        Keep Me Breathing is delivering an accelerated five-year plan — backed by
-        over 130 doctors, scientists and medical professionals — to fund, develop
-        and bring the world&rsquo;s first CCHS-specific treatments to the children
-        who need them.
+        We are developing a treatment to change and to save the lives of CCHS
+        patients — in a world where such a treatment does not exist. We will do
+        whatever it takes. Our accelerated five-year plan is backed by over 130
+        doctors, scientists and medical professionals.
       </p>
       <div class="kmb-projects">
         <article class="kmb-project">
@@ -712,12 +839,55 @@
             to a child with CCHS — carbon dioxide — continuously, comfortably and
             without needles or hospital hardware.
           </p>
-          <p class="kmb-project-note">Patent filed</p>
+          <p class="kmb-project-note">Patent pending</p>
         </article>
       </div>
+      <ul class="kmb-scope">
+        <li>Active research projects</li>
+        <li>Global collaborations</li>
+        <li>Drug development research</li>
+        <li>Drug repurposing research</li>
+        <li>A truly implantable biofeedback diaphragm pacer system — removing the need for mechanical ventilation</li>
+        <li>New technology capable of automatically adjusting breathing rate and tidal volume during sleep</li>
+      </ul>
       <div class="kmb-arrow-links">
         <a class="kmb-arrow-link" href="/technology-update/">Read the latest technology update</a>
         <a class="kmb-arrow-link" href="/partners/">Our research partners</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CAMBRIDGE UNIVERSITY ============ -->
+  <section class="kmb-section">
+    <div class="kmb-wrap">
+      <div class="kmb-cols">
+        <div>
+          <p class="kmb-eyebrow">Collaboration</p>
+          <h2>Keep Me Breathing &times; Cambridge University</h2>
+          <p class="kmb-section-lede">
+            We&rsquo;re excited to be working with The Cambridge University
+            Consulting Network to research and move forward with an advanced
+            diaphragm pacer.
+          </p>
+          <p class="kmb-section-lede">
+            The consulting network has a strong history of working in the rare
+            disease field — and we&rsquo;ll keep you fully updated on progress as
+            it is made.
+          </p>
+          <div class="kmb-arrow-links">
+            <a class="kmb-arrow-link" href="/2022/09/29/cchs-cambridgeconsultingnetwork/">Read about the project</a>
+            <a class="kmb-arrow-link" href="/keep-me-breathing-team-and-advisory-board/">Meet our advisory board</a>
+          </div>
+        </div>
+        <!-- Swap this panel for your existing YouTube embed: replace the
+             whole <a> below with
+             <iframe src="https://www.youtube.com/embed/VIDEO_ID"
+               style="width:100%;aspect-ratio:16/9;border:0;border-radius:18px"
+               allowfullscreen loading="lazy" title="Our mission and technology update"></iframe> -->
+        <a class="kmb-video" href="https://www.youtube.com/channel/UCkoubPAcZGiVuyfKIxGU27Q">
+          <span class="kmb-video-play" aria-hidden="true"></span>
+          <span class="kmb-video-label">Watch: Our mission &amp; technology update</span>
+        </a>
       </div>
     </div>
   </section>
@@ -753,8 +923,25 @@
     </div>
   </section>
 
+  <!-- ============ PRESS ============ -->
+  <section class="kmb-press" aria-label="As featured in">
+    <div class="kmb-wrap">
+      <p class="kmb-eyebrow">As featured in</p>
+      <div class="kmb-press-row">
+        <span class="kmb-press-name">The Times</span>
+        <span class="kmb-press-name">Daily Mirror</span>
+        <span class="kmb-press-name">BBC South</span>
+        <span class="kmb-press-name">ITV1 Good Morning Britain</span>
+        <span class="kmb-press-name">BBC Radio Sussex</span>
+        <span class="kmb-press-name">Greatest Hits Radio</span>
+        <span class="kmb-press-name">SussexWorld</span>
+      </div>
+      <a class="kmb-arrow-link" href="/keep-me-breathing-press/">See our press &amp; media coverage</a>
+    </div>
+  </section>
+
   <!-- ============ HOW YOU CAN HELP ============ -->
-  <section class="kmb-section kmb-help" style="padding-top: 0;">
+  <section class="kmb-section kmb-help">
     <div class="kmb-wrap">
       <p class="kmb-eyebrow">Join us</p>
       <h2>How you can help</h2>
@@ -775,6 +962,37 @@
           <h3>Partner with us</h3>
           <p>Bring your organisation alongside a high-impact charity with a clear mission.</p>
         </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============
+       The dashed panel below marks where your contact form goes. Your
+       current form is an Elementor/plugin form — shortcodes and form
+       widgets don't run inside a Custom HTML block, so either:
+       a) paste your form plugin's raw HTML embed code over the panel, or
+       b) delete the panel and place your existing form block in a
+          separate block directly below this Custom HTML block. -->
+  <section class="kmb-section kmb-contact">
+    <div class="kmb-wrap">
+      <div class="kmb-cols">
+        <div>
+          <p class="kmb-eyebrow">Get in touch</p>
+          <h2>Contact us with any questions</h2>
+          <p class="kmb-section-lede">
+            We are working relentlessly to make breakthroughs in CCHS research,
+            get treatments faster and find a cure. Whether you&rsquo;re a CCHS
+            parent, a clinician, a researcher, a fundraiser or press — we&rsquo;d
+            love to hear from you.
+          </p>
+        </div>
+        <div class="kmb-form-slot">
+          <strong>Your contact form goes here</strong>
+          <p>
+            Replace this panel with your existing contact form embed, or place
+            your form block directly below this section in WordPress.
+          </p>
+        </div>
       </div>
     </div>
   </section>
