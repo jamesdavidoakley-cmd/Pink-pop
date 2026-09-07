@@ -23,39 +23,31 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 22px clamp(32px, 5vw, 72px);
-    margin-top: 28px;
+    gap: 26px clamp(36px, 6vw, 90px);
+    margin-top: 30px;
   }
   .kmbl-logo {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 84px;
+    height: clamp(110px, 16vw, 200px);
   }
+  /* Fluid sizes: roughly double previous, scaling smoothly down to phones */
   .kmbl-logo img {
-    max-height: 64px;
-    max-width: 150px;
+    max-height: clamp(84px, 12vw, 160px);
+    max-width: clamp(180px, 26vw, 380px);
     width: auto;
-    border-radius: 10px;
+    border-radius: 14px;
     filter: grayscale(1);
     opacity: 0.6;
     transition: filter .25s ease, opacity .25s ease;
   }
   .kmbl-logo:hover img { filter: grayscale(0); opacity: 1; }
   /* per-logo optical balance */
-  .kmbl-logo--sussex img   { max-height: 56px; border-radius: 12px; }
-  .kmbl-logo--tesco img    { max-height: 80px; }
-  .kmbl-logo--bodyshop img { max-height: 68px; }
-  .kmbl-logo--pfc img      { max-height: 56px; border-radius: 50%; }
-  /* larger on desktop */
-  @media (min-width: 1100px) {
-    .kmbl-logo { height: 108px; }
-    .kmbl-logo img { max-height: 84px; max-width: 200px; }
-    .kmbl-logo--sussex img   { max-height: 74px; }
-    .kmbl-logo--tesco img    { max-height: 104px; }
-    .kmbl-logo--bodyshop img { max-height: 88px; }
-    .kmbl-logo--pfc img      { max-height: 74px; }
-  }
+  .kmbl-logo.kmbl-logo--sussex img   { max-height: clamp(76px, 10.5vw, 140px); border-radius: 16px; }
+  .kmbl-logo.kmbl-logo--tesco img    { max-height: clamp(110px, 15vw, 200px); }
+  .kmbl-logo.kmbl-logo--bodyshop img { max-height: clamp(90px, 12.5vw, 170px); }
+  .kmbl-logo.kmbl-logo--pfc img      { max-height: clamp(76px, 10.5vw, 140px); border-radius: 50%; }
   @media (prefers-reduced-motion: reduce) { .kmbl-logo img { transition: none; } }
 </style>
 
