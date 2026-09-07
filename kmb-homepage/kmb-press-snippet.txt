@@ -1,0 +1,106 @@
+<!-- KEEP ME BREATHING — "As featured in" panel.
+     Self-contained: paste this whole snippet into an Elementor
+     HTML widget wherever you want it.
+     To show an outlet's LOGO instead of its name: upload the logo
+     to Media Library, copy its URL, and paste it over the matching
+     REPLACE-... in src="" — the logo then appears automatically. -->
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Mono:wght@500&display=swap">
+
+<style>
+  .kmbp-strip {
+    background: #f3f8fd;
+    border: 1px solid #d3e2f2;
+    border-radius: 20px;
+    text-align: center;
+    padding: 36px 24px 40px;
+  }
+  .kmbp-eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #3f5372;
+  }
+  .kmbp-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 14px clamp(24px, 3.5vw, 44px);
+    margin-top: 22px;
+  }
+  .kmbp-item { display: inline-flex; align-items: center; }
+  .kmbp-name {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: 18px;
+    color: #3f5372;
+    white-space: nowrap;
+  }
+  .kmbp-img {
+    max-height: 44px;
+    max-width: 140px;
+    width: auto;
+    border-radius: 8px;
+    filter: grayscale(1);
+    opacity: 0.65;
+    transition: filter .25s ease, opacity .25s ease;
+  }
+  .kmbp-item:hover .kmbp-img { filter: grayscale(0); opacity: 1; }
+  @media (min-width: 1100px) { .kmbp-img { max-height: 54px; max-width: 170px; } }
+  .kmbp-link {
+    display: inline-block;
+    margin-top: 24px;
+    font-weight: 600;
+    color: #005eb8;
+    text-decoration: none;
+  }
+  .kmbp-link::after { content: " \2192"; }
+  .kmbp-link:hover { color: #004b96; text-decoration: underline; }
+  @media (prefers-reduced-motion: reduce) { .kmbp-img { transition: none; } }
+</style>
+
+<div class="kmbp-strip">
+  <span class="kmbp-eyebrow">As featured in</span>
+  <div class="kmbp-row">
+    <span class="kmbp-item">
+      <img class="kmbp-img" src="/wp-content/uploads/REPLACE-the-times.png" alt="The Times"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+      <span class="kmbp-name" style="display:none">The Times</span>
+    </span>
+    <span class="kmbp-item">
+      <img class="kmbp-img" src="/wp-content/uploads/REPLACE-daily-mirror.png" alt="Daily Mirror"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+      <span class="kmbp-name" style="display:none">Daily Mirror</span>
+    </span>
+    <span class="kmbp-item">
+      <img class="kmbp-img" src="/wp-content/uploads/REPLACE-bbc-south.png" alt="BBC South"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+      <span class="kmbp-name" style="display:none">BBC South</span>
+    </span>
+    <span class="kmbp-item">
+      <img class="kmbp-img" src="/wp-content/uploads/REPLACE-itv-gmb.png" alt="ITV1 Good Morning Britain"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+      <span class="kmbp-name" style="display:none">ITV1 Good Morning Britain</span>
+    </span>
+    <span class="kmbp-item">
+      <img class="kmbp-img" src="/wp-content/uploads/REPLACE-bbc-radio-sussex.png" alt="BBC Radio Sussex"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+      <span class="kmbp-name" style="display:none">BBC Radio Sussex</span>
+    </span>
+    <span class="kmbp-item">
+      <img class="kmbp-img" src="/wp-content/uploads/REPLACE-greatest-hits-radio.png" alt="Greatest Hits Radio"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+      <span class="kmbp-name" style="display:none">Greatest Hits Radio</span>
+    </span>
+    <span class="kmbp-item">
+      <img class="kmbp-img" src="/wp-content/uploads/REPLACE-sussexworld.png" alt="SussexWorld"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+      <span class="kmbp-name" style="display:none">SussexWorld</span>
+    </span>
+  </div>
+  <br>
+  <a class="kmbp-link" href="https://keepmebreathing.com/keep-me-breathing-press/">See our press &amp; media coverage</a>
+</div>

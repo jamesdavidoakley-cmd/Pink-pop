@@ -1,0 +1,78 @@
+<!-- KEEP ME BREATHING — "Proud to be supported by" strip.
+     Self-contained: paste this whole snippet into an Elementor
+     HTML widget wherever you want it. -->
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&display=swap">
+
+<style>
+  .kmbl-strip {
+    text-align: center;
+    padding: 34px 10px 38px;
+    background: #ffffff;
+  }
+  .kmbl-eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #3f5372;
+  }
+  .kmbl-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 22px clamp(32px, 5vw, 72px);
+    margin-top: 28px;
+  }
+  .kmbl-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 84px;
+  }
+  .kmbl-logo img {
+    max-height: 64px;
+    max-width: 150px;
+    width: auto;
+    border-radius: 10px;
+    filter: grayscale(1);
+    opacity: 0.6;
+    transition: filter .25s ease, opacity .25s ease;
+  }
+  .kmbl-logo:hover img { filter: grayscale(0); opacity: 1; }
+  /* per-logo optical balance */
+  .kmbl-logo--sussex img   { max-height: 56px; border-radius: 12px; }
+  .kmbl-logo--tesco img    { max-height: 80px; }
+  .kmbl-logo--bodyshop img { max-height: 68px; }
+  .kmbl-logo--pfc img      { max-height: 56px; border-radius: 50%; }
+  /* larger on desktop */
+  @media (min-width: 1100px) {
+    .kmbl-logo { height: 108px; }
+    .kmbl-logo img { max-height: 84px; max-width: 200px; }
+    .kmbl-logo--sussex img   { max-height: 74px; }
+    .kmbl-logo--tesco img    { max-height: 104px; }
+    .kmbl-logo--bodyshop img { max-height: 88px; }
+    .kmbl-logo--pfc img      { max-height: 74px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .kmbl-logo img { transition: none; } }
+</style>
+
+<div class="kmbl-strip">
+  <span class="kmbl-eyebrow">Proud to be supported by</span>
+  <div class="kmbl-row">
+    <div class="kmbl-logo kmbl-logo--sussex">
+      <img src="https://keepmebreathing.com/wp-content/uploads/2026/09/SUSSEX2026BANNER-USE-THIS.png" alt="Sussex Business Awards 2026">
+    </div>
+    <div class="kmbl-logo kmbl-logo--tesco">
+      <img src="https://keepmebreathing.com/wp-content/uploads/2026/09/3_tesco-community-grants-logo459x294.png" alt="Tesco Community Grants">
+    </div>
+    <div class="kmbl-logo kmbl-logo--bodyshop">
+      <img src="https://keepmebreathing.com/wp-content/uploads/2026/09/The_Body_Shop_logo_green-scaled.png" alt="The Body Shop">
+    </div>
+    <div class="kmbl-logo kmbl-logo--pfc">
+      <img src="https://keepmebreathing.com/wp-content/uploads/2026/09/images-1.jpeg" alt="Penny Farthing Club">
+    </div>
+  </div>
+</div>
