@@ -22,6 +22,18 @@ Each mode has three tiers (to 100, to 1,000, to 10,000; Round It uses nearest 10
 - **Round It** — a glowing halfway line sits five blocks up the deciding column. Past it, round up; under it, round down. Pick the nearer station, then watch the smaller columns melt away and the deciding column either finish its ten or vanish.
 - **Free build** — a sandbox with every button enabled.
 
+### The Grumble Wall
+
+After the fifth round a grumpy brick wall rises behind the plots and a SMASH button appears. Your tower lifts, winds up and charges it. What happens depends on how the level went:
+
+| Mistakes | Stars | Result |
+|---|---|---|
+| 0–1 | ★★★ | Straight through. Every brick flies, the eyes go with them. |
+| 2–3 | ★★ | Cracks it. The top half explodes, the tower wobbles to a stop. |
+| 4+ | ★ | Bonk. Three bricks fall, the wall shrugs, the tower tumbles back to its plots. |
+
+The level still counts and the city still grows. The wall is the reason to try for fewer slips next time.
+
 On an iPad, open it in Safari and use Share → Add to Home Screen for a full-screen app. Everything is spoken (Web Speech, en-GB voice when available) and every sound is a tiny synth, so it works offline with no assets.
 
 ## Run
@@ -32,7 +44,7 @@ npm run dev          # http://localhost:5174
 npm run build        # static build in dist/
 npm run typecheck
 npm test             # number words, tower carry/borrow, level generation
-npm run check        # headless: boots, fuses, smashes, plays a round of every mode, screenshots to shots/
+npm run check        # headless: boots, fuses, smashes, plays a round of every mode + a full level and the wall finale
 ```
 
 `npm run check` needs the dev server running. It uses the Chromium at `/opt/pw-browsers/chromium` if present.

@@ -23,6 +23,7 @@ export class Hud {
   onLevel: (m: Mode, t: Tier) => void = () => {};
   onSandbox: () => void = () => {};
   onStart: () => void = () => {};
+  onCharge: () => void = () => {};
 
   constructor() {
     const root = $('columns');
@@ -64,6 +65,7 @@ export class Hud {
 
     $('ch-a').addEventListener('click', () => this.onChoice(Number($('ch-a').dataset.value)));
     $('ch-b').addEventListener('click', () => this.onChoice(Number($('ch-b').dataset.value)));
+    $('btn-smash').addEventListener('click', () => this.onCharge());
     $('btn-home').addEventListener('click', () => this.onHome());
     $('btn-mute').addEventListener('click', () => this.onMute());
     $('btn-sandbox').addEventListener('click', () => this.onSandbox());
@@ -114,6 +116,7 @@ export class Hud {
     $('round-dots').hidden = true;
     $('numpad').hidden = true;
     $('choices').hidden = true;
+    $('btn-smash').hidden = true;
     this.hideToast();
   }
 
@@ -249,6 +252,8 @@ export class Hud {
   }
 
   hideChoices(): void { $('choices').hidden = true; $('columns').classList.remove('answering'); }
+
+  showSmash(on: boolean): void { $('btn-smash').hidden = !on; }
 
   hideNumpad(): void { $('numpad').hidden = true; $('columns').classList.remove('answering'); }
 

@@ -51,6 +51,11 @@ button:disabled { opacity: 0.35; cursor: default; }
 .col[data-place="2"] { color: var(--violet); }
 .col[data-place="3"] { color: var(--ice); }
 
+/* Level finale */
+.smash-btn { position: absolute; left: 50%; top: 66%; transform: translate(-50%, -50%); font-size: clamp(30px, 6vw, 48px); padding: 22px 44px; border-radius: 28px; animation: smashpulse 0.8s ease-in-out infinite; box-shadow: 0 0 60px rgba(255, 179, 71, 0.6); }
+@keyframes smashpulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.1) rotate(-2deg); } }
+@media (prefers-reduced-motion: reduce) { .smash-btn, .col-btns button.pulse, #splash .tag { animation: none; } }
+
 /* Toast */
 #toast { position: absolute; left: 50%; bottom: 210px; transform: translateX(-50%); max-width: min(560px, 92vw); padding: 12px 22px; border-radius: 18px; background: var(--glass); border: 1px solid var(--line); font-size: clamp(17px, 2.6vw, 22px); font-weight: 600; text-align: center; backdrop-filter: blur(10px); animation: rise 0.25s ease-out; }
 #toast.good { border-color: #ffe27a; color: #fff3b0; }

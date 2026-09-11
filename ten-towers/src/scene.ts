@@ -19,6 +19,14 @@ interface Tween { t: number; d: number; ease: Ease; fn: (k: number) => void; don
 
 interface Burst { points: THREE.Points; vel: Float32Array; life: number; max: number }
 
+interface Debris { obj: THREE.Object3D; vel: THREE.Vector3; ang: THREE.Vector3; life: number }
+
+const WALL_Z = -27;
+const BRICK = 3;
+const WALL_COLS = 12;
+const WALL_ROWS = 7;
+const easeInCubic: Ease = (x) => x * x * x;
+
 export interface Block extends THREE.Group {
   userData: { place: Place; mat: THREE.MeshStandardMaterial; edge: THREE.LineBasicMaterial };
 }
@@ -94,6 +102,9 @@ export class TowerScene {
   private starField!: THREE.Points;
   private pads: THREE.Mesh[] = [];
   private halfLines: THREE.Mesh[] = [];
+  private debris: Debris[] = [];
+  private wall: { group: THREE.Group; bricks: THREE.Mesh[]; eyes: THREE.Group; pupils: THREE.Mesh[] } | null = null;
+  private finaleShift = 0;
   private fitCenter = -7;
   private fitWidth = 50;
 
@@ -276,6 +287,9 @@ export class TowerScene {
     for (const tw of this.tweens) tw.done();
     this.tweens = [];
     this.blockRoot.clear();
+    this.blockRoot.position.set(0, 0, 0);
+    this.blockRoot.rotation.set(0, 0, 0);
+    this.clearFinale();
     this.blocks = [[], [], [], []];
     for (const p of [0, 1, 2, 3] as Place[]) {
       for (let i = 0; i < counts[p]; i++) {
@@ -461,6 +475,129 @@ export class TowerScene {
     return this.tweens.length === 0;
   }
 
+  // ---- level finale: the tower charges the Grumble Wall ---------------------
+
+  private clearFinale(): void {
+    if (this.wall) { this.scene.remove(this.wall.group); this.wall = null; }
+    for (const d of this.debris) this.scene.remove(d.obj);
+    this.debris = [];
+    this.finaleShift = 0;
+  }
+
+  private buildWall(): NonNullable<typeof this.wall> {
+    const group = new THREE.Group();
+    const geo = new THREE.BoxGeometry(BRICK * 0.96, BRICK * 0.96, BRICK * 0.96);
+    const edges = new THREE.EdgesGeometry(geo);
+    const bricks: THREE.Mesh[] = [];
+    const x0 = this.fitCenter - (WALL_COLS * BRICK) / 2 + BRICK / 2;
+    for (let r = 0; r < WALL_ROWS; r++) for (let c = 0; c < WALL_COLS; c++) {
+      const shade = 0.75 + Math.random() * 0.25;
+      const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(0x2b2f52).multiplyScalar(shade), emissive: 0x1a1640, emissiveIntensity: 0.6, roughness: 0.85 });
+      const m = new THREE.Mesh(geo, mat);
+      m.add(new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x6d6bb3, transparent: true, opacity: 0.5 })));
+      m.position.set(x0 + c * BRICK + (r % 2 ? BRICK / 2 : 0), r * BRICK + BRICK / 2, WALL_Z);
+      group.add(m);
+      bricks.push(m);
+    }
+    // A face. Eyes widen when the tower charges; pupils spin when it hits.
+    const eyes = new THREE.Group();
+    const pupils: THREE.Mesh[] = [];
+    const eyeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff7d0, emissiveIntensity: 0.9 });
+    const pupilMat = new THREE.MeshStandardMaterial({ color: 0x0a0a1a, roughness: 1 });
+    for (const dx of [-5, 5]) {
+      const eye = new THREE.Mesh(new THREE.SphereGeometry(1.7, 20, 14), eyeMat);
+      eye.position.set(this.fitCenter + dx, BRICK * 4.6, WALL_Z + BRICK / 2 + 0.6);
+      eye.scale.set(1, 0.85, 0.6);
+      const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.7, 12, 10), pupilMat);
+      pupil.position.set(0, 0, 1.4);
+      eye.add(pupil);
+      eyes.add(eye);
+      pupils.push(pupil);
+    }
+    const brow = new THREE.Mesh(new THREE.BoxGeometry(14, 0.7, 0.6), pupilMat);
+    brow.position.set(this.fitCenter, BRICK * 5.6, WALL_Z + BRICK / 2 + 0.4);
+    brow.rotation.z = 0.0;
+    const mouth = new THREE.Mesh(new THREE.BoxGeometry(8, 0.8, 0.6), pupilMat);
+    mouth.position.set(this.fitCenter, BRICK * 2.4, WALL_Z + BRICK / 2 + 0.4);
+    group.add(eyes, brow, mouth);
+    this.scene.add(group);
+    return { group, bricks, eyes, pupils };
+  }
+
+  private toDebris(obj: THREE.Object3D, vel: THREE.Vector3): void {
+    // Re-parent into world space so it keeps flying wherever its group goes.
+    const world = new THREE.Vector3();
+    obj.getWorldPosition(world);
+    obj.parent?.remove(obj);
+    obj.position.copy(world);
+    this.scene.add(obj);
+    this.debris.push({ obj, vel, ang: new THREE.Vector3((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8), life: 0 });
+  }
+
+  /**
+   * Power 3: straight through. Power 2: cracks the top half. Power 1: bonk and bounce back.
+   * onImpact fires the moment the tower meets the wall so the game can play the right sound.
+   */
+  async finale(power: 1 | 2 | 3, onImpact: () => void): Promise<void> {
+    this.clearFinale();
+    const wall = this.buildWall();
+    this.wall = wall;
+    const wallH = WALL_ROWS * BRICK;
+    this.finaleShift = -14;
+    this.fitHeight = Math.max(this.fitHeight, 34);
+
+    // The wall rises out of the ground.
+    wall.group.position.y = -wallH - 1;
+    await this.tween(1.0, (k) => { wall.group.position.y = (-wallH - 1) * (1 - k); }, easeOutCubic);
+
+    // The tower lifts, leans back, and winds up.
+    const root = this.blockRoot;
+    await this.tween(0.9, (k) => {
+      root.position.set(0, 9 * k, 16 * k);
+      root.rotation.x = -0.22 * k;
+      for (const eye of wall.eyes.children) eye.scale.set(1 + 0.3 * k, 0.85 + 0.35 * k, 0.6);
+    }, easeInOut);
+    await this.tween(0.35, () => {});
+
+    // Charge!
+    const contactZ = WALL_Z + BRICK / 2 + 6;
+    await this.tween(0.45, (k) => { root.position.z = 16 + (contactZ - 16) * k; root.position.y = 9 - 3 * k; }, easeInCubic);
+    onImpact();
+
+    if (power === 3) {
+      for (const b of wall.bricks) {
+        const v = new THREE.Vector3((Math.random() - 0.5) * 26, 8 + Math.random() * 22, -14 - Math.random() * 26);
+        this.toDebris(b, v);
+      }
+      this.toDebris(wall.eyes, new THREE.Vector3(0, 26, -18));
+      for (let i = 0; i < 4; i++) this.burst(new THREE.Vector3(this.fitCenter + (i - 1.5) * 9, 8 + i * 3, WALL_Z), [0xffb347, 0x3ee6c7, 0xd76cff, 0x8fc4ff][i], 140, 26);
+      await this.tween(1.1, (k) => { root.position.z = contactZ + (-52 - contactZ) * k; root.position.y = 6 + Math.sin(k * Math.PI) * 4; root.rotation.x = -0.22 + 0.1 * k; }, easeOutCubic);
+    } else if (power === 2) {
+      const topRows = wall.bricks.filter((b) => b.position.y > BRICK * 3.5);
+      for (const b of topRows) this.toDebris(b, new THREE.Vector3((Math.random() - 0.5) * 18, 6 + Math.random() * 16, -8 - Math.random() * 18));
+      this.toDebris(wall.eyes, new THREE.Vector3((Math.random() - 0.5) * 6, 20, -12));
+      this.burst(new THREE.Vector3(this.fitCenter, 14, WALL_Z), 0xfff3b0, 160, 22);
+      await this.tween(0.9, (k) => {
+        root.position.z = contactZ - 4 * k;
+        root.rotation.z = Math.sin(k * Math.PI * 4) * 0.12 * (1 - k);
+        root.position.y = 6;
+      }, easeOutCubic);
+    } else {
+      // Bonk. The wall shrugs, a couple of bricks fall, the tower tumbles back.
+      this.burst(new THREE.Vector3(this.fitCenter, 8, contactZ - 4), 0xfff3b0, 60, 10);
+      const loose = wall.bricks.filter((b) => b.position.y > BRICK * 5.5).slice(0, 3);
+      for (const b of loose) this.toDebris(b, new THREE.Vector3((Math.random() - 0.5) * 4, 2, 4 + Math.random() * 4));
+      await this.tween(1.3, (k) => {
+        root.position.z = contactZ + (14 - contactZ) * k;
+        root.position.y = 6 + Math.sin(k * Math.PI) * 10;
+        root.rotation.x = -0.22 + Math.sin(k * Math.PI) * 0.9;
+        wall.group.position.x = Math.sin(k * 40) * (1 - k) * 0.6;
+        for (const pu of wall.pupils) pu.position.x = Math.sin(k * 25) * 0.6 * (1 - k);
+      }, easeOutCubic);
+      await this.tween(0.6, (k) => { root.position.y = 6 * (1 - k); root.position.z = 14 * (1 - k); root.rotation.x = -0.22 * (1 - k); }, easeOutBack);
+    }
+  }
+
   // ---- per-frame -----------------------------------------------------------
 
   worldToScreen(v: THREE.Vector3): { x: number; y: number } {
@@ -511,16 +648,35 @@ export class TowerScene {
       }
     }
 
+    // Debris from the finale.
+    for (let i = this.debris.length - 1; i >= 0; i--) {
+      const d = this.debris[i];
+      d.life += dt;
+      d.obj.position.addScaledVector(d.vel, dt);
+      d.vel.y -= 34 * dt;
+      d.obj.rotation.x += d.ang.x * dt;
+      d.obj.rotation.y += d.ang.y * dt;
+      d.obj.rotation.z += d.ang.z * dt;
+      if (d.obj.position.y < 1.4 && d.vel.y < 0) {
+        d.obj.position.y = 1.4;
+        d.vel.y *= -0.35;
+        d.vel.x *= 0.6;
+        d.vel.z *= 0.6;
+        d.ang.multiplyScalar(0.5);
+      }
+      if (d.life > 6) { this.scene.remove(d.obj); this.debris.splice(i, 1); }
+    }
+
     // Camera framing: fit the plots' width and the tallest column.
     const vfov = THREE.MathUtils.degToRad(this.camera.fov);
     const hfov = 2 * Math.atan(Math.tan(vfov / 2) * this.camera.aspect);
     const width = this.fitWidth;
-    const height = this.fitHeight + 6;
+    const height = this.fitHeight + 6 + (this.finaleShift ? 10 : 0);
     const dist = Math.max((width / 2) / Math.tan(hfov / 2), (height / 2) / Math.tan(vfov / 2)) * (this.camera.aspect < 1 ? 1.25 : 1.05) + 9;
     const yaw = THREE.MathUtils.degToRad(22);
     const pitch = THREE.MathUtils.degToRad(17);
     const dir = new THREE.Vector3(Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch));
-    this.camTarget.set(this.fitCenter, Math.max(5, this.fitHeight * 0.36), 0);
+    this.camTarget.set(this.fitCenter, Math.max(5, this.fitHeight * 0.36), this.finaleShift);
     this.camPos.copy(this.camTarget).addScaledVector(dir, dist);
     this.camera.position.lerp(this.camPos, 1 - Math.pow(0.02, dt));
     this.lookAt.lerp(this.camTarget, 1 - Math.pow(0.02, dt));

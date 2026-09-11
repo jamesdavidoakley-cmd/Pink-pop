@@ -24,10 +24,10 @@ await page.screenshot({ path: `${shotDir}/02-menu.png` });
 
 // Free build: add 12 gems → one fuse, then smash the rod back.
 await page.click('#btn-sandbox');
-await page.waitForTimeout(500);
+await page.waitForTimeout(1000);
 const col = (p) => `.col[data-place="${p}"]`;
 const idle = async () => { await page.waitForFunction(() => window.__tt?.scene.isIdle(), null, { timeout: 120000 }); await page.waitForTimeout(300); };
-for (let i = 0; i < 12; i++) { await page.click(`${col(0)} .add`, { force: true }); await page.waitForTimeout(120); }
+for (let i = 0; i < 12; i++) { await page.click(`${col(0)} .add`, { force: true }); await page.waitForTimeout(250); }
 await idle();
 let counts = await page.$$eval('.col-count', (els) => els.map((e) => e.textContent));
 console.log('after 12 gems:', counts.join(','));
@@ -46,6 +46,17 @@ for (let i = 0; i < 6; i++) { await page.click(`${col(1)} .add`, { force: true }
 await idle();
 await page.waitForTimeout(1500);
 await page.screenshot({ path: `${shotDir}/04-sandbox-tall.png` });
+
+// Finale visuals: fire the Grumble Wall directly on the sandbox tower (power 3, then power 1).
+for (const power of [3, 1]) {
+  await page.evaluate((pw) => { window.__tt.scene.finale(pw, () => {}); }, power);
+  await page.waitForTimeout(2500);
+  await page.screenshot({ path: `${shotDir}/09-finale-${power}-wall.png` });
+  await page.waitForFunction(() => window.__tt.scene.isIdle(), null, { timeout: 120000 });
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: `${shotDir}/09-finale-${power}-after.png` });
+  if (power === 3) { await page.evaluate(() => window.__tt.scene.setCounts([7, 4, 2, 1])); await page.waitForTimeout(500); }
+}
 
 // Play the first round of every mode by driving the buttons, exactly as a child would.
 const dbg = () => page.evaluate(() => window.__tt.game.debug());
@@ -101,6 +112,29 @@ for (const mode of ['take', 'build', 'add', 'make', 'round']) {
   if (mode === 'take') await page.screenshot({ path: `${shotDir}/05-take-away.png` });
   await playRound(mode);
 }
+
+// A whole Build It level with no mistakes → SMASH button → straight through the wall → result screen.
+await page.click('#btn-home');
+await page.waitForTimeout(400);
+await page.click('.district:nth-child(1) .tier-btn:nth-child(1)');
+await page.waitForTimeout(600);
+for (let r = 0; r < 5; r++) {
+  const d = await dbg();
+  if (d.round !== r || d.phase !== 'play') { errors.push(`level: expected round ${r} in play, got ${d.round} ${d.phase}`); break; }
+  for (let p = 3; p >= 0; p--) for (let i = 0; i < d.delta[p]; i++) { await page.click(`${col(p)} .add`, { force: true }); await page.waitForTimeout(50); }
+  await idle();
+  await page.waitForFunction((rr) => { const x = window.__tt.game.debug(); return x.round === rr + 1 || x.phase === 'finale'; }, r, { timeout: 60000 }).catch(() => {});
+}
+const smashVisible = await page.isVisible('#btn-smash');
+console.log('SMASH button visible:', smashVisible);
+if (!smashVisible) errors.push('SMASH button did not appear after round 5');
+await page.screenshot({ path: `${shotDir}/10-smash-button.png` });
+await page.click('#btn-smash', { force: true });
+await page.waitForTimeout(3500);
+await page.screenshot({ path: `${shotDir}/11-level-finale.png` });
+await page.waitForFunction(() => !document.getElementById('result').hidden, null, { timeout: 120000 }).catch(() => errors.push('result screen never appeared'));
+console.log('result title:', await page.textContent('#res-title'), '|', await page.textContent('#res-sub'));
+await page.screenshot({ path: `${shotDir}/12-result.png` });
 
 // Phone-width layout check.
 await page.setViewportSize({ width: 400, height: 800 });

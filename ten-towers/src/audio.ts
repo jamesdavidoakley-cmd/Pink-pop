@@ -67,6 +67,15 @@ export const audio = {
   },
   nope() { tone(330, 0, 0.18, 'sine', 0.1, 262); },
   tick() { tone(880, 0, 0.05, 'square', 0.04); },
+  rumble() { noise(0, 1.2, 0.18); tone(45, 0, 1.2, 'sawtooth', 0.12, 30); },
+  whoosh() { noise(0, 0.45, 0.22); tone(200, 0, 0.45, 'sine', 0.08, 900); },
+  impact(power: number) {
+    noise(0, 0.5, 0.45);
+    tone(70, 0, 0.5, 'sawtooth', 0.2, 35);
+    if (power === 3) [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, 0.25 + i * 0.08, 0.5, 'triangle', 0.16));
+    else if (power === 2) [523, 659, 784].forEach((f, i) => tone(f, 0.3 + i * 0.1, 0.4, 'triangle', 0.14));
+  },
+  bonk() { tone(420, 0, 0.35, 'sine', 0.2, 120); tone(210, 0.35, 0.3, 'triangle', 0.1, 180); },
   speak(text: string) {
     if (muted || !('speechSynthesis' in window)) return;
     const s = window.speechSynthesis;

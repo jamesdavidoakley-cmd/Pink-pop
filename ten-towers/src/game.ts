@@ -7,7 +7,7 @@ import { toWords, withCommas, BLOCK_NAMES, PLACE_NAMES, mulberry32, plural, type
 import { makeLevel, MODE_INFO, tierLabel, ROUNDS_PER_LEVEL, type Mode, type Tier, type Round, MODES } from './levels';
 import { loadSave, writeSave, levelKey, type SaveData } from './save';
 
-type Phase = 'menu' | 'play' | 'answer' | 'result' | 'sandbox';
+type Phase = 'menu' | 'play' | 'answer' | 'result' | 'finale' | 'sandbox';
 
 export class Game {
   private tower = new Tower();
@@ -46,6 +46,7 @@ export class Game {
     hud.onSmash = (p) => void this.act('smash', p);
     hud.onAnswer = (n) => this.answer(n);
     hud.onChoice = (n) => void this.choose(n);
+    hud.onCharge = () => void this.smashFinale();
 
     this.toMenu();
     this.loop();
@@ -349,11 +350,41 @@ export class Game {
     await new Promise((r) => setTimeout(r, 900));
     this.roundIdx++;
     if (this.roundIdx < ROUNDS_PER_LEVEL) { this.startRound(); return; }
+    this.offerSmash();
+  }
+
+  private levelStars(): 1 | 2 | 3 {
+    return this.mistakes <= 1 ? 3 : this.mistakes <= 3 ? 2 : 1;
+  }
+
+  /** All five rounds done: the Grumble Wall rises and the child gets the SMASH button. */
+  private offerSmash(): void {
+    this.phase = 'finale';
+    this.hud.setBlueprint('Level done!', 'The Grumble Wall', 'Tap SMASH to charge it with your tower!');
+    this.hud.setChips(null);
+    this.hud.showSmash(true);
+    audio.rumble();
+    audio.speak('Level done! Here comes the Grumble Wall. Tap smash to charge it with your tower!');
+  }
+
+  private async smashFinale(): Promise<void> {
+    if (this.phase !== 'finale') return;
+    this.hud.showSmash(false);
+    const stars = this.levelStars();
+    this.phase = 'result';
+    audio.whoosh();
+    audio.speak('Charge!');
+    await this.scene.finale(stars, () => {
+      if (stars === 1) audio.bonk(); else audio.impact(stars);
+      const line = stars === 3 ? 'SMASHED right through!' : stars === 2 ? 'CRACKED it!' : 'BONK! The wall held.';
+      this.hud.toast(line, stars === 1 ? 'hint' : 'good', 3000);
+      audio.speak(line);
+    });
     this.finishLevel();
   }
 
   private finishLevel(): void {
-    const stars = this.mistakes <= 1 ? 3 : this.mistakes <= 3 ? 2 : 1;
+    const stars = this.levelStars();
     const key = levelKey(this.mode, this.tier);
     const prev = this.save.stars[key] ?? 0;
     if (!prev) this.save.towers++;
@@ -364,10 +395,11 @@ export class Game {
     const nextTier = (this.tier + 1) as Tier;
     const nextMode = MODES[(MODES.indexOf(this.mode) + 1) % MODES.length];
     const next = this.tier < 3 ? { mode: this.mode, tier: nextTier } : { mode: nextMode, tier: 1 as Tier };
-    const sub = prev ? `${MODE_INFO[this.mode].title} ${tierLabel(this.mode, this.tier)} — ${stars} star${stars === 1 ? '' : 's'}.`
-      : `A new tower lights up the city! That's ${this.save.towers} so far.`;
+    const wallLine = stars === 3 ? 'Straight through the Grumble Wall!' : stars === 2 ? 'You cracked the Grumble Wall.' : 'The Grumble Wall held this time. Fewer slips and it smashes!';
+    const sub = prev ? `${wallLine} ${MODE_INFO[this.mode].title} ${tierLabel(this.mode, this.tier)} — ${stars} star${stars === 1 ? '' : 's'}.`
+      : `${wallLine} A new tower lights up the city — that's ${this.save.towers} so far.`;
     audio.speak(prev ? 'Level complete!' : 'Level complete! A new tower lights up the city.');
-    this.hud.showResult(stars, 'Level complete!', sub, {
+    this.hud.showResult(stars, stars === 3 ? 'Smashed it!' : stars === 2 ? 'Cracked it!' : 'Level complete', sub, {
       home: () => this.toMenu(),
       again: () => this.startLevel(this.mode, this.tier),
       next: () => this.startLevel(next.mode, next.tier),
