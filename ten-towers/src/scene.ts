@@ -93,6 +93,7 @@ export class TowerScene {
   private elapsed = 0;
   private starField!: THREE.Points;
   private pads: THREE.Mesh[] = [];
+  private halfLines: THREE.Mesh[] = [];
   private fitCenter = -7;
   private fitWidth = 50;
 
@@ -153,6 +154,15 @@ export class TowerScene {
       pad.position.set(COL_X[p], 0.15, 0);
       this.scene.add(pad);
       this.pads[p] = pad;
+      // The halfway line: five blocks high. Reaching it means round up.
+      const line = new THREE.Mesh(
+        new THREE.BoxGeometry(w + 4, 0.14, d + 4),
+        new THREE.MeshBasicMaterial({ color: 0xfff3b0, transparent: true, opacity: 0.85 }),
+      );
+      line.position.set(COL_X[p], 5 * DIMS[p][1], 0);
+      line.visible = false;
+      this.scene.add(line);
+      this.halfLines[p] = line;
     }
 
     // Stars
@@ -229,6 +239,11 @@ export class TowerScene {
       spire.rotation.y = Math.PI / 4;
       this.landmarks.add(mesh, spire);
     }
+  }
+
+  /** Show the glowing halfway line on one column (Round It), or hide it. */
+  setHalfwayLine(place: Place | null): void {
+    this.halfLines.forEach((l, p) => { l.visible = p === place; });
   }
 
   /** Show only the first n columns (3 for numbers to 100, 4 beyond) and frame them. */
@@ -515,6 +530,7 @@ export class TowerScene {
     const shimmer = 0.45 + Math.sin(this.elapsed * 2.2) * 0.07;
     if (this.tweens.length === 0) for (const b of this.blocks.flat()) b.userData.mat.emissiveIntensity = shimmer;
     this.starField.rotation.y = this.elapsed * 0.004;
+    for (const l of this.halfLines) if (l.visible) (l.material as THREE.MeshBasicMaterial).opacity = 0.6 + Math.sin(this.elapsed * 4) * 0.3;
 
     this.composer.render(dt);
   }

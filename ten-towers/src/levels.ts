@@ -1,9 +1,9 @@
 // Round generation for every mode and tier. Pure, seeded, tested.
 import { digitsOf, randInt, toWords, withCommas, BLOCK_NAMES, plural } from './number';
 
-export type Mode = 'build' | 'add' | 'take' | 'make';
+export type Mode = 'build' | 'add' | 'take' | 'make' | 'round';
 export type Tier = 1 | 2 | 3;
-export const MODES: Mode[] = ['build', 'add', 'take', 'make'];
+export const MODES: Mode[] = ['build', 'add', 'take', 'make', 'round'];
 export const TIERS: Tier[] = [1, 2, 3];
 export const ROUNDS_PER_LEVEL = 5;
 
@@ -12,13 +12,17 @@ export const MODE_INFO: Record<Mode, { title: string; icon: string; blurb: strin
   add: { title: 'Add On', icon: '➕', blurb: 'Add blocks on top. Watch ten fuse into one!' },
   take: { title: 'Take Away', icon: '➖', blurb: 'Take blocks off. Smash one to make ten!' },
   make: { title: 'Make 100', icon: '🎯', blurb: 'Fill the tower to exactly 100 or 1,000.' },
+  round: { title: 'Round It', icon: '⚖️', blurb: 'Is the column past the halfway line? Round up or down.' },
 };
 
 export const TIER_INFO: Record<Tier, string> = { 1: 'to 100', 2: 'to 1,000', 3: 'to 10,000' };
 const MAKE_TIER_INFO: Record<Tier, string> = { 1: 'tens → 100', 2: 'any → 100', 3: '→ 1,000' };
+const ROUND_TIER_INFO: Record<Tier, string> = { 1: 'nearest 10', 2: 'nearest 100', 3: 'nearest 1,000' };
 
 export function tierLabel(mode: Mode, tier: Tier): string {
-  return mode === 'make' ? MAKE_TIER_INFO[tier] : TIER_INFO[tier];
+  if (mode === 'make') return MAKE_TIER_INFO[tier];
+  if (mode === 'round') return ROUND_TIER_INFO[tier];
+  return TIER_INFO[tier];
 }
 
 export interface Round {
@@ -33,6 +37,9 @@ export interface Round {
   big: string;
   /** Spoken + written instruction. */
   words: string;
+  /** Round It only: 10, 100 or 1000, and the two candidate answers (lower, upper). */
+  roundTo?: number;
+  choices?: [number, number];
 }
 
 function describeBlocks(counts: number[]): string {
@@ -115,12 +122,31 @@ function makeRound(tier: Tier, rand: () => number): Round {
   };
 }
 
+function roundRound(tier: Tier, rand: () => number): Round {
+  let n: number;
+  let to: number;
+  if (tier === 1) { n = randInt(rand, 11, 99); to = 10; }
+  else if (tier === 2) { n = randInt(rand, 101, 999); to = rand() < 0.4 ? 10 : 100; }
+  else { n = randInt(rand, 1001, 9999); to = [10, 100, 1000][randInt(rand, 0, 2)]; }
+  if (n % to === 0) n += 3; // never sit exactly on a station
+  const lower = Math.floor(n / to) * to;
+  const upper = lower + to;
+  const target = n - lower >= to / 2 ? upper : lower;
+  return {
+    mode: 'round', start: n, target, delta: digitsOf(n),
+    big: `${withCommas(n)} → nearest ${withCommas(to)}`,
+    words: `Round ${toWords(n)} to the nearest ${toWords(to)}. Is it nearer ${toWords(lower)} or ${toWords(upper)}?`,
+    roundTo: to, choices: [lower, upper],
+  };
+}
+
 export function makeRoundFor(mode: Mode, tier: Tier, rand: () => number): Round {
   switch (mode) {
     case 'build': return buildRound(tier, rand);
     case 'add': return addRound(tier, rand);
     case 'take': return takeRound(tier, rand);
     case 'make': return makeRound(tier, rand);
+    case 'round': return roundRound(tier, rand);
   }
 }
 

@@ -17,6 +17,7 @@ export class Hud {
   onSub: (p: Place) => void = () => {};
   onSmash: (p: Place) => void = () => {};
   onAnswer: (n: number) => void = () => {};
+  onChoice: (n: number) => void = () => {};
   onHome: () => void = () => {};
   onMute: () => void = () => {};
   onLevel: (m: Mode, t: Tier) => void = () => {};
@@ -61,6 +62,8 @@ export class Hud {
       else if (e.key === 'Enter') this.key('OK');
     });
 
+    $('ch-a').addEventListener('click', () => this.onChoice(Number($('ch-a').dataset.value)));
+    $('ch-b').addEventListener('click', () => this.onChoice(Number($('ch-b').dataset.value)));
     $('btn-home').addEventListener('click', () => this.onHome());
     $('btn-mute').addEventListener('click', () => this.onMute());
     $('btn-sandbox').addEventListener('click', () => this.onSandbox());
@@ -110,6 +113,7 @@ export class Hud {
     $('columns').hidden = true;
     $('round-dots').hidden = true;
     $('numpad').hidden = true;
+    $('choices').hidden = true;
     this.hideToast();
   }
 
@@ -133,6 +137,7 @@ export class Hud {
     if (handlers.next) next.onclick = handlers.next;
     $('result').hidden = false;
     $('numpad').hidden = true;
+    $('choices').hidden = true;
     this.hideToast();
   }
 
@@ -233,6 +238,17 @@ export class Hud {
     this.npValue = '';
     $('np-display').textContent = ' ';
   }
+
+  showChoices(prompt: string, choices: [number, number]): void {
+    $('ch-prompt').textContent = prompt;
+    const a = $('ch-a'); const b = $('ch-b');
+    a.textContent = choices[0].toLocaleString('en-GB'); a.dataset.value = String(choices[0]);
+    b.textContent = choices[1].toLocaleString('en-GB'); b.dataset.value = String(choices[1]);
+    $('choices').hidden = false;
+    $('columns').classList.add('answering');
+  }
+
+  hideChoices(): void { $('choices').hidden = true; $('columns').classList.remove('answering'); }
 
   hideNumpad(): void { $('numpad').hidden = true; $('columns').classList.remove('answering'); }
 

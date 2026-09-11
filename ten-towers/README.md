@@ -13,15 +13,16 @@ Ten of anything **fuses** into one of the next (that's carrying). One of anythin
 
 ## Modes
 
-Each mode has three tiers (to 100, to 1,000, to 10,000) and five rounds per level. Stars are earned for few mistakes; every first-time level completion lights a new tower in the city skyline.
+Each mode has three tiers (to 100, to 1,000, to 10,000; Round It uses nearest 10, 100, 1,000) and five rounds per level. Stars are earned for few mistakes; every first-time level completion lights a new tower in the city skyline.
 
 - **Build It** — build the number on the blueprint. Higher tiers give tricky blueprints like "4 slabs, 12 rods and 3 gems" so the fuse has to happen.
 - **Add On** — the tower is pre-built; add the blocks on the blueprint, watch the carries fuse, then read the new number off the columns and type it.
 - **Take Away** — remove blocks; when a column runs dry the smash button pulses. Read what's left and type it.
 - **Make 100** — fill a tower to exactly 100 (or 1,000). The final fuse is the payoff.
+- **Round It** — a glowing halfway line sits five blocks up the deciding column. Past it, round up; under it, round down. Pick the nearer station, then watch the smaller columns melt away and the deciding column either finish its ten or vanish.
 - **Free build** — a sandbox with every button enabled.
 
-Everything is spoken (Web Speech, en-GB voice when available) and every sound is a tiny synth, so it works offline with no assets.
+On an iPad, open it in Safari and use Share → Add to Home Screen for a full-screen app. Everything is spoken (Web Speech, en-GB voice when available) and every sound is a tiny synth, so it works offline with no assets.
 
 ## Run
 
@@ -31,7 +32,7 @@ npm run dev          # http://localhost:5174
 npm run build        # static build in dist/
 npm run typecheck
 npm test             # number words, tower carry/borrow, level generation
-npm run check        # headless: boots, fuses, smashes, plays a round, screenshots to shots/
+npm run check        # headless: boots, fuses, smashes, plays a round of every mode, screenshots to shots/
 ```
 
 `npm run check` needs the dev server running. It uses the Chromium at `/opt/pw-browsers/chromium` if present.

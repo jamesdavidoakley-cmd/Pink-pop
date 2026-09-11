@@ -1,0 +1,12 @@
+{
+  "name": "Ten Towers",
+  "short_name": "Ten Towers",
+  "start_url": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#05071a",
+  "theme_color": "#05071a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

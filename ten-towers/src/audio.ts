@@ -50,7 +50,10 @@ export const audio = {
     muted = m;
     if (m && 'speechSynthesis' in window) window.speechSynthesis.cancel();
   },
-  unlock() { ac(); },
+  unlock() {
+    ac();
+    if ('speechSynthesis' in window) { window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); }
+  },
   pop(place = 0) { tone(520 + place * 120, 0, 0.09, 'sine', 0.14, 900 + place * 120); },
   drop() { tone(300, 0, 0.12, 'triangle', 0.12, 160); },
   chime(place = 0) {

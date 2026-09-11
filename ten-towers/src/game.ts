@@ -45,14 +45,15 @@ export class Game {
     hud.onSub = (p) => void this.act('sub', p);
     hud.onSmash = (p) => void this.act('smash', p);
     hud.onAnswer = (n) => this.answer(n);
+    hud.onChoice = (n) => void this.choose(n);
 
     this.toMenu();
     this.loop();
   }
 
   /** Read-only snapshot for headless checks. */
-  debug(): { phase: Phase; counts: number[]; remaining: number[]; target: number; round: number } {
-    return { phase: this.phase, counts: [...this.tower.counts], remaining: [...this.remaining], target: this.round?.target ?? -1, round: this.roundIdx };
+  debug(): { phase: Phase; mode: Mode; counts: number[]; remaining: number[]; delta: number[]; target: number; start: number; round: number; choices?: number[] } {
+    return { phase: this.phase, mode: this.mode, counts: [...this.tower.counts], remaining: [...this.remaining], delta: [...(this.round?.delta ?? [])], target: this.round?.target ?? -1, start: this.round?.start ?? -1, round: this.roundIdx, choices: this.round?.choices };
   }
 
   private loop = (): void => {
@@ -68,6 +69,8 @@ export class Game {
   private toMenu(): void {
     this.phase = 'menu';
     this.hud.hideNumpad();
+    this.hud.hideChoices();
+    this.scene.setHalfwayLine(null);
     this.hud.showMenu(this.save);
     this.tower.set(0);
     this.resetScene([0, 0, 0, 0]);
@@ -128,8 +131,10 @@ export class Game {
     this.tower.set(this.round.start);
     this.resetScene(this.tower.counts);
     this.hud.hideNumpad();
+    this.hud.hideChoices();
     this.hud.hideToast();
     this.hud.setRoundDots(ROUNDS_PER_LEVEL, this.roundIdx);
+    this.scene.setHalfwayLine(this.mode === 'round' ? this.roundPlace() : null);
     const info = MODE_INFO[this.mode];
     this.hud.setBlueprint(`${info.title} · ${tierLabel(this.mode, this.tier)}`, this.round.big, this.round.words);
     if (this.mode === 'add' || this.mode === 'take' || this.mode === 'build') this.hud.setChips(this.remaining, this.round.delta);
@@ -137,6 +142,15 @@ export class Game {
     this.hud.setCounts(this.tower.counts);
     this.refreshButtons();
     audio.speak(this.round.words);
+    if (this.mode === 'round' && this.round.choices) {
+      this.phase = 'answer';
+      this.hud.showChoices('Which is nearer?', this.round.choices);
+    }
+  }
+
+  /** The column whose halfway line decides the rounding: ones for nearest 10, tens for nearest 100… */
+  private roundPlace(): Place {
+    return (Math.log10(this.round.roundTo ?? 10) - 1) as Place;
   }
 
   // ---- button state ----
@@ -153,6 +167,9 @@ export class Game {
           break;
         case 'add':
           s = { add: this.remaining[p] > 0 && this.tower.canAdd(p), sub: false, smash: false };
+          break;
+        case 'round':
+          s = { add: false, sub: false, smash: false };
           break;
         case 'take': {
           const needsMore = p > 0 && this.remaining[p - 1] > this.tower.counts[p - 1];
@@ -288,6 +305,35 @@ export class Game {
       : `The digits are ${[3, 2, 1, 0].filter((p) => c[p] || p <= Math.max(0, String(this.round.target).length - 1)).map((p) => c[p]).join(', ')}. Put them together!`;
     this.hud.toast(hint, 'hint', 4200);
     audio.speak(hint);
+  }
+
+  private async choose(n: number): Promise<void> {
+    if (this.phase !== 'answer' || this.mode !== 'round' || !this.round.choices) return;
+    const place = this.roundPlace();
+    const count = this.tower.counts[place];
+    const up = count >= 5;
+    if (n !== this.round.target) {
+      this.wrongThisRound++;
+      this.mistakes++;
+      audio.nope();
+      const hint = `Look at the ${PLACE_NAMES[place]} column. ${count} is ${up ? 'five or more' : 'less than five'}, so it rounds ${up ? 'UP' : 'DOWN'}.`;
+      this.hud.toast(hint, 'hint', 4200);
+      audio.speak(hint);
+      return;
+    }
+    // Show why: the smaller columns melt away; the deciding column either finishes its ten or vanishes.
+    this.phase = 'result';
+    this.hud.hideChoices();
+    const events: TowerEvent[] = [];
+    for (let p = 0; p < place; p++) while (this.tower.canRemove(p as Place)) events.push(...this.tower.remove(p as Place));
+    if (up) while (this.tower.counts[place] > 0) events.push(...this.tower.add(place));
+    else while (this.tower.canRemove(place)) events.push(...this.tower.remove(place));
+    this.hud.toast(up ? `${count} reaches the halfway line — round UP to ${withCommas(this.round.target)}.` : `${count} is under the halfway line — round DOWN to ${withCommas(this.round.target)}.`, 'good', 3200);
+    audio.speak(up ? 'Round up!' : 'Round down!');
+    this.hud.setCounts(this.tower.counts);
+    await this.scene.applyEvents(events, (e) => this.soundFor(e));
+    this.scene.setHalfwayLine(null);
+    await this.success();
   }
 
   private async success(): Promise<void> {

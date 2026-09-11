@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <meta name="theme-color" content="#05071a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="./manifest.webmanifest" />
   <title>Ten Towers</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='8' y='36' width='20' height='20' rx='4' fill='%23ffb347'/%3E%3Crect x='36' y='8' width='20' height='48' rx='4' fill='%233ee6c7'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="./src/styles.css" />
@@ -30,6 +34,11 @@
       <div id="np-prompt">How tall is the tower now?</div>
       <div id="np-display">&nbsp;</div>
       <div id="np-keys"></div>
+    </div>
+
+    <div id="choices" class="panel" hidden>
+      <div id="ch-prompt">Which is nearer?</div>
+      <div class="row"><button id="ch-a" class="choice"></button><button id="ch-b" class="choice"></button></div>
     </div>
 
     <div id="menu" class="screen">

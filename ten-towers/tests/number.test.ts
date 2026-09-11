@@ -78,6 +78,12 @@ describe('levels', () => {
         if (mode === 'build') expect(deltaValue).toBe(r.target);
         if (mode === 'add' || mode === 'make') expect(r.start + deltaValue).toBe(r.target);
         if (mode === 'take') expect(r.start - deltaValue).toBe(r.target);
+        if (mode === 'round') {
+          expect(r.choices).toContain(r.target);
+          expect(Math.abs(r.target - r.start) * 2).toBeLessThanOrEqual(r.roundTo!);
+          expect(r.target % r.roundTo!).toBe(0);
+          expect(r.start % r.roundTo!).not.toBe(0);
+        }
         expect(r.words.length).toBeGreaterThan(5);
       }
     }
