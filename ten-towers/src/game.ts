@@ -3,7 +3,7 @@ import { Tower, type TowerEvent } from './tower';
 import { TowerScene } from './scene';
 import { Hud } from './hud';
 import { audio } from './audio';
-import { toWords, withCommas, BLOCK_NAMES, PLACE_NAMES, mulberry32, plural, type Place } from './number';
+import { toWords, withCommas, digitsOf, BLOCK_NAMES, PLACE_NAMES, mulberry32, plural, type Place } from './number';
 import { makeLevel, MODE_INFO, tierLabel, ROUNDS_PER_LEVEL, type Mode, type Tier, type Round, MODES } from './levels';
 import { loadSave, writeSave, levelKey, type SaveData } from './save';
 
@@ -19,6 +19,8 @@ export class Game {
   private roundIdx = 0;
   private round!: Round;
   private remaining = [0, 0, 0, 0];
+  /** Build mode: blocks the child has placed per column, so the blueprint chips survive a fuse. */
+  private added = [0, 0, 0, 0];
   private mistakes = 0;
   private wrongThisRound = 0;
   private chain: Promise<void> = Promise.resolve();
@@ -47,9 +49,23 @@ export class Game {
     hud.onAnswer = (n) => this.answer(n);
     hud.onChoice = (n) => void this.choose(n);
     hud.onCharge = () => void this.smashFinale();
+    hud.onBang = () => void this.bang();
 
     this.toMenu();
     this.loop();
+  }
+
+  /** Headless checks only: start a Build It round with a fixed blueprint, e.g. [3, 12, 4, 0]. */
+  debugBuild(delta: number[]): void {
+    this.mode = 'build';
+    this.tier = 3;
+    this.setPlaces(4);
+    const target = delta.reduce((sum, c, i) => sum + c * [1, 10, 100, 1000][i], 0);
+    this.rounds = Array.from({ length: ROUNDS_PER_LEVEL }, () => ({ mode: 'build' as const, start: 0, target, delta: [...delta], big: 'debug', words: 'debug' }));
+    this.roundIdx = 0;
+    this.mistakes = 0;
+    this.hud.showPlay();
+    this.startRound();
   }
 
   /** Read-only snapshot for headless checks. */
@@ -129,6 +145,7 @@ export class Game {
     this.round = this.rounds[this.roundIdx];
     this.wrongThisRound = 0;
     this.remaining = [...this.round.delta];
+    this.added = [0, 0, 0, 0];
     this.tower.set(this.round.start);
     this.resetScene(this.tower.counts);
     this.hud.hideNumpad();
@@ -142,6 +159,7 @@ export class Game {
     else this.hud.setChips(null);
     this.hud.setCounts(this.tower.counts);
     this.refreshButtons();
+    this.hud.showBang(this.mode === 'build' || this.mode === 'make');
     audio.speak(this.round.words);
     if (this.mode === 'round' && this.round.choices) {
       this.phase = 'answer';
@@ -200,6 +218,7 @@ export class Game {
     if (kind === 'add') {
       events = this.tower.add(p);
       if (events.length && this.phase === 'play' && (this.mode === 'add') && this.remaining[p] > 0) this.remaining[p]--;
+      if (events.length && this.phase === 'play' && this.mode === 'build') this.added[p]++;
     } else if (kind === 'sub') {
       if (!this.tower.canRemove(p)) {
         audio.nope();
@@ -214,6 +233,7 @@ export class Game {
       }
       events = this.tower.remove(p);
       if (events.length && this.phase === 'play' && this.mode === 'take' && this.remaining[p] > 0) this.remaining[p]--;
+      if (events.length && this.phase === 'play' && this.mode === 'build' && this.added[p] > 0) this.added[p]--;
     } else {
       events = this.tower.smash(p);
     }
@@ -250,24 +270,16 @@ export class Game {
       });
   }
 
-  /** In build mode the chips show what is still missing against the *blueprint's* block list. */
+  /** In build mode the chips count what the child has placed, not what is standing — a fuse must not reset them. */
   private buildRemaining(): number[] {
-    const want = this.round.delta;
-    const have = this.tower.counts;
-    // Compare by value per place from the top down, so a tricky blueprint (12 rods) still reads sensibly.
-    return want.map((w, p) => Math.max(0, w - have[p]));
+    return this.round.delta.map((w, p) => Math.max(0, w - this.added[p]));
   }
 
   private checkRound(): void {
-    const value = this.tower.value();
     switch (this.mode) {
       case 'build':
       case 'make':
-        if (value === this.round.target && this.tower.isStandard()) void this.success();
-        else if (this.mode === 'make' && value > this.round.target) {
-          this.hud.toast('Too tall! Take some off.', 'hint');
-          audio.speak('Too tall. Take some off.');
-        }
+        // Nothing automatic: the child presses BANG when they think it's right.
         break;
       case 'add':
       case 'take':
@@ -308,6 +320,34 @@ export class Game {
     audio.speak(hint);
   }
 
+  /** The child says "I'm done". Right → it goes bang. Wrong → a fizzle and a nudge towards the column that's off. */
+  private async bang(): Promise<void> {
+    if (this.phase !== 'play' || (this.mode !== 'build' && this.mode !== 'make')) return;
+    await this.chain; // let any fuse in flight land first
+    if (this.phase !== 'play') return;
+    const value = this.tower.value();
+    if (value === this.round.target && this.tower.isStandard()) {
+      this.hud.showBang(false);
+      void this.success();
+      return;
+    }
+    this.wrongThisRound++;
+    this.mistakes++;
+    audio.fizzle();
+    this.hud.fizzleBang();
+    void this.scene.fizzle();
+    const want = digitsOf(this.round.target);
+    let off: Place = 0;
+    for (let p = 3; p >= 0; p--) if (this.tower.counts[p] !== want[p]) { off = p as Place; break; }
+    const tooTall = value > this.round.target;
+    const hint = this.wrongThisRound === 1
+      ? `Not yet — ${tooTall ? 'too tall' : 'not tall enough'}. Look at the ${PLACE_NAMES[off]} column.`
+      : `The ${PLACE_NAMES[off]} column needs ${want[off]}, and it has ${this.tower.counts[off]}.`;
+    this.hud.toast(hint, 'hint', 4000);
+    this.hud.shakeColumn(off);
+    audio.speak(hint.replace('—', ','));
+  }
+
   private async choose(n: number): Promise<void> {
     if (this.phase !== 'answer' || this.mode !== 'round' || !this.round.choices) return;
     const place = this.roundPlace();
@@ -340,6 +380,7 @@ export class Game {
   private async success(): Promise<void> {
     this.phase = 'result';
     this.hud.setChips(null);
+    this.hud.showBang(false);
     for (const p of [0, 1, 2, 3] as Place[]) { this.hud.setButtons(p, { add: false, sub: false, smash: false }); this.hud.pulseSmash(p, false); }
     const cheer = ['Brilliant!', 'Tower built!', 'You did it!', 'Perfect!', 'Superb!'][this.roundIdx % 5];
     this.hud.toast(`${cheer} ${withCommas(this.round.target)} — ${toWords(this.round.target)}.`, 'good', 3000);

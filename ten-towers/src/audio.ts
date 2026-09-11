@@ -75,6 +75,7 @@ export const audio = {
     if (power === 3) [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, 0.25 + i * 0.08, 0.5, 'triangle', 0.16));
     else if (power === 2) [523, 659, 784].forEach((f, i) => tone(f, 0.3 + i * 0.1, 0.4, 'triangle', 0.14));
   },
+  fizzle() { noise(0, 0.35, 0.12); tone(330, 0, 0.4, 'sawtooth', 0.06, 90); },
   bonk() { tone(420, 0, 0.35, 'sine', 0.2, 120); tone(210, 0.35, 0.3, 'triangle', 0.1, 180); },
   speak(text: string) {
     if (muted || !('speechSynthesis' in window)) return;

@@ -24,6 +24,7 @@ export class Hud {
   onSandbox: () => void = () => {};
   onStart: () => void = () => {};
   onCharge: () => void = () => {};
+  onBang: () => void = () => {};
 
   constructor() {
     const root = $('columns');
@@ -66,6 +67,7 @@ export class Hud {
     $('ch-a').addEventListener('click', () => this.onChoice(Number($('ch-a').dataset.value)));
     $('ch-b').addEventListener('click', () => this.onChoice(Number($('ch-b').dataset.value)));
     $('btn-smash').addEventListener('click', () => this.onCharge());
+    $('btn-bang').addEventListener('click', () => this.onBang());
     $('btn-home').addEventListener('click', () => this.onHome());
     $('btn-mute').addEventListener('click', () => this.onMute());
     $('btn-sandbox').addEventListener('click', () => this.onSandbox());
@@ -117,6 +119,7 @@ export class Hud {
     $('numpad').hidden = true;
     $('choices').hidden = true;
     $('btn-smash').hidden = true;
+    $('btn-bang').hidden = true;
     this.hideToast();
   }
 
@@ -141,6 +144,7 @@ export class Hud {
     $('result').hidden = false;
     $('numpad').hidden = true;
     $('choices').hidden = true;
+    $('btn-bang').hidden = true;
     this.hideToast();
   }
 
@@ -254,6 +258,13 @@ export class Hud {
   hideChoices(): void { $('choices').hidden = true; $('columns').classList.remove('answering'); }
 
   showSmash(on: boolean): void { $('btn-smash').hidden = !on; }
+  showBang(on: boolean): void { $('btn-bang').hidden = !on; }
+  fizzleBang(): void {
+    const b = $('btn-bang');
+    b.classList.remove('fizzle');
+    void b.offsetWidth;
+    b.classList.add('fizzle');
+  }
 
   hideNumpad(): void { $('numpad').hidden = true; $('columns').classList.remove('answering'); }
 

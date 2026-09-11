@@ -459,6 +459,21 @@ export class TowerScene {
     }, (x) => x);
   }
 
+  /** A damp little puff: the bang didn't work. */
+  async fizzle(): Promise<void> {
+    for (const p of [0, 1, 2, 3] as Place[]) {
+      const n = this.blocks[p].length;
+      if (n) this.burst(slotPos(p, n - 1).add(new THREE.Vector3(0, DIMS[p][1], 0)), 0x8a8fa8, 30, 5);
+    }
+    const all = this.blocks.flat();
+    const base = all.map((b) => b.position.x);
+    await this.tween(0.45, (k) => {
+      const dx = Math.sin(k * Math.PI * 7) * (1 - k) * 0.6;
+      all.forEach((b, i) => { b.position.x = base[i] + dx; });
+    }, (x) => x);
+    all.forEach((b, i) => { b.position.x = base[i]; });
+  }
+
   /** Nudge a column to say "nothing here". */
   async shake(place: Place): Promise<void> {
     const col = this.blocks[place];

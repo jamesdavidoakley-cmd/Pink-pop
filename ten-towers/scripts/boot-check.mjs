@@ -64,7 +64,16 @@ const MODE_CARD = { build: 1, add: 2, take: 3, make: 4, round: 5 };
 async function playRound(mode) {
   let d = await dbg();
   console.log(`${mode}: start ${d.start} → target ${d.target} (delta ${d.delta.join(',')})`);
-  if (mode === 'build' || mode === 'add' || mode === 'make') {
+  if (mode === 'build' || mode === 'make') {
+    // Press BANG too early once → fizzle + hint, then finish and BANG for real.
+    await page.click(`${col(0)} .add`, { force: true }); await idle();
+    await page.click('#btn-bang', { force: true }); await page.waitForTimeout(400);
+    console.log('  early bang:', await page.textContent('#toast'));
+    await page.click(`${col(0)} .sub`, { force: true }); await idle();
+    for (let p = 3; p >= 0; p--) for (let i = 0; i < d.delta[p]; i++) { await page.click(`${col(p)} .add`, { force: true }); await page.waitForTimeout(60); }
+    await idle();
+    await page.click('#btn-bang', { force: true });
+  } else if (mode === 'add') {
     for (let p = 3; p >= 0; p--) for (let i = 0; i < d.delta[p]; i++) { await page.click(`${col(p)} .add`, { force: true }); await page.waitForTimeout(60); }
   } else if (mode === 'take') {
     for (let p = 0; p < 4; p++) {
@@ -113,6 +122,24 @@ for (const mode of ['take', 'build', 'add', 'make', 'round']) {
   await playRound(mode);
 }
 
+// Regression: a tricky blueprint "4 slabs, 12 rods and 3 gems". The rods chip must count down through the fuse.
+await page.click('#btn-home');
+await page.waitForTimeout(400);
+await page.evaluate(() => window.__tt.game.debugBuild([3, 12, 4, 0]));
+await page.waitForTimeout(500);
+const rodChip = () => page.$$eval('#bp-chips .chip', (els) => els.map((e) => e.textContent.trim()).find((t) => /rod/.test(t)));
+for (let i = 0; i < 10; i++) { await page.click(`${col(1)} .add`, { force: true }); await page.waitForTimeout(80); }
+await idle();
+let chip = await rodChip();
+console.log('after 10 rods (fused):', chip, '| counts', (await dbg()).counts.join(','));
+if (chip !== '2 rods') errors.push(`tricky blueprint: expected "2 rods" after the fuse, got "${chip}"`);
+for (let i = 0; i < 2; i++) { await page.click(`${col(1)} .add`, { force: true }); await page.waitForTimeout(80); }
+await idle();
+chip = await rodChip();
+console.log('after 12 rods:', chip);
+if (chip !== '0 rods') errors.push(`tricky blueprint: expected "0 rods", got "${chip}"`);
+await page.screenshot({ path: `${shotDir}/13-tricky-chips.png` });
+
 // A whole Build It level with no mistakes → SMASH button → straight through the wall → result screen.
 await page.click('#btn-home');
 await page.waitForTimeout(400);
@@ -123,6 +150,9 @@ for (let r = 0; r < 5; r++) {
   if (d.round !== r || d.phase !== 'play') { errors.push(`level: expected round ${r} in play, got ${d.round} ${d.phase}`); break; }
   for (let p = 3; p >= 0; p--) for (let i = 0; i < d.delta[p]; i++) { await page.click(`${col(p)} .add`, { force: true }); await page.waitForTimeout(50); }
   await idle();
+  const chips = await page.$$eval('#bp-chips .chip', (els) => els.map((e) => e.textContent.trim()));
+  if (chips.some((c) => !/^0 /.test(c))) errors.push(`level round ${r}: chips not all done after building: ${chips.join(' | ')}`);
+  await page.click('#btn-bang', { force: true });
   await page.waitForFunction((rr) => { const x = window.__tt.game.debug(); return x.round === rr + 1 || x.phase === 'finale'; }, r, { timeout: 60000 }).catch(() => {});
 }
 const smashVisible = await page.isVisible('#btn-smash');
