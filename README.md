@@ -24,6 +24,10 @@ npm run dev        # → http://localhost:5173
 | `npm run test:smoke` | Playwright boot→play→save smoke test |
 | `npm run ci` | typecheck + validate + test + build |
 
+## Ten Towers (place-value spin-off)
+
+`ten-towers/` is a standalone maths game: numbers as glowing crystal blocks, with carrying and borrowing as fuse/smash animations. See `ten-towers/README.md`. Run it with `cd ten-towers && npm install && npm run dev`.
+
 ## Docs
 
 - `BUILD_PROMPT.md` — the master design/build brief
