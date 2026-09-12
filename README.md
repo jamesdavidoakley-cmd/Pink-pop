@@ -28,6 +28,10 @@ npm run dev        # → http://localhost:5173
 
 `ten-towers/` is a standalone maths game: numbers as glowing crystal blocks, with carrying and borrowing as fuse/smash animations. See `ten-towers/README.md`. Run it with `cd ten-towers && npm install && npm run dev`.
 
+## Crash Test (engineering spin-off)
+
+`crash-test/` is a standalone build-and-test game with real 2D physics: bridges, gates, towers, levers and roofs, each ending with a load that either holds or fails, and an explanation of why. See `crash-test/README.md`. Run it with `cd crash-test && npm install && npm run dev`.
+
 ## Docs
 
 - `BUILD_PROMPT.md` — the master design/build brief

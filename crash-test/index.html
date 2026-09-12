@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#0b1440" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <title>Crash Test</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1440'/%3E%3Cpath d='M8 44h48M14 44l18-22 18 22M32 22v22' stroke='%23ffb347' stroke-width='6' stroke-linecap='round' fill='none'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./src/styles.css" />
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="hud">
+    <div id="topbar">
+      <button id="btn-home" class="icon-btn" title="Home" aria-label="Home">🏠</button>
+      <div id="blueprint" hidden>
+        <div id="bp-title"></div>
+        <div id="bp-prompt"></div>
+        <div id="bp-budget"></div>
+      </div>
+      <button id="btn-mute" class="icon-btn" title="Sound" aria-label="Sound">🔊</button>
+    </div>
+
+    <div id="testbar" hidden></div>
+    <div id="toast" hidden></div>
+
+    <div id="bottom">
+      <div id="palette" hidden></div>
+      <div id="tip"></div>
+      <div id="actions" hidden>
+        <button id="btn-undo" class="small-btn" title="Undo">↶ Undo</button>
+        <button id="btn-clear" class="small-btn" title="Clear">✕ Clear</button>
+        <button id="btn-test" class="big-btn test-btn">🔨 TEST</button>
+      </div>
+    </div>
+
+    <div id="menu" class="screen">
+      <div class="title">
+        <h1>CRASH TEST</h1>
+        <p class="tag">Build it. Test it. Watch it fail. Fix it.</p>
+      </div>
+      <div id="districts"></div>
+      <div id="star-count"></div>
+    </div>
+
+    <div id="result" class="screen" hidden>
+      <div class="panel result-panel">
+        <div id="res-stars"></div>
+        <h2 id="res-title"></h2>
+        <p id="res-sub"></p>
+        <div class="row">
+          <button id="res-menu" class="big-btn ghost">Levels</button>
+          <button id="res-fix" class="big-btn">Fix it</button>
+          <button id="res-next" class="big-btn">Next ▶</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="splash" class="screen">
+      <div class="title">
+        <h1>CRASH TEST</h1>
+        <p class="tag">Tap to start</p>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>

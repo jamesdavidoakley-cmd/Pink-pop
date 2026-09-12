@@ -1,0 +1,10 @@
+{
+  "name": "Crash Test",
+  "short_name": "Crash Test",
+  "start_url": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0b1440",
+  "theme_color": "#0b1440",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
