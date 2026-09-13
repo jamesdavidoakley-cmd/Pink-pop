@@ -36,6 +36,10 @@ npm run dev        # → http://localhost:5173
 
 `rainbow-pop/index.html` is a single-file first game: letters, words, pictures and numbers with giant tiles, everything spoken, and fireworks on every win. No build step, just open the file.
 
+## Arcobaleno Pop (for Casper)
+
+`arcobaleno-pop/index.html` is Rainbow Pop in Italian only: Italian alphabet, words, articles and voice.
+
 ## Docs
 
 - `BUILD_PROMPT.md` — the master design/build brief
