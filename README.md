@@ -32,6 +32,10 @@ npm run dev        # → http://localhost:5173
 
 `crash-test/` is a standalone build-and-test game with real 2D physics: bridges, gates, towers, levers and roofs, each ending with a load that either holds or fails, and an explanation of why. See `crash-test/README.md`. Run it with `cd crash-test && npm install && npm run dev`.
 
+## Rainbow Pop (for Cas)
+
+`rainbow-pop/index.html` is a single-file first game: letters, words, pictures and numbers with giant tiles, everything spoken, and fireworks on every win. No build step, just open the file.
+
 ## Docs
 
 - `BUILD_PROMPT.md` — the master design/build brief
