@@ -206,6 +206,7 @@ export class Game {
     this.loadStates[this.loadIdx] = 'now';
     this.hud.setTestBar(this.level.loads.map((l, i) => ({ label: l.label, state: this.loadStates[i] })));
     this.testStage = 'load';
+    if (load.type === 'quake') this.renderer.dust(12, this.level.ground[0][1], 30, 20);
     this.announce(load);
   }
 
@@ -226,6 +227,8 @@ export class Game {
       this.loadStates[this.loadIdx] = 'ok';
       this.hud.setTestBar(this.level.loads.map((l, i) => ({ label: l.label, state: this.loadStates[i] })));
       audio.held();
+      this.renderer.confetti(this.loadIdx === this.level.loads.length - 1 ? 140 : 60);
+      this.renderer.twinkle(12, 6, 14);
       this.hud.toast(`${this.level.loads[this.loadIdx].label}: it held!`, 'good', 1500);
       this.testStage = 'holdPause';
       this.wait = 1.1;
@@ -235,6 +238,11 @@ export class Game {
     this.loadStates[this.loadIdx] = 'fail';
     this.hud.setTestBar(this.level.loads.map((l, i) => ({ label: l.label, state: this.loadStates[i] })));
     if (outcome.reason === 'snapped') audio.snap(); else audio.crash();
+    if (outcome.at) {
+      if (outcome.reason === 'snapped') this.renderer.sparks(outcome.at.x, outcome.at.y, 40);
+      this.renderer.dust(outcome.at.x, outcome.at.y + 0.3, 12, 1.5);
+    }
+    this.renderer.shake(outcome.reason === 'snapped' ? 10 : 16);
     this.timeScale = 0.25;
     if (outcome.at) this.focus = { x: outcome.at.x, y: outcome.at.y, k: 1.7, circle: true };
     const why = explain(outcome, this.level);
@@ -285,6 +293,7 @@ export class Game {
     if (this.testStage === 'settle') {
       this.wait -= dt;
       if (sim.firstBreak) { this.onOutcome({ ok: false, reason: 'snapped', link: sim.firstBreak.link, at: { x: (sim.firstBreak.link.a.x + sim.firstBreak.link.b.x) / 2, y: (sim.firstBreak.link.a.y + sim.firstBreak.link.b.y) / 2 } }); return; }
+      if (this.wait > 0.85 && this.level.mode !== 'lift') for (const p of this.level.anchors) this.renderer.dust(p[0], p[1], 2, 0.5);
       if (this.wait <= 0) this.beginLoad();
     } else if (this.testStage === 'load') {
       if (status.state === 'done') this.onOutcome(status.outcome);
