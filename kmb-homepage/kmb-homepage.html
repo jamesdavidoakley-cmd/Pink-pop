@@ -187,44 +187,41 @@
   }
   .kmb-hero-pledge p { font-size: clamp(15.5px, 14.5px + 0.25vw, 18px); color: var(--kmb-light-mut); }
 
-  /* Breathing ring — one calm resting-breath cycle */
-  .kmb-breath {
+  /* Hero photo — framed portrait with a slow breathing glow */
+  .kmb-hero-photo {
     position: relative;
     justify-self: center;
-    width: min(300px, 32vw);
-    aspect-ratio: 1;
-    display: grid;
-    place-items: center;
+    width: min(360px, 34vw);
   }
-  .kmb-breath::before,
-  .kmb-breath::after {
+  .kmb-hero-photo::before {
+    content: "";
+    position: absolute;
+    inset: -14%;
+    border-radius: 40px;
+    background: radial-gradient(closest-side, rgba(65, 182, 230, 0.38), transparent 72%);
+    filter: blur(12px);
+    animation: kmb-glow 4.8s ease-in-out infinite;
+  }
+  .kmb-hero-photo::after {
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: 50%;
-    animation: kmb-inhale 4.8s ease-in-out infinite;
+    border-radius: 26px;
+    border: 1.5px solid rgba(65, 182, 230, 0.55);
+    transform: translate(16px, 16px);
   }
-  .kmb-breath::before {
-    border: 1.5px solid rgba(65, 182, 230, 0.6);
-    box-shadow: 0 0 70px rgba(65, 182, 230, 0.16), inset 0 0 50px rgba(65, 182, 230, 0.08);
+  .kmb-hero-photo img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    border-radius: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 30px 80px rgba(0, 10, 40, 0.5);
   }
-  .kmb-breath::after {
-    inset: 14%;
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    animation-delay: -0.35s;
-  }
-  .kmb-breath-label {
-    font-family: var(--kmb-mono);
-    font-size: 11.5px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.6);
-    text-align: center;
-    line-height: 2;
-  }
-  @keyframes kmb-inhale {
-    0%, 100% { transform: scale(0.9);  opacity: 0.55; }
-    50%      { transform: scale(1.06); opacity: 1; }
+  @keyframes kmb-glow {
+    0%, 100% { opacity: 0.5; transform: scale(0.97); }
+    50%      { opacity: 1;   transform: scale(1.03); }
   }
 
   /* Capnography trace — the CO2 waveform VENTO is built to read */
@@ -247,9 +244,21 @@
     from { transform: translateX(0); }
     to   { transform: translateX(-1440px); }
   }
+  /* Apnoea cycle: the trace breathes for ~3s, then flatlines for ~3s —
+     the monitor keeps sweeping, the breaths stop. */
+  .kmb-trace-g {
+    transform-box: view-box;
+    transform-origin: 50% 80%;
+    animation: kmb-apnea 6s ease-in-out infinite;
+  }
+  @keyframes kmb-apnea {
+    0%, 45%  { transform: scaleY(1); }
+    52%, 94% { transform: scaleY(0.04); }
+    100%     { transform: scaleY(1); }
+  }
 
   @media (prefers-reduced-motion: reduce) {
-    .kmb-breath::before, .kmb-breath::after, .kmb-trace svg { animation: none; }
+    .kmb-hero-photo::before, .kmb-trace svg, .kmb-trace-g { animation: none; }
     .kmb-btn:hover { transform: none; }
   }
 
@@ -760,7 +769,8 @@
 
   @media (max-width: 900px) {
     .kmb-hero-inner { grid-template-columns: 1fr; }
-    .kmb-breath { display: none; }
+    .kmb-hero-photo { width: min(320px, 82%); margin-top: 8px; }
+    .kmb-hero-photo::after { transform: translate(12px, 12px); }
     .kmb-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .kmb-stat:nth-child(3) { border-left: none; }
     .kmb-stat { border-top: 1px solid rgba(255, 255, 255, 0.14); }
@@ -803,8 +813,9 @@
                treatments for CCHS. Not a penny is spent on administration.</p>
           </div>
         </div>
-        <div class="kmb-breath" aria-hidden="true">
-          <span class="kmb-breath-label">Inhale<br>· · ·<br>Exhale</span>
+        <!-- Add a short description of who's pictured to the alt="" for SEO -->
+        <div class="kmb-hero-photo">
+          <img src="https://keepmebreathing.com/wp-content/uploads/2022/09/IMG-20220823-WA0009-1.jpg" alt="">
         </div>
       </div>
     </div>
@@ -815,10 +826,12 @@
           <path id="kmb-wave" fill="none" stroke="#41b6e6" stroke-width="1.5"
                 d="M0,72 h64 l14,-46 96,-6 14,52 h52 l14,-46 96,-6 14,52 h52 l14,-46 96,-6 14,52 h52 l14,-46 96,-6 14,52 h64" />
         </defs>
-        <use href="#kmb-wave" x="0" />
-        <use href="#kmb-wave" x="720" />
-        <use href="#kmb-wave" x="1440" />
-        <use href="#kmb-wave" x="2160" />
+        <g class="kmb-trace-g">
+          <use href="#kmb-wave" x="0" />
+          <use href="#kmb-wave" x="720" />
+          <use href="#kmb-wave" x="1440" />
+          <use href="#kmb-wave" x="2160" />
+        </g>
       </svg>
     </div>
   </section>
