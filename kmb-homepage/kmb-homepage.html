@@ -344,6 +344,47 @@
   }
   @media (prefers-reduced-motion: reduce) { .kmb-logo img { transition: none; } }
 
+  /* ================= SUSSEX BUSINESS AWARDS FEATURE ================= */
+
+  .kmb-sba {
+    background:
+      radial-gradient(900px 480px at 85% 30%, rgba(0, 114, 206, 0.42), transparent 62%),
+      var(--kmb-night);
+  }
+  .kmb-sba .kmb-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: center;
+    gap: clamp(28px, 4vw, 64px);
+    padding-block: clamp(48px, 6vw, 84px);
+  }
+  .kmb-sba .kmb-eyebrow { color: var(--kmb-trace); }
+  .kmb-sba h2 {
+    color: var(--kmb-light);
+    font-size: clamp(28px, 3.2vw, 44px);
+    font-weight: 600;
+    margin-top: 14px;
+  }
+  .kmb-sba h2 em { font-style: italic; color: var(--kmb-trace); }
+  .kmb-sba p {
+    color: var(--kmb-light-mut);
+    margin-top: 16px;
+    max-width: 32em;
+    font-size: clamp(16px, 15px + 0.3vw, 20px);
+  }
+  .kmb-sba-logo {
+    display: block;
+    justify-self: center;
+    width: min(440px, 100%);
+    border-radius: 22px;
+    box-shadow: 0 26px 70px rgba(0, 10, 40, 0.45);
+  }
+  @media (max-width: 900px) {
+    .kmb-sba .kmb-wrap { grid-template-columns: 1fr; text-align: center; }
+    .kmb-sba p { margin-inline: auto; }
+    .kmb-sba-logo { width: min(340px, 92%); }
+  }
+
   /* ================= LIGHT SECTIONS ================= */
 
   .kmb-section { padding-block: clamp(64px, 8vw, 104px); }
@@ -744,7 +785,7 @@
       <div class="kmb-hero-inner">
         <div>
           <p class="kmb-eyebrow">Registered charity no. 1201757 · Brighton, UK</p>
-          <h1>Driving research for <em>CCHS</em> treatment worldwide</h1>
+          <h1>Driving research for <em>CCHS</em> treatment</h1>
           <p class="kmb-hero-lede">
             Children born with Congenital Central Hypoventilation Syndrome (CCHS)
             stop breathing when they fall asleep. There is no cure and no treatment
@@ -787,8 +828,8 @@
     <div class="kmb-wrap">
       <div class="kmb-stats-grid">
         <div class="kmb-stat">
-          <div class="kmb-stat-num">&pound;500k<sup>+</sup></div>
-          <div class="kmb-stat-label">Invested in research &amp; development</div>
+          <div class="kmb-stat-num">Patent filed</div>
+          <div class="kmb-stat-label">For continuous CO&#8322; monitoring</div>
         </div>
         <div class="kmb-stat">
           <div class="kmb-stat-num">130<sup>+</sup></div>
@@ -835,6 +876,26 @@
           <span class="kmb-logo-name" style="display:none">Penny Farthing Club</span>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ============ SUSSEX BUSINESS AWARDS FEATURE ============
+       To use a different logo image, replace the src of the
+       kmb-sba-logo image below with its Media Library URL. -->
+  <section class="kmb-sba" aria-label="Official charity of the Sussex Business Awards 2026">
+    <div class="kmb-wrap">
+      <div>
+        <p class="kmb-eyebrow">Official charity partner</p>
+        <h2>Proud to be the official charity of the <em>Sussex Business Awards 2026</em></h2>
+        <p>
+          We&rsquo;re honoured to stand alongside the Sussex business community
+          this year — helping bring the world&rsquo;s first CCHS treatments
+          closer with every celebration.
+        </p>
+      </div>
+      <img class="kmb-sba-logo"
+           src="https://keepmebreathing.com/wp-content/uploads/2026/09/SUSSEX2026BANNER-USE-THIS.png"
+           alt="Sussex Business Awards 2026">
     </div>
   </section>
 
