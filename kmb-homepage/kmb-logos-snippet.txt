@@ -18,24 +18,31 @@
     text-transform: uppercase;
     color: #3f5372;
   }
+  /* 4 fixed columns on desktop — the row can never wrap */
   .kmbl-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    justify-items: center;
     align-items: center;
-    gap: 26px clamp(36px, 6vw, 90px);
+    gap: 26px clamp(20px, 3vw, 56px);
     margin-top: 30px;
+    max-width: 1380px;
+    margin-inline: auto;
+  }
+  @media (max-width: 700px) {
+    .kmbl-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   .kmbl-logo {
     display: flex;
     align-items: center;
     justify-content: center;
     height: clamp(110px, 16vw, 200px);
+    max-width: 100%;
   }
   /* Fluid sizes: roughly double previous, scaling smoothly down to phones */
   .kmbl-logo img {
     max-height: clamp(84px, 12vw, 160px);
-    max-width: clamp(180px, 26vw, 380px);
+    max-width: 100%;
     width: auto;
     border-radius: 14px;
     filter: grayscale(1);

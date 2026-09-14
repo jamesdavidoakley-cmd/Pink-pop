@@ -252,13 +252,23 @@
     animation: kmb-apnea 6s ease-in-out infinite;
   }
   @keyframes kmb-apnea {
-    0%, 45%  { transform: scaleY(1); }
-    52%, 94% { transform: scaleY(0.04); }
-    100%     { transform: scaleY(1); }
+    0%, 45%  { transform: scaleY(1);    opacity: 1; }
+    52%, 94% { transform: scaleY(0.03); opacity: 0; }
+    100%     { transform: scaleY(1);    opacity: 1; }
+  }
+  /* The flatline itself — appears while the breaths are stopped */
+  .kmb-trace-flat {
+    opacity: 0;
+    animation: kmb-flatline 6s ease-in-out infinite;
+  }
+  @keyframes kmb-flatline {
+    0%, 45%  { opacity: 0; }
+    52%, 94% { opacity: 1; }
+    100%     { opacity: 0; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .kmb-hero-photo::before, .kmb-trace svg, .kmb-trace-g { animation: none; }
+    .kmb-hero-photo::before, .kmb-trace svg, .kmb-trace-g, .kmb-trace-flat { animation: none; }
     .kmb-btn:hover { transform: none; }
   }
 
@@ -306,19 +316,26 @@
     text-align: center;
   }
   .kmb-supporters .kmb-eyebrow { color: var(--kmb-body); }
+  /* Wider container just for the logo band so 4 large logos fit */
+  .kmb-supporters .kmb-wrap { max-width: 1380px; }
+  /* 4 fixed columns on desktop — the row can never wrap */
   .kmb-logo-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    justify-items: center;
     align-items: center;
-    gap: 22.4px clamp(32px, 5vw, 72px);
+    gap: 26px clamp(20px, 3vw, 56px);
     margin-top: 28.8px;
+  }
+  @media (max-width: 700px) {
+    .kmb-logo-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   .kmb-logo {
     display: flex;
     align-items: center;
     justify-content: center;
     height: clamp(110px, 16vw, 200px);
+    max-width: 100%;
   }
   /* Per-logo optical balance — different shapes tuned to equal visual weight */
   .kmb-logo.kmb-logo--sussex img   { max-height: clamp(76px, 10.5vw, 140px); border-radius: 16px; }
@@ -330,7 +347,7 @@
   }
   .kmb-logo img {
     max-height: clamp(84px, 12vw, 160px);
-    max-width: clamp(180px, 26vw, 380px);
+    max-width: 100%;
     width: auto;
     border-radius: 14px;
     /* Grayscale keeps mismatched logos visually in sync; colour returns on hover */
@@ -832,6 +849,7 @@
           <use href="#kmb-wave" x="1440" />
           <use href="#kmb-wave" x="2160" />
         </g>
+        <line class="kmb-trace-flat" x1="0" y1="72" x2="2880" y2="72" stroke="#41b6e6" stroke-width="1.5" />
       </svg>
     </div>
   </section>
