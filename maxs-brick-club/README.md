@@ -62,6 +62,16 @@ handoff recommends Bookwhen or Class4Kids: replace the three cards + summary in
 `src/pages/book.astro` with their embed and keep the page header. The `?club=mini` /
 `?club=club` deep links from the class cards preset the club.
 
+## Single-file handoff
+
+`handoff/maxs-brick-club.html` is the whole site in one self-contained HTML file (inline CSS,
+embedded fonts, all seven screens with hash routing: `#/classes`, `#/book?club=mini`, …). Open it
+in a browser or paste it into a builder such as Lovable. Regenerate it after changes with:
+
+```bash
+npm run build:single    # builds a flat copy and bundles it into handoff/maxs-brick-club.html
+```
+
 ## Photos
 
 Placeholders until real photos are dropped into `public/images/` — see
