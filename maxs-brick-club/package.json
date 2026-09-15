@@ -1,0 +1,17 @@
+{
+  "name": "maxs-brick-club",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Marketing and booking site for Max's Brick Club, a Saturday kids' brick-building club in Hove.",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "node tests/run.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.3.2"
+  }
+}

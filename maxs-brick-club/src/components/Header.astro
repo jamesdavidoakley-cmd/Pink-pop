@@ -1,0 +1,35 @@
+---
+import { site, cta, nav } from '../site.config';
+const current = Astro.url.pathname.replace(/\/?$/, '/');
+---
+{site.showAnnouncement && <div class="announce">{site.announcement}</div>}
+
+<header class="header">
+  <a class="logo" href="/" aria-label="Max's Brick Club — home">
+    <span class="logo__brick" aria-hidden="true">
+      <span class="logo__studs"><span class="logo__stud"></span><span class="logo__stud"></span><span class="logo__stud"></span></span>
+    </span>
+    <span class="logo__word">MAX'S BRICK CLUB</span>
+  </a>
+
+  <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+    <span class="nav__toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+    Menu
+  </button>
+
+  <nav class="nav" id="site-nav" aria-label="Main">
+    {nav.map((n) => (
+      <a class="nav__link" href={n.href} aria-current={current === n.href ? 'page' : undefined}>{n.label}</a>
+    ))}
+    <a class="nav__cta" href={cta.href}>{cta.label}</a>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const nav = document.getElementById('site-nav');
+  toggle?.addEventListener('click', () => {
+    const open = nav?.classList.toggle('is-open') ?? false;
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+</script>

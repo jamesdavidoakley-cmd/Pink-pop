@@ -1,0 +1,23 @@
+---
+import { site, nav } from '../site.config';
+---
+<footer class="footer">
+  <div class="footer__inner">
+    <div>
+      <div class="footer__word">MAX'S BRICK CLUB</div>
+      <div class="footer__tag">Saturdays in Hove · £5 a session<br />{site.venue.name}, Hove BN3</div>
+    </div>
+    <div class="footer__cols">
+      <div class="footer__col">
+        {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+        <a class="footer__book" href="/book/">Book a spot</a>
+      </div>
+      <div class="footer__col">
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+        <a href={site.instagramUrl} rel="noopener" target="_blank">Instagram</a>
+        <a href={site.facebookUrl} rel="noopener" target="_blank">Facebook</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer__legal">© 2026 Max's Brick Club. LEGO® and DUPLO® are trademarks of the LEGO Group, which does not sponsor, authorise or endorse this club.</div>
+</footer>

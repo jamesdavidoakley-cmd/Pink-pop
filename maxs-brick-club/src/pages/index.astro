@@ -1,0 +1,175 @@
+---
+import Base from '../layouts/Base.astro';
+import { site, cta } from '../site.config';
+
+const faqs = [
+  { q: 'Do I need to book?', a: "It helps, so we know how many tubs to open. But if there's space you can just turn up and pay £5 at the door." },
+  { q: 'Can I drop my child off?', a: 'Brick Club (4–7): yes, from age 5. Mini Bricks (2–4): a grown-up stays and builds too.' },
+  { q: 'What if my 4-year-old could go to either?', a: 'Try both. A confident 4 is welcome in Brick Club; a wobbly 4 might love Mini Bricks for another term.' },
+  { q: 'Do we bring our own bricks?', a: "Please don't, they'll get mixed in with ours forever. We have 40,000. You're covered." },
+];
+---
+<Base title={site.name}>
+  <!-- Hero -->
+  <section class="home-hero">
+    <div>
+      <div class="eyebrow">SATURDAYS · HOVE</div>
+      <h1 class="home-hero__title">Build.<br />Smash.<br /><span class="home-hero__accent">Repeat!</span></h1>
+      <p class="home-hero__lead">One hour of pure brick-building chaos every Saturday morning. Two clubs, two ages, one giant pile of bricks. £5 a session.</p>
+      <div class="home-hero__actions">
+        <a class="btn btn--red" href={cta.href}>{cta.label} — £5</a>
+        <a class="textlink" href="/classes/">See the two clubs</a>
+      </div>
+    </div>
+    <div class="stack" aria-hidden="true">
+      <div class="stack__brick stack__brick--blue"><div class="stack__studs"><span></span><span></span><span></span><span></span></div></div>
+      <div class="stack__brick stack__brick--green"><div class="stack__studs"><span></span><span></span></div></div>
+      <div class="stack__brick stack__brick--red"><div class="stack__studs"><span></span></div></div>
+      <figure class="photo stack__photo">
+        <img src="/images/home-01.jpg" alt="" loading="eager" onerror="this.classList.add('is-missing')" />
+        <span class="photo__label">PHOTO: kids mid-build, arms in the air</span>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Two clubs -->
+  <section class="clubs">
+    <div class="brick-card brick-card--cyan">
+      <div class="studs" aria-hidden="true"><span class="stud"></span><span class="stud"></span><span class="stud"></span></div>
+      <div class="label">AGES 2–4 · SAT 9:30–10:30</div>
+      <h2 class="h2 h2--card clubs__title">Max's Mini Bricks</h2>
+      <p class="copy clubs__copy">Big chunky bricks for little hands. Towers, tunnels, tea parties for dinosaurs. Grown-ups build too.</p>
+      <a class="btn btn--white" href={cta.mini}>Book Mini Bricks →</a>
+    </div>
+    <div class="brick-card brick-card--red">
+      <div class="studs" aria-hidden="true"><span class="stud"></span><span class="stud"></span><span class="stud"></span></div>
+      <div class="label">AGES 4–7 · SAT 10:30–11:30</div>
+      <h2 class="h2 h2--card clubs__title">Max's Brick Club</h2>
+      <p class="copy clubs__copy">Weekly build challenges, speed-builds and a giant free-build wall. Bring your wildest idea.</p>
+      <a class="btn btn--white" href={cta.club}>Book Brick Club →</a>
+    </div>
+  </section>
+
+  <!-- How a session goes -->
+  <section class="section section--white">
+    <div class="container">
+      <h2 class="h2 how__title">How a session goes</h2>
+      <div class="grid grid--220">
+        <div><div class="step__num step__num--red">1</div><div class="step__title">Warm-up build</div><p class="step__copy">Ten minutes. Tallest tower, longest bridge, silliest hat. Everyone's hands get busy.</p></div>
+        <div><div class="step__num step__num--blue">2</div><div class="step__title">The big challenge</div><p class="step__copy">Max sets the week's theme: a rocket, a zoo, a house for a dragon. Thirty-five minutes to build it.</p></div>
+        <div><div class="step__num step__num--green">3</div><div class="step__title">Show and smash</div><p class="step__copy">Every builder shows their creation. Then the best bit: the great tidy-up smash into the tubs.</p></div>
+        <div><div class="step__num step__num--cyan">4</div><div class="step__title">Sticker and out</div><p class="step__copy">A builder sticker on the way out. On the dot, so the next club can come in.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ink strip -->
+  <section class="section section--ink">
+    <div class="container info">
+      <div>
+        <div class="info__title">Every Saturday</div>
+        <div class="timetable">
+          <div class="timetable__row"><span class="timetable__time timetable__time--cyan">9:30 – 10:30</span><span>Mini Bricks (2–4)</span></div>
+          <div class="timetable__row"><span class="timetable__time timetable__time--red">10:30 – 11:30</span><span>Brick Club (4–7)</span></div>
+        </div>
+        <div class="info__venue">{site.venue.name}, Hove BN3</div>
+      </div>
+      <div>
+        <div class="info__title">£5 a session</div>
+        <p class="copy">That's it. No sign-up fee, no term commitment. Book online, pay online, turn up and build.</p>
+      </div>
+      <div>
+        <div class="info__title">Who's Max?</div>
+        <p class="copy info__copy">Father and son who LOVE Lego. Max picks the challenges. Dad brings the bricks.</p>
+        <a class="info__link" href="/about/">Meet us →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Parties banner -->
+  <section class="section section--green">
+    <div class="strip">
+      <div class="parties__text">
+        <div class="parties__title">Brick birthday parties!</div>
+        <p class="parties__copy">Two hours, a mountain of bricks, and a party host who actually knows a 2×4 from a 1×6.</p>
+      </div>
+      <a class="btn btn--yellow parties__btn" href="/parties/">SEE PARTIES →</a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="padded">
+    <h2 class="h2 faq__title">Parents ask us</h2>
+    <div class="faq__grid">
+      {faqs.map((f) => (
+        <div class="card"><div class="card__title">{f.q}</div><p class="card__copy">{f.a}</p></div>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Hero */
+  .home-hero {
+    max-width: var(--content); margin: 0 auto;
+    padding: clamp(40px, 6vw, 72px) var(--gutter) 40px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; align-items: center;
+  }
+  .home-hero__title { font-family: var(--display); font-weight: 400; font-size: clamp(56px, 8vw, 96px); line-height: .92; margin: 20px 0; text-transform: uppercase; }
+  .home-hero__accent { color: var(--red); }
+  .home-hero__lead { font-size: clamp(17px, 1.6vw, 20px); font-weight: 700; line-height: 1.4; margin: 0 0 28px; max-width: 460px; text-wrap: pretty; }
+  .home-hero__actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+
+  /* CSS brick stack with rotated photo card */
+  .stack { position: relative; height: 400px; min-width: 0; }
+  .stack__brick { position: absolute; border-radius: 10px; }
+  .stack__brick--blue { left: 4%; bottom: 0; width: 80%; height: 110px; background: var(--blue); }
+  .stack__brick--green { left: 12%; bottom: 110px; width: 46%; height: 100px; background: var(--green); }
+  .stack__brick--red { left: 62%; bottom: 110px; width: 24%; height: 100px; background: var(--red); }
+  .stack__studs { position: absolute; top: -22px; display: flex; justify-content: space-between; }
+  .stack__studs span { height: 22px; border-radius: 8px 8px 0 0; background: inherit; }
+  .stack__brick--blue .stack__studs { left: 6%; right: 6%; }
+  .stack__brick--blue .stack__studs span { width: 15%; background: var(--blue); }
+  .stack__brick--green .stack__studs { left: 10%; right: 10%; }
+  .stack__brick--green .stack__studs span { width: 30%; background: var(--green); }
+  .stack__brick--red .stack__studs { left: 25%; width: 50%; }
+  .stack__brick--red .stack__studs span { width: 100%; background: var(--red); }
+  .stack__photo {
+    position: absolute; left: 22%; bottom: 212px; width: 56%; height: 170px; margin: 0;
+    transform: rotate(-3deg); box-shadow: 0 8px 0 rgba(0, 0, 0, .08);
+  }
+
+  /* Two clubs */
+  .clubs {
+    max-width: var(--content); margin: 0 auto; padding: 24px var(--gutter) 56px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px;
+  }
+  .clubs__title { margin: 8px 0 12px; }
+  .clubs__copy { margin: 0 0 20px; }
+
+  /* How a session goes */
+  .how__title { margin: 0 0 28px; }
+
+  /* Ink info strip */
+  .info { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 36px; }
+  .info__title { font-family: var(--display); font-size: 34px; color: var(--yellow); margin-bottom: 12px; line-height: 1; }
+  .timetable { display: flex; flex-direction: column; gap: 10px; font-weight: 700; font-size: 17px; }
+  .timetable__row { display: flex; gap: 14px; }
+  .timetable__time { width: 130px; flex: none; }
+  .timetable__time--cyan { color: var(--cyan); }
+  .timetable__time--red { color: var(--red-light); }
+  .info__venue { margin-top: 14px; opacity: .7; font-size: 15px; font-weight: 700; }
+  .info__copy { margin: 0 0 12px; }
+  .info__link { color: var(--yellow); font-weight: 900; cursor: pointer; text-decoration: underline; }
+  .info__link:hover { color: var(--yellow); }
+
+  /* Parties banner */
+  .parties__text { flex: 1; min-width: 280px; }
+  .parties__title { font-family: var(--display); font-size: clamp(36px, 4vw, 48px); line-height: 1; }
+  .parties__copy { margin: 10px 0 0; font-weight: 700; font-size: 18px; line-height: 1.4; }
+  .parties__btn { flex: none; }
+
+  /* FAQ */
+  .faq__title { margin: 0 0 24px; }
+  .faq__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+</style>

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://maxsbrickclub.co.uk/sitemap-index.xml
