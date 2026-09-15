@@ -1,0 +1,113 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../site.config';
+
+const beliefs = [
+  { title: 'No instructions', copy: "There's no wrong way to build a dragon house. We give a theme and get out of the way." },
+  { title: 'Everyone shows', copy: 'Every builder holds up their creation every week. Shy ones too, eventually.' },
+  { title: 'Smashing is building', copy: 'The tidy-up smash is the most popular two minutes of the hour. We lean into it.' },
+];
+
+const safetyLine = [site.safety.dbs, site.safety.firstAid, site.safety.insurance].join(' · ');
+---
+<Base title="About">
+  <!-- Hero -->
+  <section class="about-hero">
+    <div>
+      <div class="eyebrow">ABOUT US</div>
+      <h1 class="h1">Father and son who LOVE Lego</h1>
+      <p class="about-hero__lead">Max's Brick Club started the way most good ideas do: on a living-room floor, knee-deep in bricks, wondering why there wasn't a place in Hove where kids could do this together every week. So we made one.</p>
+    </div>
+    <div class="about-hero__photos">
+      <figure class="photo about-photo about-photo--left">
+        <img src="/images/about-01.jpg" alt="Max holding his biggest build" loading="eager" onerror="this.classList.add('is-missing')" />
+        <span class="photo__label">PHOTO: Max with his biggest build</span>
+      </figure>
+      <figure class="photo about-photo about-photo--right">
+        <img src="/images/about-02.jpg" alt="Dad carrying tubs of bricks" loading="eager" onerror="this.classList.add('is-missing')" />
+        <span class="photo__label">PHOTO: Dad carrying the tubs</span>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Who we are -->
+  <section class="section section--white">
+    <div class="container grid">
+      <div class="person person--red">
+        <div class="person__name">Max</div>
+        <div class="person__role">CHIEF CHALLENGE SETTER</div>
+        <p class="person__copy">{site.maxAge} years old and has never met a brick he didn't want to click. Max picks every week's build theme, judges builder of the week, and tests every party game first.</p>
+      </div>
+      <div class="person person--blue">
+        <div class="person__name">Dad</div>
+        <div class="person__role">CHIEF BRICK HAULER</div>
+        <p class="person__copy">{site.dadName}. Runs the register, the timer and the kettle. Sorts 40,000 bricks by colour on Friday nights so nobody has to hunt for a blue 2×4 on Saturday.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- What we believe -->
+  <section class="section">
+    <div class="container">
+      <h2 class="h2 beliefs__title">What we believe</h2>
+      <div class="beliefs__grid">
+        {beliefs.map((b) => (
+          <div class="belief"><div class="belief__title">{b.title}</div><p class="belief__copy">{b.copy}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- The grown-up bit -->
+  <section class="section section--ink">
+    <div class="container">
+      <h2 class="grownup__title">The grown-up bit</h2>
+      <div class="grownup__grid">
+        <div><div class="grownup__sub">Safety</div>{safetyLine}. Small bricks only in the 4–7 club.</div>
+        <div><div class="grownup__sub">Not affiliated</div>We're independent. LEGO® is a trademark of the LEGO Group, which doesn't sponsor or endorse us. We just love the bricks.</div>
+        <div><div class="grownup__sub">Photos</div>We only photograph builders whose grown-ups have ticked yes at booking.</div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Hero (pattern A: max-width + padding on the same element) */
+  .about-hero {
+    max-width: var(--content); margin: 0 auto;
+    padding: clamp(40px, 6vw, 72px) var(--gutter) 48px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: center;
+    /* The rotated right-hand photo card pokes ~12px past the viewport at phone widths in the
+       prototype; clip horizontally so the page never scrolls sideways (card boxes are unchanged). */
+    overflow-x: clip;
+  }
+  .about-hero__lead { font-size: 19px; font-weight: 700; line-height: 1.5; margin: 0; text-wrap: pretty; }
+  .about-hero__photos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  /* overflow stays visible (as in the prototype) so the grid sizes the cards from their aspect ratio;
+     the photo is clipped by its own radius instead. */
+  .about-photo { border-radius: 12px; aspect-ratio: 3 / 4; padding: 16px; margin: 0; overflow: visible; }
+  .about-photo img { border-radius: 12px; }
+  .about-photo--left { transform: rotate(-3deg); }
+  .about-photo--right { transform: rotate(3deg); margin-top: 30px; }
+
+  /* Max / Dad cards (no studs, no top margin) */
+  .person { color: var(--white); border-radius: 14px; padding: 36px; }
+  .person--red { background: var(--red); }
+  .person--blue { background: var(--blue); }
+  .person__name { font-family: var(--display); font-size: 40px; line-height: 1; }
+  .person__role { font-weight: 900; font-size: 14px; letter-spacing: 1px; margin: 6px 0 12px; }
+  .person__copy { margin: 0; font-weight: 700; font-size: 17px; line-height: 1.5; }
+
+  /* What we believe */
+  .beliefs__title { margin: 0 0 24px; }
+  .beliefs__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .belief { background: var(--white); border-radius: 12px; padding: 26px; }
+  .belief__title { font-weight: 900; font-size: 19px; margin-bottom: 8px; }
+  .belief__copy { margin: 0; font-weight: 600; font-size: 16px; line-height: 1.45; }
+
+  /* The grown-up bit */
+  /* Real <h2>: keeps the browser's bold like the prototype (see global.css) */
+  .grownup__title { font-family: var(--display); font-size: clamp(32px, 4vw, 44px); margin: 0 0 20px; line-height: 1; color: var(--yellow); }
+  .grownup__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; font-weight: 700; font-size: 16px; line-height: 1.5; }
+  .grownup__sub { font-weight: 900; font-size: 18px; margin-bottom: 6px; }
+</style>

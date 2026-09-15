@@ -1,0 +1,113 @@
+---
+import Base from '../layouts/Base.astro';
+import { site, cta } from '../site.config';
+
+const mapUrl = site.venue.mapEmbedUrl;
+---
+<Base title="Times & Prices">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="eyebrow">EVERY SATURDAY · HOVE</div>
+    <h1 class="h1">Times &amp; prices</h1>
+  </section>
+
+  <!-- Timetable + prices + venue -->
+  <section class="times">
+    <div class="times__day">
+      <div class="times__title">Saturday</div>
+      <div class="times__rows">
+        <div class="times__row times__row--cyan">
+          <div class="times__time">9:30<br /><span class="times__to">to 10:30</span></div>
+          <div>
+            <div class="times__club">Max's Mini Bricks</div>
+            <div class="times__ages">Ages 2–4 · grown-up stays</div>
+          </div>
+        </div>
+        <div class="times__row times__row--red">
+          <div class="times__time">10:30<br /><span class="times__to">to 11:30</span></div>
+          <div>
+            <div class="times__club">Max's Brick Club</div>
+            <div class="times__ages">Ages 4–7 · drop-off from 5</div>
+          </div>
+        </div>
+      </div>
+      <p class="times__note">Doors open 10 minutes before each club. We run through school holidays; we skip Christmas week and Easter Saturday.</p>
+    </div>
+
+    <div class="times__side">
+      <div class="price">
+        <div class="price__amount">£5</div>
+        <div class="price__per">per child, per session</div>
+        <ul class="checks">
+          <li>Pay as you go, no term block</li>
+          <li>Book online up to 10 minutes before</li>
+          <li>Cancel free up to 9am Saturday</li>
+          <li>Siblings: second child £4</li>
+          <li>Grown-ups always free</li>
+        </ul>
+      </div>
+
+      <div class="where">
+        <h2 class="where__title">Where</h2>
+        <div class="where__name">{site.venue.name}</div>
+        <div class="where__address">{site.venue.street}<br />{site.venue.postcode}</div>
+        {mapUrl
+          ? <iframe class="where__map" src={mapUrl} title="Map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+          : <div class="where__map where__map--placeholder">MAP PLACEHOLDER</div>}
+        <p class="where__note">Free street parking on Saturdays. Buggy park inside the door. Step-free access.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA strip -->
+  <section class="section section--red">
+    <div class="strip">
+      <div class="strip__title">Ready? Grab a spot for this Saturday.</div>
+      <a class="btn btn--yellow" href={cta.href}>{cta.label}</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Grid: ink day card | price + venue column */
+  .times {
+    max-width: var(--content); margin: 0 auto; padding: 0 var(--gutter) 56px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px; align-items: start;
+  }
+
+  /* Saturday card */
+  .times__day { background: var(--ink); color: var(--white); border-radius: 14px; padding: 36px; }
+  .times__title { font-family: var(--display); font-size: 34px; color: var(--yellow); line-height: 1; margin-bottom: 20px; }
+  .times__rows { display: flex; flex-direction: column; gap: 12px; }
+  .times__row {
+    display: flex; gap: 16px; align-items: center;
+    background: rgba(255, 255, 255, .08); border-radius: 10px; padding: 16px; border-left: 10px solid var(--cyan);
+  }
+  .times__row--cyan { border-left-color: var(--cyan); }
+  .times__row--red { border-left-color: var(--red); }
+  .times__time { font-family: var(--display); font-size: 24px; width: 130px; flex: none; line-height: 1; }
+  .times__to { font-size: 16px; opacity: .7; }
+  .times__club { font-weight: 900; font-size: 18px; }
+  .times__ages { font-weight: 700; opacity: .8; }
+  .times__note { margin: 20px 0 0; font-weight: 700; opacity: .8; font-size: 15px; line-height: 1.5; }
+
+  /* Right column */
+  .times__side { display: flex; flex-direction: column; gap: 28px; }
+
+  /* Price card */
+  .price { background: var(--white); border-radius: 14px; padding: 36px; }
+  .price__amount { font-family: var(--display); font-size: 64px; color: var(--red); line-height: 1; }
+  .price__per { font-weight: 900; font-size: 20px; margin: 4px 0 12px; }
+
+  /* Venue card */
+  .where { background: var(--blue); color: var(--white); border-radius: 14px; padding: 36px; }
+  .where__title { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1; margin-bottom: 10px; }
+  .where__name { font-weight: 900; font-size: 18px; }
+  .where__address { font-weight: 700; opacity: .9; line-height: 1.5; }
+  .where__map { display: block; margin-top: 14px; height: 150px; width: 100%; border: 0; border-radius: 10px; }
+  .where__map--placeholder {
+    background: rgba(255, 255, 255, .15); display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px;
+  }
+  .where__note { margin: 14px 0 0; font-weight: 700; font-size: 15px; line-height: 1.5; opacity: .9; }
+</style>

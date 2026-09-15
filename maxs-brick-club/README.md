@@ -13,8 +13,12 @@ npm install
 npm run dev        # http://localhost:4321
 npm run build      # static output in dist/
 npm run preview    # serve dist/ locally
+npm run check      # TypeScript / Astro diagnostics
 npm test           # build first; drives dist/ with Playwright (routes, nav, booking flow, forms)
 ```
+
+`npm test` needs a Chromium for Playwright: run `npx playwright install chromium` once, or point
+`CHROMIUM_PATH` at an existing binary.
 
 ## Pages
 
@@ -50,7 +54,8 @@ Everything the client still needs to supply lives in one file:
 ## Booking
 
 `/book/` reproduces the prototype end to end: club toggle, the next six Saturdays (computed in
-the browser, `Sat 19 Sep` format), spots pills (red "N left!" at ≤ 3), 1–4 builders at
+the browser and formatted by hand as `Sat 19 Sep`, the handoff's format, so it never depends on
+the browser's locale data), spots pills (red "N left!" at ≤ 3), 1–4 builders at
 £5 + £4 per extra child, sticky summary, "PAY £N & BOOK" and the green success card. It is a
 front-end only: **no payment is taken**. Wire it to a booking provider before launch. The
 handoff recommends Bookwhen or Class4Kids: replace the three cards + summary in

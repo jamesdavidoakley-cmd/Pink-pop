@@ -17,6 +17,7 @@ const FAILED = "COULDN'T SEND — EMAIL US INSTEAD";
 for (const form of document.querySelectorAll<HTMLFormElement>('form[data-enquiry]')) {
   const button = form.querySelector<HTMLButtonElement>('[data-enquiry-submit]');
   if (!button) continue;
+  button.setAttribute('aria-live', 'polite');
   const original = button.textContent ?? 'SEND IT';
 
   form.addEventListener('submit', async (event) => {
@@ -46,8 +47,8 @@ for (const form of document.querySelectorAll<HTMLFormElement>('form[data-enquiry
   });
 
   function markSent() {
+    // Prototype behaviour: the button just relabels; further clicks are ignored via data-sent.
     form.dataset.sent = 'true';
-    if (button) { button.textContent = SENT; button.disabled = true; }
-    form.querySelector<HTMLElement>('[data-enquiry-status]')?.replaceChildren(document.createTextNode(SENT));
+    if (button) { button.disabled = false; button.textContent = SENT; }
   }
 }

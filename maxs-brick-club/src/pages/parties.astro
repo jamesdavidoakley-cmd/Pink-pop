@@ -1,0 +1,125 @@
+---
+import Base from '../layouts/Base.astro';
+
+const packages = [
+  {
+    tone: 'yellow', studs: 2, name: 'Mini Party', meta: 'AGES 2–4 · 90 MINS · UP TO 10',
+    copy: 'Duplo mountain, build-a-cake game, songs, and a take-home mini build.', price: '£150',
+  },
+  {
+    tone: 'blue', studs: 3, name: 'Brick Party', meta: 'AGES 4–7 · 2 HOURS · UP TO 12',
+    copy: 'Team build battles, speed-build showdown, giant free-build, and a birthday-kid trophy build.', price: '£195',
+  },
+  {
+    tone: 'red', studs: 4, name: 'Mega Party', meta: 'UP TO 20 KIDS · 2 HOURS · 2 HOSTS',
+    copy: 'Everything in Brick Party plus a themed build (space, castle, city, dinos).', price: '£260',
+  },
+];
+
+const steps = [
+  { tone: 'red', title: 'Pick a date', copy: 'Weekend afternoons in Hove & Brighton. We come to you or use our hall.' },
+  { tone: 'blue', title: 'Pick a theme', copy: 'Space, castles, cities, dinosaurs, or "just bricks please".' },
+  { tone: 'green', title: 'We bring the bricks', copy: 'Tubs, baseplates, games, prizes. You sort cake.' },
+  { tone: 'yellow', title: 'We tidy up', copy: 'Every last brick. Promise.' },
+];
+---
+<Base title="Parties" bg="#00A94F">
+  <div class="parties">
+    <!-- Hero -->
+    <section class="parties-hero">
+      <div class="eyebrow">BIRTHDAY PARTIES · HOVE &amp; BRIGHTON</div>
+      <h1 class="parties-hero__title">The party that <span class="parties-hero__accent">builds itself</span></h1>
+      <p class="parties-hero__lead">Two hours. 12 kids. 10,000 bricks. We bring everything, run the games, and leave your living room exactly as we found it.</p>
+      <a class="btn btn--yellow" href="/contact/">ENQUIRE ABOUT A DATE</a>
+    </section>
+
+    <!-- Packages -->
+    <section class="packages">
+      {packages.map((p) => (
+        <div class={`brick-card brick-card--${p.tone} pkg`}>
+          <div class="studs" aria-hidden="true">
+            {Array.from({ length: p.studs }).map(() => <span class="stud"></span>)}
+          </div>
+          <h2 class="pkg__name">{p.name}</h2>
+          <div class="label pkg__meta">{p.meta}</div>
+          <p class="pkg__copy">{p.copy}</p>
+          <div class="pkg__price">{p.price}</div>
+        </div>
+      ))}
+    </section>
+
+    <!-- How it works -->
+    <section class="section section--white">
+      <div class="container">
+        <div class="grid grid--220">
+          {steps.map((s, i) => (
+            <div>
+              <div class={`step__num step__num--${s.tone}`}>{i + 1}</div>
+              <div class="step__title steps__title">{s.title}</div>
+              <p class="step__copy steps__copy">{s.copy}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Enquiry -->
+    <section class="section section--ink">
+      <div class="container enquiry">
+        <div>
+          <h2 class="enquiry__title">Ask about a date</h2>
+          <p class="copy enquiry__copy">Tell us the birthday kid's name, age and your ideal date. We'll reply within a day. Deposit £50, rest on the day.</p>
+        </div>
+        <form class="form" data-enquiry novalidate>
+          <label class="visually-hidden" for="party-name">Your name</label>
+          <input class="input" id="party-name" name="name" type="text" placeholder="Your name" autocomplete="name" />
+          <label class="visually-hidden" for="party-contact">Email or phone</label>
+          <input class="input" id="party-contact" name="contact" type="text" placeholder="Email or phone" />
+          <label class="visually-hidden" for="party-details">Birthday kid's age + ideal date</label>
+          <input class="input" id="party-details" name="details" type="text" placeholder="Birthday kid's age + ideal date" />
+          <button type="submit" data-enquiry-submit class="btn btn--red btn--submit enquiry__btn">SEND IT</button>
+        </form>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>import '../scripts/enquiry.ts';</script>
+
+<style>
+  .parties { background: var(--green); color: var(--white); }
+
+  /* Hero */
+  .parties-hero {
+    max-width: var(--content); margin: 0 auto;
+    padding: clamp(40px, 6vw, 72px) var(--gutter) 48px; text-align: center;
+  }
+  .parties-hero__title {
+    font-family: var(--display); font-size: clamp(52px, 7.5vw, 84px); line-height: .95;
+    margin: 20px auto; max-width: 800px; text-transform: uppercase;
+  }
+  .parties-hero__accent { color: var(--yellow); }
+  .parties-hero__lead { font-size: 20px; font-weight: 700; max-width: 620px; margin: 0 auto 28px; line-height: 1.4; text-wrap: pretty; }
+
+  /* Packages */
+  .packages {
+    max-width: var(--content); margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px;
+    padding: 0 var(--gutter) 56px;
+  }
+  .pkg { padding: 32px; }
+  .pkg__name { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1; }
+  .pkg__meta { margin: 6px 0 12px; }
+  .pkg__copy { margin: 0 0 16px; font-weight: 700; font-size: 16px; line-height: 1.45; }
+  .pkg__price { font-family: var(--display); font-weight: 400; font-size: 36px; }
+
+  /* Steps */
+  .steps__title { font-size: 18px; }
+  .steps__copy { font-size: 15px; line-height: 1.4; }
+
+  /* Enquiry */
+  .enquiry { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: center; }
+  .enquiry__title { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 4vw, 44px); color: var(--yellow); line-height: 1; }
+  .enquiry__copy { margin: 12px 0 0; }
+  .enquiry__btn { box-shadow: none; }
+</style>

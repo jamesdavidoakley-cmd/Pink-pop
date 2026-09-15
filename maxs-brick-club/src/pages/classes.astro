@@ -1,0 +1,142 @@
+---
+import Base from '../layouts/Base.astro';
+import { cta } from '../site.config';
+
+const clubs = [
+  {
+    colour: 'cyan',
+    ages: 'AGES 2–4 · SATURDAYS 9:30–10:30',
+    name: "Max's Mini Bricks",
+    copy: 'Chunky Duplo-size bricks made for small hands. A gentle, silly, stompy hour where toddlers stack, knock down, and stack again. Grown-ups stay in the room and build alongside.',
+    hour: [
+      'Hello song & free stacking',
+      'Build-along story (this week: a house for a very tall giraffe)',
+      'Colour sorting race',
+      'Big tower knock-down finale',
+    ],
+    checks: [
+      'Max 12 little builders',
+      'One grown-up per child, free',
+      'Babies in slings welcome',
+      'Snacks after, not during (bricks + biscuits = glue)',
+    ],
+    btn: 'Book Mini Bricks — £5 →',
+    href: cta.mini,
+  },
+  {
+    colour: 'red',
+    ages: 'AGES 4–7 · SATURDAYS 10:30–11:30',
+    name: "Max's Brick Club",
+    copy: 'Proper bricks, proper challenges. Every week Max sets a theme and the room goes quiet for about four seconds before the building frenzy starts. Parents can stay or grab a coffee.',
+    hour: [
+      'Speed-build warm-up (60 seconds, go!)',
+      'The big challenge (this week: a vehicle for a T-rex)',
+      'Show & tell, builder of the week',
+      'Free-build wall & the great smash',
+    ],
+    checks: [
+      'Max 16 builders',
+      'Drop-off OK from age 5',
+      'Builder sticker every week, badge every 6',
+      'Bring nothing. We have 40,000 bricks.',
+    ],
+    btn: 'Book Brick Club — £5 →',
+    href: cta.club,
+  },
+];
+---
+<Base title="Classes">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="eyebrow">TWO CLUBS · ONE MORNING</div>
+    <h1 class="h1 classes-hero__title">Pick your builder's club</h1>
+    <p class="lead classes-hero__lead">Both run every Saturday, back to back, in the same hall. Got a 3-year-old and a 6-year-old? Stay for both. Coffee's on.</p>
+  </section>
+
+  <!-- Two class cards -->
+  <section class="clubs">
+    {clubs.map((c) => (
+      <div class={`brick-card brick-card--${c.colour} club-card`}>
+        <div class="studs" aria-hidden="true"><span class="stud"></span><span class="stud"></span><span class="stud"></span></div>
+        <div class="label">{c.ages}</div>
+        <h2 class="h2 club-card__title">{c.name}</h2>
+        <p class="club-card__copy">{c.copy}</p>
+        <div class="hour">
+          <div class="hour__title">A TYPICAL HOUR</div>
+          <ul class="hour__list">
+            {c.hour.map((h) => <li>{h}</li>)}
+          </ul>
+        </div>
+        <ul class="checks checks--sm club-card__checks">
+          {c.checks.map((k) => <li>{k}</li>)}
+        </ul>
+        <a class="btn btn--white club-card__btn" href={c.href}>{c.btn}</a>
+      </div>
+    ))}
+  </section>
+
+  <!-- Not sure which club? -->
+  <section class="section section--white">
+    <div class="container which">
+      <div>
+        <h2 class="h2 which__title">Not sure which club?</h2>
+        <p class="which__copy">Go by hands, not birthdays. If they still put bricks in their mouth, it's Mini Bricks. If they can click two small bricks together on their own, it's Brick Club. A confident 4-year-old is welcome in either, so try both and see where they light up.</p>
+      </div>
+      <div class="tiles">
+        <div class="tile">
+          <div class="tile__age">2–4</div>
+          <div class="tile__name">Mini Bricks</div>
+          <div class="tile__sub">Big bricks, big grins</div>
+        </div>
+        <div class="tile">
+          <div class="tile__age">4–7</div>
+          <div class="tile__name">Brick Club</div>
+          <div class="tile__sub">Small bricks, big ideas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ink CTA strip -->
+  <section class="section section--ink">
+    <div class="strip">
+      <div class="strip__title cta-strip__title">£5 a session. No term fees. Ever.</div>
+      <a class="btn btn--red" href={cta.href}>{cta.label}</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Hero */
+  .classes-hero__title { max-width: 800px; }
+  .classes-hero__lead { max-width: 600px; }
+
+  /* Two class cards */
+  .clubs {
+    max-width: var(--content); margin: 0 auto; padding: 0 var(--gutter) 40px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px; align-items: stretch;
+  }
+  .club-card { padding: 40px; display: flex; flex-direction: column; }
+  /* Global .checks sets line-height 1.4; the prototype's ✔ list has none */
+  .club-card__checks { line-height: normal; }
+  .club-card__title { margin: 8px 0 14px; }
+  .club-card__copy { font-size: 17px; font-weight: 700; line-height: 1.5; margin: 0 0 20px; }
+  .hour { background: rgba(255, 255, 255, .15); border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
+  .hour__title { font-weight: 900; font-size: 14px; letter-spacing: 1px; margin-bottom: 8px; }
+  .hour__list { display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 16px; list-style: none; margin: 0; padding: 0; }
+  .club-card__checks { margin-bottom: 24px; }
+  .club-card__btn { padding: 14px 24px; margin-top: auto; align-self: flex-start; }
+
+  /* Not sure which club? */
+  .which { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px; align-items: center; }
+  .which__title { margin: 0 0 14px; }
+  .which__copy { font-size: 17px; font-weight: 700; line-height: 1.5; margin: 0; }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .tile { background: var(--yellow); border-radius: 12px; padding: 22px; text-align: center; }
+  .tile__age { font-family: var(--display); font-size: 44px; line-height: 1; }
+  .tile__name { font-weight: 900; }
+  .tile__sub { font-weight: 700; font-size: 14px; color: var(--muted); }
+
+  /* Ink CTA strip */
+  .cta-strip__title { color: var(--yellow); }
+</style>

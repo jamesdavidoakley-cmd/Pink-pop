@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../site.config';
+---
+<Base title="Contact">
+  <section class="contact">
+    <div>
+      <div class="eyebrow">SAY HELLO</div>
+      <h1 class="h1">Get in touch</h1>
+      <p class="contact__lead">Parties, questions, a kid who wants to show Max their build. We answer everything within a day.</p>
+      <div class="contact__lines">
+        <a class="contact__link" href={`mailto:${site.email}`}>{site.email}</a>
+        <span>{site.phone}</span>
+        <a class="contact__link" href={site.instagramUrl} rel="noopener" target="_blank">@{site.instagram} on Instagram</a>
+        <span class="contact__venue">{site.venue.name}, Hove BN3 · Saturdays 9:30–11:30</span>
+      </div>
+    </div>
+    <form class="form contact__form" data-enquiry novalidate>
+      <label class="visually-hidden" for="contact-name">Your name</label>
+      <input class="input input--grey" id="contact-name" name="name" type="text" placeholder="Your name" autocomplete="name" />
+      <label class="visually-hidden" for="contact-reply">Email or phone</label>
+      <input class="input input--grey" id="contact-reply" name="contact" type="text" placeholder="Email or phone" />
+      <label class="visually-hidden" for="contact-message">What's up?</label>
+      <textarea class="input input--grey" id="contact-message" name="message" rows="5" placeholder="What's up? (party date, a question, anything)"></textarea>
+      <button type="submit" class="btn btn--red btn--submit" data-enquiry-submit>SEND IT</button>
+    </form>
+  </section>
+</Base>
+
+<script>import '../scripts/enquiry.ts';</script>
+
+<style>
+  .contact {
+    max-width: var(--content); margin: 0 auto;
+    padding: clamp(40px, 6vw, 72px) var(--gutter) 72px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: start;
+  }
+  .contact__lead { font-size: 18px; font-weight: 700; line-height: 1.5; margin: 0 0 24px; }
+  .contact__lines { display: flex; flex-direction: column; gap: 10px; font-weight: 800; font-size: 17px; }
+  .contact__link { color: inherit; text-decoration: none; }
+  .contact__link:hover { color: inherit; }
+  .contact__venue { font-weight: 700; color: var(--muted); margin-top: 8px; }
+  .contact__form { background: var(--white); border-radius: 14px; padding: 32px; }
+</style>

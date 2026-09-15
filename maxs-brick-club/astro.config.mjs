@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 
 // Static site: every route builds to <route>/index.html so it deploys to any
 // host (Netlify, Vercel, Cloudflare Pages, GitHub Pages, plain nginx).
@@ -8,4 +9,5 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   build: { format: 'directory' },
+  integrations: [sitemap()],
 });

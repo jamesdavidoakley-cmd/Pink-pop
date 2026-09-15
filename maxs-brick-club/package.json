@@ -12,6 +12,13 @@
     "test": "node tests/run.mjs"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
     "astro": "^7.3.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "http-server": "^14.1.1",
+    "playwright": "^1.63.0",
+    "typescript": "^6.0.3"
   }
 }
