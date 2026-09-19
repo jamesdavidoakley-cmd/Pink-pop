@@ -1,0 +1,12 @@
+{
+  "name": "Snack Stack",
+  "short_name": "Snack Stack",
+  "start_url": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#ffe9d2",
+  "theme_color": "#3a1f0e",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

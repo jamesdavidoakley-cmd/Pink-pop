@@ -40,6 +40,10 @@ npm run dev        # → http://localhost:5173
 
 `arcobaleno-pop/index.html` is Rainbow Pop in Italian only: Italian alphabet, words, articles and voice.
 
+## Snack Stack (Ten Towers with food)
+
+`snack-stack/` is Ten Towers re-themed as Max's bakery: cookies, packs, boxes and crates on plates, cakes on a shelf, and a giant jelly to smash at the end of each level. See `snack-stack/README.md`.
+
 ## Docs
 
 - `BUILD_PROMPT.md` — the master design/build brief

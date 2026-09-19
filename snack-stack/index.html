@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#3a1f0e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <title>Snack Stack</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='26' fill='%23f2b24a'/%3E%3Ccircle cx='24' cy='26' r='4' fill='%234a2a12'/%3E%3Ccircle cx='40' cy='24' r='4' fill='%234a2a12'/%3E%3Ccircle cx='42' cy='40' r='4' fill='%234a2a12'/%3E%3Ccircle cx='27' cy='42' r='4' fill='%234a2a12'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./src/styles.css" />
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="hud">
+    <div id="topbar">
+      <button id="btn-home" class="icon-btn" title="Home" aria-label="Home">🏠</button>
+      <div id="blueprint" hidden>
+        <div id="bp-title"></div>
+        <div id="bp-big"></div>
+        <div id="bp-words"></div>
+        <div id="bp-chips"></div>
+        <div id="round-dots"></div>
+      </div>
+      <button id="btn-mute" class="icon-btn" title="Sound" aria-label="Sound">🔊</button>
+    </div>
+
+    <div id="columns"></div>
+    <div id="toast" hidden></div>
+    <button id="btn-smash" class="big-btn smash-btn" hidden>💥 SMASH!</button>
+    <button id="btn-bang" class="big-btn bang-btn" hidden>💥 BANG!</button>
+
+    <div id="numpad" class="panel" hidden>
+      <div id="np-prompt">How many cookies now?</div>
+      <div id="np-display">&nbsp;</div>
+      <div id="np-keys"></div>
+    </div>
+
+    <div id="choices" class="panel" hidden>
+      <div id="ch-prompt">Which is nearer?</div>
+      <div class="row"><button id="ch-a" class="choice"></button><button id="ch-b" class="choice"></button></div>
+    </div>
+
+    <div id="menu" class="screen">
+      <div class="title">
+        <h1>SNACK STACK</h1>
+        <p class="tag">Max's bakery. Ten of anything snaps into one bigger pack.</p>
+      </div>
+      <div id="districts"></div>
+      <div class="menu-foot">
+        <button id="btn-sandbox" class="big-btn ghost">🍪 Free bake</button>
+        <div id="city-count"></div>
+      </div>
+    </div>
+
+    <div id="result" class="screen" hidden>
+      <div class="panel result-panel">
+        <div id="res-stars"></div>
+        <h2 id="res-title">Order complete!</h2>
+        <p id="res-sub"></p>
+        <div class="row">
+          <button id="res-home" class="big-btn ghost">City</button>
+          <button id="res-again" class="big-btn">Play again</button>
+          <button id="res-next" class="big-btn">Next ▶</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="splash" class="screen">
+      <div class="title">
+        <h1>SNACK STACK</h1>
+        <p class="tag">Tap to start</p>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>
