@@ -44,6 +44,10 @@ npm run dev        # → http://localhost:5173
 
 `snack-stack/` is Ten Towers re-themed as Max's bakery: cookies, packs, boxes and crates on plates, cakes on a shelf, and a giant jelly to smash at the end of each level. See `snack-stack/README.md`.
 
+## Numbermoor (wizard-school maths)
+
+`numbermoor/` is a school of numbers with houses and house points. Two classes: Potion Scales (equations as a balance) and Broom Formations (multiplication as arrays, factors, remainders and primes). See `numbermoor/README.md`.
+
 ## Docs
 
 - `BUILD_PROMPT.md` — the master design/build brief

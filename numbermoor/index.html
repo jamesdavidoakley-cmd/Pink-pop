@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#0d0a2a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <title>Numbermoor</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230d0a2a'/%3E%3Cpath d='M32 8l6 16 17 2-13 11 4 17-14-9-14 9 4-17-13-11 17-2z' fill='%23ffe27a'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Nunito:wght@600;800&display=swap" />
+  <link rel="stylesheet" href="./src/styles.css" />
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="hud">
+    <div id="topbar">
+      <button id="btn-home" class="icon-btn" aria-label="Great Hall">🏰</button>
+      <div id="play-panel" hidden>
+        <div id="pp-title"></div>
+        <div id="pp-prompt"></div>
+        <div id="pp-words"></div>
+        <div id="round-dots"></div>
+      </div>
+      <div id="points"></div>
+      <button id="btn-say" class="icon-btn" aria-label="Say it again">🔊</button>
+      <button id="btn-mute" class="icon-btn" aria-label="Sound">🔈</button>
+    </div>
+
+    <div id="found" hidden></div>
+    <div id="toast" hidden></div>
+
+    <div id="choices" class="panel" hidden>
+      <div id="ch-prompt"></div>
+      <div id="ch-row" class="row"></div>
+    </div>
+
+    <div id="potion-controls" class="controls" hidden>
+      <button id="btn-undo" class="ctl">↶ Undo</button>
+      <button id="btn-halve" class="ctl gold">✂ Halve both</button>
+    </div>
+
+    <div id="broom-controls" class="controls" hidden>
+      <div class="dial"><span class="lbl">rows</span><button id="rows-minus" class="ctl">−</button><b id="rows-val">1</b><button id="rows-plus" class="ctl">+</button></div>
+      <div class="dial"><span class="lbl">in a row</span><button id="cols-minus" class="ctl">−</button><b id="cols-val">1</b><button id="cols-plus" class="ctl">+</button></div>
+      <div id="equation"></div>
+      <button id="btn-swap" class="ctl" title="Turn the formation">⟲ Turn</button>
+      <button id="btn-fly" class="big-btn">🧹 FLY!</button>
+    </div>
+
+    <div id="home" class="screen">
+      <div class="title"><h1>NUMBERMOOR</h1><p class="tag">School of Numbers</p></div>
+      <p id="pick-title" class="pick">Choose your house</p>
+      <div id="house-pick"></div>
+      <div id="house-line"></div>
+      <div id="classes"></div>
+    </div>
+
+    <div id="result" class="screen" hidden>
+      <div class="panel result-panel">
+        <div id="res-stars"></div>
+        <h2 id="res-title"></h2>
+        <p id="res-sub"></p>
+        <div class="row">
+          <button id="res-home" class="big-btn ghost">Great Hall</button>
+          <button id="res-again" class="big-btn">Again</button>
+          <button id="res-next" class="big-btn">Next ▶</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="splash" class="screen">
+      <div class="title"><h1>NUMBERMOOR</h1><p class="tag">Tap to enter</p></div>
+    </div>
+  </div>
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>
