@@ -99,7 +99,7 @@ export class Hud {
   }
 
   setMuted(m: boolean): void { $('btn-mute').textContent = m ? '🔇' : '🔊'; }
-  setTitle(title: string, prompt: string, words: string): void { $('pp-title').textContent = title; $('pp-prompt').textContent = prompt; $('pp-words').textContent = words; }
+  setTitle(title: string, prompt: string, words: string): void { $('pp-title').textContent = title; $('pp-prompt').textContent = prompt; $('pp-words').textContent = words; const o = $('owl'); o.classList.remove('talk'); void o.offsetWidth; o.classList.add('talk'); }
   setRoundDots(total: number, current: number): void {
     const d = $('round-dots'); d.innerHTML = '';
     for (let i = 0; i < total; i++) { const s = document.createElement('span'); s.className = i < current ? 'done' : i === current ? 'now' : ''; d.appendChild(s); }

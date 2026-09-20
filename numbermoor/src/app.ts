@@ -102,6 +102,7 @@ export class App {
     if (this.cls === 'potions') {
       this.potion = new PotionGame(makePotion(this.tier, this.rand));
       this.potionView.brewing = 0;
+      this.potionView.reveal = null;
       this.potionView.useStones = this.tier > 1;
       this.tiltSince = 0;
       this.hud.setTitle(`${info.title} · ${info.tiers[this.tier - 1]}`, 'How heavy is the mystery bottle?', this.potion.puzzle.words);
@@ -156,13 +157,13 @@ export class App {
       }
       g.removeBottle(t.side);
       audio.place();
-      this.fx.sparkle(x, y, 10, '#c48bff');
+      this.potionView.hop(t);
       this.hud.toast('One bottle off. Now take one off the other pan too.', 'hint', 2200);
     } else {
       const n = t.kind === 'stone' ? 5 : 1;
       g.removeDrops(t.side, n);
       audio.tap();
-      this.fx.sparkle(x, y, 6, t.kind === 'stone' ? '#5fc8ff' : '#7bd88f');
+      this.potionView.hop(t);
     }
     if (!g.balanced()) { audio.tip(); if (!this.tiltSince) this.tiltSince = this.time; } else this.tiltSince = 0;
     this.refreshPotion();
@@ -190,6 +191,7 @@ export class App {
     this.phase = 'celebrate';
     this.hud.hideChoices();
     this.potionView.brewHue = 100 + this.rand() * 220;
+    this.potionView.reveal = { n, t: 0 };
     const cheer = ['Brewed!', 'Perfect potion!', 'Bubbling brilliant!', 'Yes!', 'Spot on!'][this.roundIdx % 5];
     this.hud.toast(`${cheer} The bottle weighs ${n}.`, 'good', 3000);
     audio.brew();
@@ -217,6 +219,7 @@ export class App {
     const r = g.fly();
     if (!r.ok) {
       this.roundMistakes++; this.mistakes++; audio.nope();
+      this.broomView.leftover = r.leftover; this.broomView.leftoverUntil = this.time + 3;
       const msg = r.leftover > 0
         ? `${r.rows} × ${r.cols} = ${r.product}. ${r.leftover} broom${r.leftover === 1 ? '' : 's'} left over in the hangar!`
         : `${r.rows} × ${r.cols} = ${r.product}. That needs ${r.short} more broom${r.short === 1 ? '' : 's'} than we have.`;
@@ -226,6 +229,7 @@ export class App {
     audio.whoosh();
     if (r.already) { this.hud.toast(`${r.rows} × ${r.cols} — you already found that one. Try another!`, 'hint'); this.refreshBroom(); return; }
     this.refreshBroom();
+    this.broomView.cheerUntil = this.time + 1.6;
     for (const p of this.broomView.broomPositions().slice(0, g.n)) if (this.rand() < 0.3) this.fx.sparkle(p.x, p.y, 4, '#ffe27a');
     this.award(this.roundMistakes === 0 ? 8 : 5);
     const pair = g.pairs.find(([a, b]) => a === r.cols && b === r.rows && a !== b);
@@ -236,6 +240,7 @@ export class App {
         : `That's every formation for ${g.n}! ${g.pairs.length} ways.`;
       this.hud.toast(line, 'good', 4500); audio.speak(line);
       this.award(g.round.prime ? 20 : 12);
+      this.broomView.cheerUntil = this.time + 4;
       const pos = this.broomView.broomPositions().slice(0, g.n);
       pos.forEach((p, i) => this.fx.firework(p.x, p.y, (i * 47) % 360, i * 0.08));
       for (let i = 0; i < Math.ceil(g.n / 4); i++) setTimeout(() => audio.firework(), 700 + i * 300);
@@ -283,6 +288,7 @@ export class App {
     const ctx = this.ctx;
     if (this.phase !== 'menu') {
       if (this.cls === 'potions' && this.potion) {
+        this.potionView.wand = this.wand;
         this.potionView.update(this.potion, dt);
         this.potionView.draw(ctx, this.W, this.H, this.potion, this.time);
         if (this.phase === 'play' && this.tiltSince && this.time - this.tiltSince > 3.5) {
@@ -292,11 +298,12 @@ export class App {
         }
       } else if (this.cls === 'brooms' && this.broom) {
         this.broomView.layout(this.broom, this.W, this.H);
-        this.broomView.update(dt);
+        this.broomView.wand = this.wand;
+        this.broomView.update(dt, this.time);
         this.broomView.draw(ctx, this.W, this.H, this.broom, this.time);
       }
     } else {
-      const g = ctx.createLinearGradient(0, 0, 0, this.H); g.addColorStop(0, '#0d0a2a'); g.addColorStop(1, '#2a1a4a');
+      const g = ctx.createLinearGradient(0, 0, 0, this.H); g.addColorStop(0, '#2a1470'); g.addColorStop(0.6, '#5a2d9f'); g.addColorStop(1, '#ff8ac0');
       ctx.fillStyle = g; ctx.fillRect(0, 0, this.W, this.H);
       ctx.fillStyle = '#fff';
       for (let i = 0; i < 120; i++) { const x = ((i * 97) % 1000) / 1000 * this.W; const y = ((i * 57) % 1000) / 1000 * this.H; ctx.globalAlpha = 0.3 + 0.6 * Math.abs(Math.sin(this.time + i)); ctx.beginPath(); ctx.arc(x, y, 1 + (i % 3) * 0.6, 0, Math.PI * 2); ctx.fill(); }
