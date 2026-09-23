@@ -58,7 +58,7 @@
   <span class="kmbl-eyebrow">Proud to be supported by</span>
   <div class="kmbl-row">
     <div class="kmbl-logo kmbl-logo--sussex">
-      <img src="https://keepmebreathing.com/wp-content/uploads/2026/09/SUSSEX2026BANNER-USE-THIS.png" alt="Sussex Business Awards 2026">
+      <img src="https://keepmebreathing.com/wp-content/uploads/2026/09/images.png" alt="Sussex Business Awards 2026">
     </div>
     <div class="kmbl-logo kmbl-logo--tesco">
       <img src="https://keepmebreathing.com/wp-content/uploads/2026/09/3_tesco-community-grants-logo459x294.png" alt="Tesco Community Grants">
