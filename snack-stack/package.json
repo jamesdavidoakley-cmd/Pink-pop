@@ -2,7 +2,7 @@
   "name": "snack-stack",
   "private": true,
   "version": "0.1.0",
-  "description": "Snack Stack — place value with cookies, packs, boxes and crates. Ten Towers with food.",
+  "description": "Snack Stack - place value with cookies, packs, boxes and crates. Ten Towers with food.",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -2,7 +2,7 @@
   "name": "numbermoor",
   "private": true,
   "version": "0.1.0",
-  "description": "Numbermoor — a wizard school of numbers. Potion Scales (equations as balance) and Broom Formations (arrays, factors, primes).",
+  "description": "Numbermoor - a wizard school of numbers. Potion Scales (equations as balance) and Broom Formations (arrays, factors, primes).",
   "type": "module",
   "scripts": {
     "dev": "vite",

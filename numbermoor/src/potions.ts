@@ -49,7 +49,7 @@ export class PotionGame {
     const p = this.pan(side); if (p.drops < n) return false;
     this.push(); p.drops -= n; return true;
   }
-  /** The very last bottle can never come off — it is the thing we are weighing. Any other bottle can (and the scale will tell you if that was fair). */
+  /** The very last bottle can never come off, it is the thing we are weighing. Any other bottle can (and the scale will tell you if that was fair). */
   canRemoveBottle(side: Side): boolean { return this.pan(side).bottles > 0 && this.left.bottles + this.right.bottles > 1; }
   removeBottle(side: Side): boolean { if (!this.canRemoveBottle(side)) return false; this.push(); this.pan(side).bottles--; return true; }
   canHalve(): boolean { return this.balanced() && this.left.bottles % 2 === 0 && this.left.drops % 2 === 0 && this.right.bottles % 2 === 0 && this.right.drops % 2 === 0 && (this.left.bottles + this.right.bottles) > 0 && (this.left.bottles + this.right.bottles + this.left.drops + this.right.drops) > 1; }

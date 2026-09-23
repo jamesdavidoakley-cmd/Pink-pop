@@ -19,11 +19,11 @@ Beams glow green, then amber, then red as they strain, so you can see where the 
 
 Three levels each. Two loads per level: a light one, then a heavy one. Level 3's heavy load is Max himself.
 
-- **Cross the Gap** — bridge a canyon for a cart. Long beams sag. Hold the middle up, or make triangles.
-- **Don't Wobble** — build a gate; a goat runs into it and leans. Squares wobble, triangles don't.
-- **Stand Up** — stack blocks to the star and survive an earthquake. Wide at the bottom, heavy at the bottom.
-- **Lift It** — put the pivot under the plank so Max can lift the boulder. Long arm, big lift.
-- **Hold It Up** — build a roof over the sheep pen; rocks fall on it. Loads need a path down to the ground.
+- **Cross the Gap** - bridge a canyon for a cart. Long beams sag. Hold the middle up, or make triangles.
+- **Don't Wobble** - build a gate; a goat runs into it and leans. Squares wobble, triangles don't.
+- **Stand Up** - stack blocks to the star and survive an earthquake. Wide at the bottom, heavy at the bottom.
+- **Lift It** - put the pivot under the plank so Max can lift the boulder. Long arm, big lift.
+- **Hold It Up** - build a roof over the sheep pen; rocks fall on it. Loads need a path down to the ground.
 
 Stars: one for holding the light load, two for holding both, three for doing it at or under the level's par cost.
 

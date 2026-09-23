@@ -1,4 +1,4 @@
-// Pure number helpers — no DOM, no three.js. Everything here is unit-tested.
+// Pure number helpers, no DOM, no three.js. Everything here is unit-tested.
 
 export type Place = 0 | 1 | 2 | 3; // ones, tens, hundreds, thousands
 export const PLACES: Place[] = [0, 1, 2, 3];

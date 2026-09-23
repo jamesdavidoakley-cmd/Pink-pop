@@ -270,7 +270,7 @@ export class Game {
       });
   }
 
-  /** In build mode the chips count what the child has placed, not what is standing — a fuse must not reset them. */
+  /** In build mode the chips count what the child has placed, not what is standing, a fuse must not reset them. */
   private buildRemaining(): number[] {
     return this.round.delta.map((w, p) => Math.max(0, w - this.added[p]));
   }
@@ -341,11 +341,11 @@ export class Game {
     for (let p = 3; p >= 0; p--) if (this.tower.counts[p] !== want[p]) { off = p as Place; break; }
     const tooTall = value > this.round.target;
     const hint = this.wrongThisRound === 1
-      ? `Not yet — ${tooTall ? 'too many' : 'not enough'}. Look at the ${PLACE_NAMES[off]} plate.`
+      ? `Not yet, ${tooTall ? 'too many' : 'not enough'}. Look at the ${PLACE_NAMES[off]} plate.`
       : `The ${PLACE_NAMES[off]} plate needs ${want[off]}, and it has ${this.tower.counts[off]}.`;
     this.hud.toast(hint, 'hint', 4000);
     this.hud.shakeColumn(off);
-    audio.speak(hint.replace('—', ','));
+    audio.speak(hint);
   }
 
   private async choose(n: number): Promise<void> {
@@ -369,7 +369,7 @@ export class Game {
     for (let p = 0; p < place; p++) while (this.tower.canRemove(p as Place)) events.push(...this.tower.remove(p as Place));
     if (up) while (this.tower.counts[place] > 0) events.push(...this.tower.add(place));
     else while (this.tower.canRemove(place)) events.push(...this.tower.remove(place));
-    this.hud.toast(up ? `${count} reaches the halfway line — round UP to ${withCommas(this.round.target)}.` : `${count} is under the halfway line — round DOWN to ${withCommas(this.round.target)}.`, 'good', 3200);
+    this.hud.toast(up ? `${count} reaches the halfway line, round UP to ${withCommas(this.round.target)}.` : `${count} is under the halfway line, round DOWN to ${withCommas(this.round.target)}.`, 'good', 3200);
     audio.speak(up ? 'Round up!' : 'Round down!');
     this.hud.setCounts(this.tower.counts);
     await this.scene.applyEvents(events, (e) => this.soundFor(e));
@@ -383,7 +383,7 @@ export class Game {
     this.hud.showBang(false);
     for (const p of [0, 1, 2, 3] as Place[]) { this.hud.setButtons(p, { add: false, sub: false, smash: false }); this.hud.pulseSmash(p, false); }
     const cheer = ['Yummy!', 'Order done!', 'You did it!', 'Perfect!', 'Delicious!'][this.roundIdx % 5];
-    this.hud.toast(`${cheer} ${withCommas(this.round.target)} — ${toWords(this.round.target)}.`, 'good', 3000);
+    this.hud.toast(`${cheer} ${withCommas(this.round.target)}, ${toWords(this.round.target)}.`, 'good', 3000);
     audio.fanfare();
     audio.speak(`${cheer} ${toWords(this.round.target)}.`);
     this.hud.setRoundDots(ROUNDS_PER_LEVEL, this.roundIdx + 1);
@@ -437,8 +437,8 @@ export class Game {
     const nextMode = MODES[(MODES.indexOf(this.mode) + 1) % MODES.length];
     const next = this.tier < 3 ? { mode: this.mode, tier: nextTier } : { mode: nextMode, tier: 1 as Tier };
     const wallLine = stars === 3 ? 'Splat, straight through the Giant Jelly!' : stars === 2 ? 'You split the Giant Jelly.' : 'The Giant Jelly bounced you off. Fewer slips and it splats!';
-    const sub = prev ? `${wallLine} ${MODE_INFO[this.mode].title} ${tierLabel(this.mode, this.tier)} — ${stars} star${stars === 1 ? '' : 's'}.`
-      : `${wallLine} A new cake goes on the shelf — that's ${this.save.towers} so far.`;
+    const sub = prev ? `${wallLine} ${MODE_INFO[this.mode].title} ${tierLabel(this.mode, this.tier)}, ${stars} star${stars === 1 ? '' : 's'}.`
+      : `${wallLine} A new cake goes on the shelf, that's ${this.save.towers} so far.`;
     audio.speak(prev ? 'Level complete!' : 'Level complete! A new cake goes on the shelf.');
     this.hud.showResult(stars, stars === 3 ? 'Splat!' : stars === 2 ? 'Split it!' : 'Level complete', sub, {
       home: () => this.toMenu(),

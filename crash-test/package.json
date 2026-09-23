@@ -2,7 +2,7 @@
   "name": "crash-test",
   "private": true,
   "version": "0.1.0",
-  "description": "Crash Test — build it, test it, watch it fail, fix it. Basic engineering for Max.",
+  "description": "Crash Test - build it, test it, watch it fail, fix it. Basic engineering for Max.",
   "type": "module",
   "scripts": {
     "dev": "vite",

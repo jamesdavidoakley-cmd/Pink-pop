@@ -13,12 +13,12 @@ Ten of anything **snaps** into one of the next (carrying). One of anything **ope
 
 ## Modes
 
-- **Fill the Order** — bake the number on the order, then press BANG.
-- **Big Delivery** — a delivery arrives; add it, watch ten cookies snap into a pack, then say how many cookies there are now.
-- **Hungry Customers** — customers buy cookies; open a pack when the cookie plate runs dry, then say how many are left.
-- **Fill the Box** — bake up to exactly 100 or 1,000.
-- **Round It** — a halfway line five high on the deciding plate. Past it, round up.
-- **Free bake** — a sandbox.
+- **Fill the Order** - bake the number on the order, then press BANG.
+- **Big Delivery** - a delivery arrives; add it, watch ten cookies snap into a pack, then say how many cookies there are now.
+- **Hungry Customers** - customers buy cookies; open a pack when the cookie plate runs dry, then say how many are left.
+- **Fill the Box** - bake up to exactly 100 or 1,000.
+- **Round It** - a halfway line five high on the deciding plate. Past it, round up.
+- **Free bake** - a sandbox.
 
 After five rounds the Giant Jelly rises. Tap SMASH and the cookie tower charges it: three stars splat straight through, two split it, one bounces off. Every first-time level completion puts a candle-lit cake on the shelf.
 

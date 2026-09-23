@@ -152,7 +152,7 @@ export class App {
     if (t.kind === 'bottle') {
       if (!g.canRemoveBottle(t.side)) {
         audio.nope();
-        this.hud.toast("That's the mystery bottle. Keep it on — take the drops off instead.", 'hint');
+        this.hud.toast("That's the mystery bottle. Keep it on, take the drops off instead.", 'hint');
         return;
       }
       g.removeBottle(t.side);
@@ -227,7 +227,7 @@ export class App {
       return;
     }
     audio.whoosh();
-    if (r.already) { this.hud.toast(`${r.rows} × ${r.cols} — you already found that one. Try another!`, 'hint'); this.refreshBroom(); return; }
+    if (r.already) { this.hud.toast(`${r.rows} × ${r.cols}, you already found that one. Try another!`, 'hint'); this.refreshBroom(); return; }
     this.refreshBroom();
     this.broomView.cheerUntil = this.time + 1.6;
     for (const p of this.broomView.broomPositions().slice(0, g.n)) if (this.rand() < 0.3) this.fx.sparkle(p.x, p.y, 4, '#ffe27a');

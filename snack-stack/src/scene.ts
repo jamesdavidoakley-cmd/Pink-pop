@@ -4,7 +4,7 @@ import { EffectComposer, RenderPass, EffectPass, BloomEffect, VignetteEffect, Bl
 import type { TowerEvent } from './tower';
 import type { Place } from './number';
 
-// Left → right on screen: thousands, hundreds, tens, ones — the same order as the digits.
+// Left → right on screen: thousands, hundreds, tens, ones, the same order as the digits.
 export const COL_X = [12, 2, -12, -26];
 const DIMS: [number, number, number][] = [[1, 1, 1], [10, 1, 1], [10, 1, 10], [10, 10, 10]];
 const COLORS = [0xf2b24a, 0xff5c7a, 0x4fb3ff, 0xc98a4b];
@@ -301,7 +301,7 @@ export class TowerScene {
     this.scene.add(moon);
   }
 
-  /** Cakes on the front shelf — one per level the player has completed. */
+  /** Cakes on the front shelf, one per level the player has completed. */
   setLandmarks(n: number): void {
     this.landmarks.clear();
     if (n > 0) {

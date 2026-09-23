@@ -2,7 +2,7 @@
   "name": "ten-towers",
   "private": true,
   "version": "0.1.0",
-  "description": "Ten Towers — place value, carrying and borrowing as glowing crystal blocks. A maths game for Max.",
+  "description": "Ten Towers - place value, carrying and borrowing as glowing crystal blocks. A maths game for Max.",
   "type": "module",
   "scripts": {
     "dev": "vite",

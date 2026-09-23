@@ -64,7 +64,7 @@ describe('verlet world', () => {
       return topY;
     };
     const thin = topple(0.6); const wide = topple(3);
-    console.log('top of stack after quake — thin:', thin.toFixed(2), 'wide:', wide.toFixed(2));
+    console.log('top of stack after quake, thin:', thin.toFixed(2), 'wide:', wide.toFixed(2));
     expect(thin).toBeGreaterThan(wide + 1); // the thin one fell over
     expect(wide).toBeLessThan(7.2); // the wide one is still standing four high
   });

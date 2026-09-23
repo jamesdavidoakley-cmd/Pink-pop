@@ -4,7 +4,7 @@ import { EffectComposer, RenderPass, EffectPass, BloomEffect, VignetteEffect, Bl
 import type { TowerEvent } from './tower';
 import type { Place } from './number';
 
-// Left → right on screen: thousands, hundreds, tens, ones — the same order as the digits.
+// Left → right on screen: thousands, hundreds, tens, ones, the same order as the digits.
 export const COL_X = [12, 2, -12, -26];
 const DIMS: [number, number, number][] = [[1, 1, 1], [10, 1, 1], [10, 1, 10], [10, 10, 10]];
 const COLORS = [0xffb347, 0x3ee6c7, 0xd76cff, 0x8fc4ff];
@@ -155,7 +155,7 @@ export class TowerScene {
     grid.position.y = 0.02;
     this.scene.add(grid);
 
-    // Column pads — the four building plots.
+    // Column pads, the four building plots.
     for (const p of [0, 1, 2, 3] as Place[]) {
       const [w, , d] = DIMS[p];
       const pad = new THREE.Mesh(
@@ -231,7 +231,7 @@ export class TowerScene {
     this.scene.add(winMesh);
   }
 
-  /** Glowing landmark towers behind the plots — one per level the player has completed. */
+  /** Glowing landmark towers behind the plots, one per level the player has completed. */
   setLandmarks(n: number): void {
     this.landmarks.clear();
     for (let i = 0; i < n; i++) {

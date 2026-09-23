@@ -2,7 +2,7 @@
 
 A joyful, fully-voiced 3D collect-a-thon platformer for ages 7–8, starring Max the blue T-Rex. Real KS2 (Years 3–4) science, maths, and engineering tasks earn Star Fossils; boss personalities emerge from a trait-driven utility AI. 100% original IP, offline, no accounts, no ads.
 
-**Current build: through the end of World 2** — Dino Plaza (hub), Fossil Canyon (W1, Bruno Ironhide), and Gearworks Gorge (W2, Baroness Cogwheel), with the education engine (5 task archetypes), the boss personality framework + AI proofs, the dialogue/voice system, saves, and the Fossil Café.
+**Current build: through the end of World 2** - Dino Plaza (hub), Fossil Canyon (W1, Bruno Ironhide), and Gearworks Gorge (W2, Baroness Cogwheel), with the education engine (5 task archetypes), the boss personality framework + AI proofs, the dialogue/voice system, saves, and the Fossil Café.
 
 ## Run it
 
@@ -50,14 +50,14 @@ npm run dev        # → http://localhost:5173
 
 ## Docs
 
-- `BUILD_PROMPT.md` — the master design/build brief
-- `docs/DEVLOG.md` — phase progress, decisions, gate evidence
-- `docs/AUTHORING.md` — add worlds/bosses/questions with zero engine changes
-- `docs/CONTROLS.md` — keyboard & gamepad controls
+- `BUILD_PROMPT.md` - the master design/build brief
+- `docs/DEVLOG.md` - phase progress, decisions, gate evidence
+- `docs/AUTHORING.md` - add worlds/bosses/questions with zero engine changes
+- `docs/CONTROLS.md` - keyboard & gamepad controls
 
 Dev conveniences: `?level=<id>` boots straight into a level (e.g. `?level=playground`), `?slot=<0-2>` picks a save slot, `window.__game` exposes scene/player/session/goto for tooling.
 
-### Headless sanity scripts (used as phase gates — see DEVLOG)
+### Headless sanity scripts (used as phase gates - see DEVLOG)
 
 | Script | Proves |
 |---|---|
