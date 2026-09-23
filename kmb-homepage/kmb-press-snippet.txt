@@ -1,9 +1,9 @@
-<!-- KEEP ME BREATHING — "As featured in" panel.
+<!-- KEEP ME BREATHING - "As featured in" panel.
      Self-contained: paste this whole snippet into an Elementor
      HTML widget wherever you want it.
      To show an outlet's LOGO instead of its name: upload the logo
      to Media Library, copy its URL, and paste it over the matching
-     REPLACE-... in src="" — the logo then appears automatically. -->
+     REPLACE-... in src="" - the logo then appears automatically. -->
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Mono:wght@500&display=swap">
 

@@ -1,8 +1,8 @@
 <!-- ============================================================
-     KEEP ME BREATHING — HOMEPAGE
+     KEEP ME BREATHING - HOMEPAGE
      Paste this entire file into a WordPress "Custom HTML" block
      on the homepage (use a full-width page template and hide the
-     theme's page title — see notes at the bottom of this file).
+     theme's page title - see notes at the bottom of this file).
      All styles are scoped under .kmb-home and will not affect
      the rest of your theme.
      ============================================================ -->
@@ -13,7 +13,7 @@
   /* ---- SITE HEADER (theme menu): tighter + sticky ----
      These rules target the standard Elementor / WordPress header
      wrappers. If your header uses different markup they simply do
-     nothing — delete this block to undo. */
+     nothing - delete this block to undo. */
   .elementor-location-header,
   header.site-header,
   #masthead {
@@ -36,7 +36,7 @@
 
   .kmb-home {
     /* ---- Brand tokens: edit colours here in one place ---- */
-    --kmb-night:     #003087;  /* NHS dark blue — hero / closing band */
+    --kmb-night:     #003087;  /* NHS dark blue - hero / closing band */
     --kmb-night-2:   #00276e;  /* stat strip on night  */
     --kmb-ink:       #14264e;  /* headings on light    */
     --kmb-body:      #3f5372;  /* body text on light   */
@@ -45,7 +45,7 @@
     --kmb-tint:      #d3e2f2;  /* soft borders / tints */
     --kmb-blue:      #005eb8;  /* KMB / NHS blue       */
     --kmb-blue-deep: #004b96;
-    --kmb-trace:     #41b6e6;  /* NHS light blue — CO2 monitor trace */
+    --kmb-trace:     #41b6e6;  /* NHS light blue - CO2 monitor trace */
     --kmb-light:     #f2f7fd;  /* text on night        */
     --kmb-light-mut: #b6cbe8;  /* muted text on night  */
 
@@ -122,7 +122,7 @@
   .kmb-btn--blue { background: var(--kmb-blue); color: #ffffff; }
   .kmb-btn--blue:hover { background: var(--kmb-blue-deep); color: #ffffff; }
 
-  /* ================= HERO — night ================= */
+  /* ================= HERO - night ================= */
 
   .kmb-hero {
     position: relative;
@@ -187,7 +187,7 @@
   }
   .kmb-hero-pledge p { font-size: clamp(15.5px, 14.5px + 0.25vw, 18px); color: var(--kmb-light-mut); }
 
-  /* Hero photo — framed portrait with a slow breathing glow */
+  /* Hero photo - framed portrait with a slow breathing glow */
   .kmb-hero-photo {
     position: relative;
     justify-self: center;
@@ -224,7 +224,7 @@
     50%      { opacity: 1;   transform: scale(1.03); }
   }
 
-  /* Capnography trace — the CO2 waveform VENTO is built to read */
+  /* Capnography trace - the CO2 waveform VENTO is built to read */
   .kmb-trace {
     position: absolute;
     left: 0; right: 0; bottom: -6px;
@@ -244,7 +244,7 @@
     from { transform: translateX(0); }
     to   { transform: translateX(-1440px); }
   }
-  /* Apnoea cycle: the trace breathes for ~3s, then flatlines for ~3s —
+  /* Apnoea cycle: the trace breathes for ~3s, then flatlines for ~3s -
      the monitor keeps sweeping, the breaths stop. */
   .kmb-trace-g {
     transform-box: view-box;
@@ -256,7 +256,7 @@
     52%, 94% { transform: scaleY(0.03); opacity: 0; }
     100%     { transform: scaleY(1);    opacity: 1; }
   }
-  /* The flatline itself — appears while the breaths are stopped */
+  /* The flatline itself - appears while the breaths are stopped */
   .kmb-trace-flat {
     opacity: 0;
     animation: kmb-flatline 6s ease-in-out infinite;
@@ -318,7 +318,7 @@
   .kmb-supporters .kmb-eyebrow { color: var(--kmb-body); }
   /* Wider container just for the logo band so 4 large logos fit */
   .kmb-supporters .kmb-wrap { max-width: 1380px; }
-  /* 4 fixed columns on desktop — the row can never wrap */
+  /* 4 fixed columns on desktop - the row can never wrap */
   .kmb-logo-row {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -337,7 +337,7 @@
     height: clamp(110px, 16vw, 200px);
     max-width: 100%;
   }
-  /* Per-logo optical balance — different shapes tuned to equal visual weight */
+  /* Per-logo optical balance - different shapes tuned to equal visual weight */
   .kmb-logo.kmb-logo--sussex img   { max-height: clamp(76px, 10.5vw, 140px); border-radius: 16px; }
   .kmb-logo.kmb-logo--tesco img    { max-height: clamp(110px, 15vw, 200px); }  /* file has internal padding */
   .kmb-logo.kmb-logo--bodyshop img { max-height: clamp(90px, 12.5vw, 170px); }
@@ -578,7 +578,7 @@
     font-weight: 700;
   }
 
-  /* Video panel — links to YouTube until the real embed is swapped in */
+  /* Video panel - links to YouTube until the real embed is swapped in */
   .kmb-video {
     position: relative;
     display: flex;
@@ -811,7 +811,7 @@
           <p class="kmb-hero-lede">
             Children born with Congenital Central Hypoventilation Syndrome (CCHS)
             stop breathing when they fall asleep. There is no cure and no treatment
-            beyond artificial ventilation — <strong>yet</strong>. Keep Me Breathing
+            beyond artificial ventilation - <strong>yet</strong>. Keep Me Breathing
             exists to change that, by funding the research and technology that will
             let every child with CCHS sleep safely.
           </p>
@@ -831,7 +831,7 @@
         </div>
       </div>
     </div>
-    <!-- Capnography (CO2) trace — the waveform our VENTO monitor reads -->
+    <!-- Capnography (CO2) trace - the waveform our VENTO monitor reads -->
     <div class="kmb-trace" aria-hidden="true">
       <svg viewBox="0 0 2880 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -915,7 +915,7 @@
         <h2>Proud to be the official charity of the <em>Sussex Business Awards 2026</em></h2>
         <p>
           We&rsquo;re honoured to stand alongside the Sussex business community
-          this year — helping bring the world&rsquo;s first CCHS treatments
+          this year, helping bring the world&rsquo;s first CCHS treatments
           closer with every celebration.
         </p>
       </div>
@@ -939,8 +939,7 @@
             asleep, their body simply forgets to breathe.
           </p>
           <p class="kmb-section-lede">
-            Every night of their lives, they depend on mechanical ventilation —
-            through a tracheostomy or a mask — to keep them alive until morning.
+            Every night of their lives, they depend on mechanical ventilation, through a tracheostomy or a mask, to keep them alive until morning.
           </p>
           <div class="kmb-arrow-links">
             <a class="kmb-arrow-link" href="https://keepmebreathing.com/cchs-for-patients-and-parents/">CCHS for patients &amp; parents</a>
@@ -959,12 +958,12 @@
         <div class="kmb-cchs-facts">
           <div class="kmb-fact">
             <strong>Also known as</strong>
-            Ondine&rsquo;s curse — a failure of the body&rsquo;s drive to breathe,
+            Ondine&rsquo;s curse - a failure of the body&rsquo;s drive to breathe,
             because it cannot sense oxygen and carbon dioxide levels.
           </div>
           <div class="kmb-fact">
             <strong>Life support</strong>
-            Lifelong ventilation every time they sleep — and for some children,
+            Lifelong ventilation every time they sleep, and for some children,
             when they are awake too.
           </div>
           <div class="kmb-fact">
@@ -986,7 +985,7 @@
   <!-- ============ PRESS ============
        Each outlet shows as a styled name. To show its logo instead:
        upload the logo to Media Library, copy its URL, and paste it
-       over the matching REPLACE-... in src="" below — the logo then
+       over the matching REPLACE-... in src="" below - the logo then
        automatically appears in place of the text, sized to match. -->
   <section class="kmb-press" aria-label="As featured in">
     <div class="kmb-wrap">
@@ -1039,7 +1038,7 @@
       <h2>The research we&rsquo;re funding</h2>
       <p class="kmb-section-lede">
         We are developing a treatment to change and to save the lives of CCHS
-        patients — in a world where such a treatment does not exist. We will do
+        patients - in a world where such a treatment does not exist. We will do
         whatever it takes. Our accelerated five-year plan is backed by over 130
         doctors, scientists and medical professionals.
       </p>
@@ -1048,10 +1047,10 @@
           <span class="kmb-project-tag">Treatment</span>
           <h3>The Breathing Pacemaker</h3>
           <p>
-            A fully implantable biofeedback phrenic-nerve pacing system — the
+            A fully implantable biofeedback phrenic-nerve pacing system - the
             world&rsquo;s first treatment designed specifically for CCHS. Like a
             cardiac pacemaker for breathing, it will sense what the body needs and
-            adjust the rate and depth of every breath automatically — no wires, no
+            adjust the rate and depth of every breath automatically - no wires, no
             external kit, no mechanical ventilator.
           </p>
           <p class="kmb-project-note">First patent filed</p>
@@ -1060,9 +1059,9 @@
           <span class="kmb-project-tag">Monitoring</span>
           <h3>VENTO</h3>
           <p>
-            The world&rsquo;s smallest portable, non-invasive CO&#8322; wearable —
+            The world&rsquo;s smallest portable, non-invasive CO&#8322; wearable -
             built by Keep Me Breathing. VENTO reads the one signal that matters most
-            to a child with CCHS — carbon dioxide — continuously, comfortably and
+            to a child with CCHS, carbon dioxide, continuously, comfortably and
             without needles or hospital hardware.
           </p>
           <p class="kmb-project-note">Patent pending</p>
@@ -1073,7 +1072,7 @@
         <li>Global collaborations</li>
         <li>Drug development research</li>
         <li>Drug repurposing research</li>
-        <li>A truly implantable biofeedback diaphragm pacer system — removing the need for mechanical ventilation</li>
+        <li>A truly implantable biofeedback diaphragm pacer system - removing the need for mechanical ventilation</li>
         <li>New technology capable of automatically adjusting breathing rate and tidal volume during sleep</li>
       </ul>
       <div class="kmb-arrow-links">
@@ -1097,7 +1096,7 @@
           </p>
           <p class="kmb-section-lede">
             The consulting network has a strong history of working in the rare
-            disease field — and we&rsquo;ll keep you fully updated on progress as
+            disease field, and we&rsquo;ll keep you fully updated on progress as
             it is made.
           </p>
           <div class="kmb-arrow-links">
@@ -1136,13 +1135,13 @@
           <p class="kmb-section-lede">
             Keep Me Breathing was set up by Casper&rsquo;s parents after he was born
             with CCHS and a complex neuroblastoma. Casper from Hove, Beau from
-            Arundel — and every child like them around the world — are who this
+            Arundel, and every child like them around the world, are who this
             research is for. When our mission is complete, their lives will be
             transformed.
           </p>
           <div class="kmb-arrow-links">
             <a class="kmb-arrow-link" href="https://keepmebreathing.com/caspersstory/">Read Casper&rsquo;s story</a>
-            <a class="kmb-arrow-link" href="https://keepmebreathing.com/product/dreaming-of-breathing/">The Adventures of Casper &amp; Beau — the book</a>
+            <a class="kmb-arrow-link" href="https://keepmebreathing.com/product/dreaming-of-breathing/">The Adventures of Casper &amp; Beau - the book</a>
           </div>
         </div>
       </div>
@@ -1182,11 +1181,11 @@
       <div class="kmb-help-grid">
         <a class="kmb-help-card" href="https://keepmebreathing.com/contribute/">
           <h3>Donate</h3>
-          <p>Every penny goes straight to CCHS research — nothing to admin. One-off or monthly.</p>
+          <p>Every penny goes straight to CCHS research - nothing to admin. One-off or monthly.</p>
         </a>
         <a class="kmb-help-card" href="https://keepmebreathing.com/sm-version-fundraising/">
           <h3>Fundraise</h3>
-          <p>Run, ride, bake or climb — set up a JustGiving page and choose Keep Me Breathing.</p>
+          <p>Run, ride, bake or climb - set up a JustGiving page and choose Keep Me Breathing.</p>
         </a>
         <a class="kmb-help-card" href="https://keepmebreathing.com/volunteer-network/">
           <h3>Volunteer</h3>
@@ -1213,7 +1212,7 @@
           <p class="kmb-section-lede">
             We are working relentlessly to make breakthroughs in CCHS research,
             get treatments faster and find a cure. Whether you&rsquo;re a CCHS
-            parent, a clinician, a researcher, a fundraiser or press — we&rsquo;d
+            parent, a clinician, a researcher, a fundraiser or press - we&rsquo;d
             love to hear from you.
           </p>
         </div>
@@ -1241,7 +1240,7 @@
       <h2>Sign up and receive the latest KMB treatment updates</h2>
       <p>
         Research milestones, technology updates and news from the Keep Me
-        Breathing team — straight to your inbox. One click and we&rsquo;ll add
+        Breathing team, straight to your inbox. One click and we&rsquo;ll add
         you to the list.
       </p>
       <a class="kmb-btn kmb-btn--blue" href="mailto:info@keepmebreathing.com?subject=Please%20sign%20me%20up%20for%20KMB%20treatment%20updates&amp;body=Hi%20Keep%20Me%20Breathing%20team%2C%0A%0APlease%20add%20me%20to%20the%20treatment%20updates%20list.%0A%0AThank%20you!">Sign me up by email</a>
@@ -1296,17 +1295,17 @@
 </script>
 
 <!-- ============================================================
-     HOW TO INSTALL (keep this comment or delete it — it renders
+     HOW TO INSTALL (keep this comment or delete it - it renders
      as nothing either way):
      1. Edit your homepage in WordPress → add a "Custom HTML" block
         → paste this whole file into it.
      2. Delete the old page content, but DO NOT touch the page's
-        SEO title or meta description (Yoast/RankMath panel) —
+        SEO title or meta description (Yoast/RankMath panel) -
         those carry your existing SEO and this block keeps the
         same H1 phrase and CCHS keywords in the copy.
      3. Set the page to a full-width template if available, and
         hide the theme's page title on this page (so the page has
-        exactly one H1 — the one in this block).
+        exactly one H1 - the one in this block).
      4. Colours can be changed in one place: the token list at the
         very top of the <style> block.
      ============================================================ -->

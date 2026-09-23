@@ -1,4 +1,4 @@
-<!-- KEEP ME BREATHING — "Proud to be supported by" strip.
+<!-- KEEP ME BREATHING - "Proud to be supported by" strip.
      Self-contained: paste this whole snippet into an Elementor
      HTML widget wherever you want it. -->
 
@@ -18,7 +18,7 @@
     text-transform: uppercase;
     color: #3f5372;
   }
-  /* 4 fixed columns on desktop — the row can never wrap */
+  /* 4 fixed columns on desktop - the row can never wrap */
   .kmbl-row {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
