@@ -777,6 +777,45 @@
   .kmb-close-meta a { color: var(--kmb-light); }
   .kmb-close-meta a:hover { color: var(--kmb-trace); }
 
+  /* ================= FLOATING DONATE BUTTON ================= */
+
+  .kmb-donate-fab {
+    position: fixed;
+    right: max(20px, env(safe-area-inset-right));
+    bottom: max(20px, env(safe-area-inset-bottom));
+    z-index: 9998;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--kmb-sans);
+    font-weight: 600;
+    font-size: 16px;
+    color: #ffffff;
+    background: var(--kmb-blue);
+    padding: 15px 24px;
+    border-radius: 999px;
+    box-shadow: 0 10px 32px rgba(0, 48, 135, 0.38);
+    /* hidden until the hero's own Donate button scrolls away */
+    opacity: 0;
+    transform: translateY(14px);
+    pointer-events: none;
+    transition: opacity .3s ease, transform .3s ease, background-color .2s ease;
+  }
+  .kmb-donate-fab.kmb-show { opacity: 1; transform: none; pointer-events: auto; }
+  .kmb-donate-fab:hover { background: var(--kmb-blue-deep); color: #ffffff; }
+  .kmb-donate-heart { width: 18px; height: 18px; animation: kmb-heartbeat 2.4s ease-in-out infinite; }
+  @keyframes kmb-heartbeat {
+    0%, 24%, 100% { transform: scale(1); }
+    12%           { transform: scale(1.22); }
+  }
+  @media (max-width: 600px) {
+    .kmb-donate-fab { font-size: 15px; padding: 12px 19px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .kmb-donate-heart { animation: none; }
+    .kmb-donate-fab { transition: none; }
+  }
+
   /* ================= RESPONSIVE ================= */
 
   @media (max-width: 900px) {
@@ -1262,7 +1301,26 @@
     </div>
   </section>
 
+  <!-- Floating donate button: appears after scrolling past the hero -->
+  <a class="kmb-donate-fab" href="https://keepmebreathing.com/contribute/" aria-label="Donate to Keep Me Breathing">
+    <svg class="kmb-donate-heart" viewBox="0 0 24 24" fill="#ffffff" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    Donate
+  </a>
+
 </div>
+
+<script>
+(function () {
+  var fab = document.querySelector('.kmb-donate-fab');
+  if (!fab) return;
+  function toggle() {
+    if (window.scrollY > 520) { fab.classList.add('kmb-show'); }
+    else { fab.classList.remove('kmb-show'); }
+  }
+  window.addEventListener('scroll', toggle, { passive: true });
+  toggle();
+})();
+</script>
 
 <!-- OPTIONAL: structured data for search engines. If Yoast/RankMath
      already outputs Organization schema for the site, delete this block. -->
