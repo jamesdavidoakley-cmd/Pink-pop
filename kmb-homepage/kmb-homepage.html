@@ -406,6 +406,34 @@
     .kmb-sba-logo { width: min(340px, 92%); }
   }
 
+  /* ================= COT DEATHS STATEMENT ================= */
+
+  .kmb-cot {
+    background: var(--kmb-ground);
+    border-bottom: 1px solid var(--kmb-tint);
+    text-align: center;
+  }
+  .kmb-cot .kmb-wrap { padding-block: clamp(64px, 8vw, 104px); max-width: 900px; }
+  .kmb-cot-line {
+    width: 84px;
+    height: 2px;
+    background: var(--kmb-trace);
+    margin: 0 auto 28px;
+  }
+  .kmb-cot h2 {
+    font-size: clamp(36px, 4.2vw, 58px);
+    font-weight: 600;
+  }
+  .kmb-cot p {
+    margin: 24px auto 0;
+    max-width: 28em;
+    font-size: clamp(18px, 16px + 0.4vw, 23px);
+    line-height: 1.6;
+    color: var(--kmb-ink);
+  }
+  .kmb-cot p + p { margin-top: 14px; font-weight: 600; }
+  .kmb-cot .kmb-arrow-links { justify-content: center; margin-top: 32px; }
+
   /* ================= LIGHT SECTIONS ================= */
 
   .kmb-section { padding-block: clamp(64px, 8vw, 104px); }
@@ -961,6 +989,24 @@
       <img class="kmb-sba-logo"
            src="https://keepmebreathing.com/wp-content/uploads/2026/09/SUSSEX2026BANNER-USE-THIS.png"
            alt="Sussex Business Awards 2026">
+    </div>
+  </section>
+
+  <!-- ============ COT DEATHS ============ -->
+  <section class="kmb-cot" aria-label="Some cot deaths">
+    <div class="kmb-wrap">
+      <div class="kmb-cot-line" aria-hidden="true"></div>
+      <h2>Some Cot Deaths</h2>
+      <p>
+        Babies have died of CCHS undiagnosed. PHOX2B faults keep appearing in
+        babies who died suddenly.
+      </p>
+      <p>
+        These are the deaths usually called cot death or SIDS.
+      </p>
+      <div class="kmb-arrow-links">
+        <a class="kmb-arrow-link" href="#what-is-cchs">What is CCHS</a>
+      </div>
     </div>
   </section>
 
