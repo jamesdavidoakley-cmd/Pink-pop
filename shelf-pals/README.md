@@ -22,6 +22,7 @@ Everything is in one file. No downloads, accounts, ads or network calls. Sounds 
 
 - Tap a friend in the bottom tray to pop them onto a shelf, or drag them up onto the exact spot you want.
 - Drag a friend higher on a shelf to put them behind the others; lower brings them to the front (they get a little bigger too).
+- After **Jump off**, the friends on the floor light up again in the tray (gold ring and arrow). Tap one to send them back up onto a shelf, or drag the tile to put them exactly where you want. **Line up** brings everyone back at once.
 - Drag a friend back down to the tray to put them away. Tap a friend on the shelf to hear their name and a giggle.
 - Hold the basket button for a second to put everyone away.
 - Each place remembers its own arrangement on that device.

@@ -175,6 +175,9 @@ button{font-family:inherit;color:inherit}
 .tile .nm{font-size:10px;font-weight:900;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;letter-spacing:.2px}
 .tile.used{opacity:.42;filter:saturate(.3)}
 .tile.used::after{content:"✓";position:absolute;right:5px;top:4px;width:20px;height:20px;border-radius:50%;background:var(--grass);color:#fff;font-size:13px;display:grid;place-items:center;font-weight:900}
+.tile.floor{box-shadow:0 3px 0 #d7b170,inset 0 0 0 3px var(--sun)}
+.tile.floor::after{content:"▲";position:absolute;right:5px;top:4px;width:22px;height:22px;border-radius:50%;background:var(--sun);color:#fff;font-size:11px;display:grid;place-items:center;font-weight:900;animation:badge .9s ease-in-out infinite alternate}
+@keyframes badge{from{transform:translateY(0)}to{transform:translateY(-4px)}}
 .tile.wig{animation:wig .4s ease-in-out}
 @keyframes wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg) scale(1.05)}75%{transform:rotate(8deg) scale(1.05)}}
 
@@ -844,7 +847,9 @@ window.addEventListener('resize',refit); if(window.visualViewport) window.visual
 function fromPlacement(p){
   const sh=geo.shelves[Math.min(p.shelf,geo.shelves.length-1)]; p.shelf=geo.shelves.indexOf(sh);
   p.x=sh.x0+(sh.x1-sh.x0)*p.xf; p.y=sh.top+(sh.bottom-sh.top)*p.depth; p.s=sh.s0+(sh.s1-sh.s0)*p.depth;
+  markTile(p.id, sh.floor ? 'floor' : 'shelf');
 }
+const onFloor=p=>!!geo.shelves[p.shelf]?.floor;
 function toPlacement(p,i,x,y){
   const sh=geo.shelves[i]; const m=geo.palH*.28/(sh.x1-sh.x0);
   p.shelf=i; p.depth=clamp((y-sh.top)/Math.max(1,(sh.bottom-sh.top)),0,1); p.xf=clamp((x-sh.x0)/(sh.x1-sh.x0),m,1-m);
@@ -871,7 +876,7 @@ function addPal(id,pl,opts={}){
   const p={id,spec,el,anim,shelf:pl.shelf??0,depth:pl.depth??.5,xf:pl.xf??.5,x:0,y:0,s:1,state:'idle',vx:0,vy:0,bounces:0};
   fromPlacement(p); render(p); pals.set(id,p);
   if(opts.pop){ el.classList.add('pop'); setTimeout(()=>el.classList.remove('pop'),500); sparkle(p.x,p.y-geo.palH*.5); Sfx.pop(); }
-  markTile(id,true); if(!opts.quiet){ dismissHint(); save(); } return p;
+  if(!opts.quiet){ dismissHint(); save(); } return p;
 }
 function removePal(id,silent){
   const p=pals.get(id); if(!p) return;
@@ -957,18 +962,22 @@ window.addEventListener('contextmenu',e=>e.preventDefault());
 function buildTray(){
   trayScroll.innerHTML=PALS.map(p=>`<div class="tile" data-id="${p.id}">${drawPal(p,'t'+p.id)}<span class="nm">${p.n}</span></div>`).join('');
 }
-function markTile(id,used){ const t=trayScroll.querySelector(`.tile[data-id="${id}"]`); if(t) t.classList.toggle('used',used); }
+function markTile(id,where){ const t=trayScroll.querySelector(`.tile[data-id="${id}"]`); if(!t) return; t.classList.toggle('used',where==='shelf'); t.classList.toggle('floor',where==='floor'); }
 function wiggleTile(id){ const t=trayScroll.querySelector(`.tile[data-id="${id}"]`); if(t){ t.classList.remove('wig'); void t.offsetWidth; t.classList.add('wig'); } }
 trayScroll.addEventListener('pointerdown',e=>{ const t=e.target.closest('.tile'); if(!t||drag) return; Sfx.unlock(); trayDrag={id:t.dataset.id,x0:e.clientX,y0:e.clientY,started:false}; });
 function startTrayDrag(e){
   const id=trayDrag.id; trayDrag=null;
-  if(pals.has(id)){ const p=pals.get(id); wiggleTile(id); solo(p); return; }
+  if(pals.has(id)){ const p=pals.get(id);
+    if(onFloor(p) && p.state==='idle'){ stageRect=stage.getBoundingClientRect(); beginDrag(p,e,land?-geo.palH*.3:0,land?geo.palH*.3:geo.palH*.55,false); return; }   // pick them up off the floor
+    wiggleTile(id); solo(p); return; }
   stageRect=stage.getBoundingClientRect();
   const p=addPal(id,{shelf:0,depth:.5,xf:.5},{});
   beginDrag(p,e,land?-geo.palH*.3:0,land?geo.palH*.3:geo.palH*.55,true);
 }
 function tapTile(id){
-  if(pals.has(id)){ wiggleTile(id); solo(pals.get(id)); return; }
+  if(pals.has(id)){ const p=pals.get(id);
+    if(onFloor(p) && p.state==='idle'){ clearActionFor(p); flyTo(p,freeSpot(),0); Sfx.boing(); say(p.spec.n); markTile(id,'shelf'); return; }   // back up onto a shelf
+    wiggleTile(id); solo(p); return; }
   const p=addPal(id,freeSpot(),{pop:true}); if(p) say(p.spec.n);
 }
 
@@ -1045,16 +1054,18 @@ function lineUp(){
   while(idx<L.length){ slots.push({shelf:geo.shelves.length-1,n:L.length-slots.length+ (slots.filter(s=>s.shelf===geo.shelves.length-1).length),j:idx}); idx++; }
   // normalise floor overflow positions
   const fl=slots.filter(s=>s.shelf===geo.shelves.length-1); fl.forEach((s,j)=>{ s.n=fl.length; s.j=j; });
-  const t0=performance.now();
-  L.forEach((p,i)=>{ const sl=slots[i]; const sh=geo.shelves[sl.shelf]; const tx=sh.x0+(sh.x1-sh.x0)*((sl.j+.5)/sl.n), ty=sh.top+(sh.bottom-sh.top)*.5, ts=sh.s0+(sh.s1-sh.s0)*.5;
-    p.state='tween'; p.tw={x0:p.x,y0:p.y,s0:p.s,x1:tx,y1:ty,s1:ts,t0:t0+i*45,d:950,shelf:sl.shelf}; p.el.classList.add('act-march'); });
-  Sfx.startLoop('march'); startLoop();
+  L.forEach((p,i)=>{ const sl=slots[i]; flyTo(p,{shelf:sl.shelf,xf:(sl.j+.5)/sl.n,depth:.5},i*45); });
+  Sfx.startLoop('march');
   setTimeout(()=>{ Sfx.stopLoop(); Sfx.chord(); },950+L.length*45+100);
+}
+function flyTo(p,pl,delay){
+  const sh=geo.shelves[pl.shelf]; const tx=sh.x0+(sh.x1-sh.x0)*pl.xf, ty=sh.top+(sh.bottom-sh.top)*pl.depth, ts=sh.s0+(sh.s1-sh.s0)*pl.depth;
+  p.state='tween'; p.tw={x0:p.x,y0:p.y,s0:p.s,x1:tx,y1:ty,s1:ts,t0:performance.now()+delay,d:950,shelf:pl.shelf}; p.el.classList.add('act-march'); startLoop();
 }
 function stepTween(p,now){
   const t=p.tw; let k=clamp((now-t.t0)/t.d,0,1); const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
   p.x=t.x0+(t.x1-t.x0)*e; p.y=t.y0+(t.y1-t.y0)*e-Math.sin(k*Math.PI)*geo.palH*.9; p.s=t.s0+(t.s1-t.s0)*e;
-  if(k>=1){ p.state='idle'; p.el.classList.remove('act-march'); toPlacement(p,t.shelf,t.x1,t.y1); p.el.classList.add('land'); setTimeout(()=>p.el.classList.remove('land'),450); Sfx.tick(); save(); }
+  if(k>=1){ p.state='idle'; p.el.classList.remove('act-march'); toPlacement(p,t.shelf,t.x1,t.y1); p.el.classList.add('land'); setTimeout(()=>p.el.classList.remove('land'),450); sparkle(p.x,p.y-geo.palH*.4); Sfx.tick(); save(); }
   render(p);
 }
 
