@@ -40,6 +40,8 @@ export class App {
     this.mover = new HumanMover(this.view, new BoardInput(scene), this.hud);
     this.progress = loadProgress();
     this.hud.onBack = () => this.goHome();
+    // Cards sit at the bottom; lift the board so the squares stay visible above them.
+    this.hud.onCard = (h) => scene.setLift(h);
     this.screens.onPlay = () => this.goPlay();
     this.screens.onRung = (_r, i) => void this.goPuzzle(i);
     this.screens.onRecipe = (r) => void this.goRecipe(r.id);

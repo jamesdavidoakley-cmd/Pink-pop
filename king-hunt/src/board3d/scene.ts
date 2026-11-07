@@ -22,6 +22,7 @@ export class BoardScene {
   private tickers = new Set<(dt: number, t: number) => void>();
   private orientation: 'w' | 'b' = 'w';
   private camTarget = new THREE.Vector3(0, 8.6, 8.2);
+  private liftPx = 0;
 
   constructor(canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
@@ -100,21 +101,65 @@ export class BoardScene {
     this.scene.add(floor);
   }
 
+  /** Camera height/distance for the current aspect: phones look more top-down so the far rank fits. */
+  private framing() {
+    const aspect = window.innerWidth / Math.max(1, window.innerHeight);
+    if (aspect < 0.8) return { y: 11.6, z: 5.6 };
+    if (aspect < 1.1) return { y: 10.0, z: 7.0 };
+    return { y: 8.6, z: 8.2 };
+  }
+
   resize() {
     const w = window.innerWidth;
     const h = window.innerHeight;
     this.renderer.setSize(w, h, false);
     this.composer.setSize(w, h);
-    this.camera.aspect = w / h;
-    // Portrait screens (tablets) need a wider view to keep the whole board on.
-    this.camera.fov = w < h ? 58 : 42;
+    const f = this.framing();
+    this.camTarget.set(0, f.y, this.orientation === 'w' ? f.z : -f.z);
+    this.camera.position.copy(this.camTarget);
+    this.camera.lookAt(0, -0.4, 0);
+    this.applyProjection();
+  }
+
+  /** Shifts the picture up by `px` screen pixels (used while a card covers the bottom of the screen). */
+  setLift(px: number) {
+    // On wide screens the far rank already sits near the top bar, so the lift is capped there;
+    // portrait screens have room above the board and take the full lift.
+    const h = window.innerHeight;
+    const cap = window.innerWidth / h < 1.1 ? h * 0.5 : h * 0.07;
+    this.liftPx = Math.max(0, Math.round(Math.min(px, cap)));
+    this.applyProjection();
+  }
+
+  /**
+   * Projection for the current screen and lift. The camera renders the bottom `h` pixels of a
+   * virtual frame `h + lift` tall, so the board sits higher on screen while a card is open.
+   * Aspect and FOV are those of the full virtual frame (what setViewOffset expects). The vertical
+   * FOV is derived from the horizontal angle the board needs at the camera's distance, so the whole
+   * board fits on any screen shape, and never goes narrower than 42°.
+   */
+  private applyProjection() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const fullH = h + this.liftPx;
+    const aspect = w / fullH;
+    const f = this.framing();
+    const dist = Math.hypot(f.y + 0.4, f.z);
+    const halfWidth = 5.2; // board + frame + a little air
+    const fovX = 2 * Math.atan(halfWidth / dist);
+    const fovY = (2 * Math.atan(Math.tan(fovX / 2) / aspect) * 180) / Math.PI;
+    this.camera.aspect = aspect;
+    this.camera.fov = Math.min(100, Math.max(44, fovY));
+    if (this.liftPx > 0) this.camera.setViewOffset(w, fullH, 0, this.liftPx, w, h);
+    else this.camera.clearViewOffset();
     this.camera.updateProjectionMatrix();
   }
 
   /** Which side sits at the bottom of the screen. The camera swings round smoothly. */
   setOrientation(side: 'w' | 'b') {
     this.orientation = side;
-    this.camTarget.set(0, 8.6, side === 'w' ? 8.2 : -8.2);
+    const f = this.framing();
+    this.camTarget.set(0, f.y, side === 'w' ? f.z : -f.z);
   }
   getOrientation() {
     return this.orientation;

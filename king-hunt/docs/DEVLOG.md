@@ -96,3 +96,10 @@ James, after playing the hosted build: the why-questions drag. Now **paced and s
 - Every question has a Skip. Follow-up cards auto-advance with a thin timer bar (sized to the text's reading time) and can still be tapped through. The recipe ledger keeps its question (it is the calculation step) but offers "Just play it", and the ledger then shows briefly instead of blocking.
 - Saves record principle answers per rung and the last five why results; older saves load with defaults.
 Tests 40/40; puzzle, recipe, daily and boot checks OK; republished.
+
+## P3.2 — Fits every screen (2026-11-07)
+
+James on a phone: the board overflowed the screen and the question card sat on top of what was left.
+- The camera is now framed from the screen's aspect: phones look more top-down, and the vertical FOV is derived from the horizontal angle the board needs at the camera's distance, so the whole board always fits (never narrower than 44°).
+- Cards anchor to the bottom of the screen. While one is open the projection renders the bottom of a taller virtual frame (`setViewOffset` with the full frame's aspect), lifting the board above the card: by the card's height on portrait screens (capped at half the screen), by a little on wide screens where the far rank already sits near the top bar. Smaller card type and padding under 640px.
+- Checked at 412×915, 820×1180 and 1280×800 with the question open. Republished.

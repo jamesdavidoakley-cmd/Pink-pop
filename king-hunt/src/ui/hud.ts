@@ -18,6 +18,8 @@ export class Hud {
   private actions: HTMLElement;
   private card: HTMLElement;
   onBack: (() => void) | null = null;
+  /** Fires when a card opens (with its height in px) or closes (0), so the board can move out from under it. */
+  onCard: ((heightPx: number) => void) | null = null;
 
   constructor(private root: HTMLElement) {
     root.innerHTML = `
@@ -49,6 +51,15 @@ export class Hud {
 
   show(visible: boolean) {
     this.root.classList.toggle('hidden', !visible);
+  }
+
+  private openCard() {
+    this.card.classList.remove('hidden');
+    requestAnimationFrame(() => this.onCard?.(this.card.classList.contains('hidden') ? 0 : this.card.offsetHeight));
+  }
+  private closeCard() {
+    this.card.classList.add('hidden');
+    this.onCard?.(0);
   }
   setTitle(html: string) {
     this.title.innerHTML = html;
@@ -107,11 +118,11 @@ export class Hud {
         <p>${opts.body}</p>
         <button class="btn">${opts.button}</button>
         ${opts.autoMs ? `<div class="auto"><div class="auto-fill" style="animation-duration:${opts.autoMs}ms"></div></div>` : ''}`;
-      this.card.classList.remove('hidden');
+      this.openCard();
       const done = () => {
         if (this.cardTimer) window.clearTimeout(this.cardTimer);
         this.cardTimer = null;
-        this.card.classList.add('hidden');
+        this.closeCard();
         resolve();
       };
       this.card.querySelector('button')!.addEventListener('click', done);
@@ -134,16 +145,16 @@ export class Hud {
         el.className = 'btn option';
         el.textContent = o.text;
         el.addEventListener('click', () => {
-          this.card.classList.add('hidden');
+          this.closeCard();
           resolve(i);
         });
         box.appendChild(el);
       });
       this.card.querySelector('.skip')?.addEventListener('click', () => {
-        this.card.classList.add('hidden');
+        this.closeCard();
         resolve(-1);
       });
-      this.card.classList.remove('hidden');
+      this.openCard();
     });
   }
 
@@ -158,16 +169,16 @@ export class Hud {
         el.className = 'btn option';
         el.textContent = label;
         el.addEventListener('click', () => {
-          this.card.classList.add('hidden');
+          this.closeCard();
           resolve(p);
         });
         box.appendChild(el);
       }
-      this.card.classList.remove('hidden');
+      this.openCard();
     });
   }
 
   hideCard() {
-    this.card.classList.add('hidden');
+    this.closeCard();
   }
 }
