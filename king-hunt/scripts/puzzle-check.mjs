@@ -57,7 +57,8 @@ console.log('principle question:', await card.locator('h2').innerText());
 await card.locator('.option').first().click();
 await card.waitFor({ timeout: 5000 });
 console.log('feedback:', await card.locator('h2').innerText());
-await card.locator('button').click();
+// In quick mode the feedback card auto-advances, so a click may land after it has gone; either is fine.
+try { await card.locator('button.btn').first().click({ timeout: 3000 }); } catch { /* auto-advanced */ }
 await page.waitForFunction(() => window.__app.state().solved === 1 && window.__app.state().expected, null, { timeout: 90000 });
 const saved = await page.evaluate(() => localStorage.getItem('king-hunt.progress.v1'));
 console.log('saved progress:', saved);
