@@ -9,6 +9,8 @@ import { PRINCIPLE_WHY } from '../content/ladder';
 import type { Recipe } from '../content/recipes';
 import { recordRecipe, type Progress } from './progress';
 import { readMs } from './questions';
+import type { Moments } from './moments';
+import { sfx } from '../audio/sfx';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -45,6 +47,7 @@ export class RecipeSession {
     readonly recipe: Recipe,
     private progress: Progress,
     private onProgress: (p: Progress) => void,
+    private moments: Moments,
   ) {}
 
   startFen(): string {
@@ -59,12 +62,14 @@ export class RecipeSession {
     this.hud.setTitle(`<b>${r.title}</b> · ${r.principle}`);
     this.hud.setStatus('Plan Lab');
     this.hud.say([]);
-    await this.hud.showCard({ kicker: 'Attack recipe', title: r.title, body: `<b>The plan:</b> ${r.goal}<br><br><b>How we got here:</b> ${r.howWeGotHere}`, button: 'Show me' });
-    if (!this.alive) return;
     this.rules = new Rules(this.startFen());
     this.ply = r.start;
     this.view.setPosition(this.rules);
     this.view.scene.setOrientation(r.side);
+    await this.moments.intro(r.title, 'Attack recipe', r.principle, r.side);
+    if (!this.alive) return;
+    await this.hud.showCard({ kicker: 'Attack recipe', title: r.title, body: `<b>The plan:</b> ${r.goal}<br><br><b>How we got here:</b> ${r.howWeGotHere}`, button: 'Show me' });
+    if (!this.alive) return;
     this.hud.setAttack(this.view.paintLens(this.rules, r.side));
     this.mover.rules = this.rules;
     this.mover.side = r.side;
@@ -107,7 +112,10 @@ export class RecipeSession {
     if (!this.alive) return;
     const mv = this.rules.raw().move(this.recipe.moves[this.ply]!);
     this.view.applyMove(mv, true, this.rules);
-    this.hud.setAttack(this.view.paintLens(this.rules, this.recipe.side));
+    if (!mv.captured) sfx.move();
+    const rep = this.view.paintLens(this.rules, this.recipe.side);
+    this.hud.setAttack(rep);
+    this.moments.storm(rep.score, rep.enemyKing);
     const took = !!mv.captured;
     const prev = this.recipe.steps[String(this.ply - 1)];
     if (prev?.bait && took) this.hud.setStatus(`They took the bait (${mv.san}).`);
@@ -171,17 +179,28 @@ export class RecipeSession {
     const mv = this.rules.play(m)!;
     this.view.applyMove(mv, true, this.rules);
     this.view.clearHighlights();
-    this.hud.setAttack(this.view.paintLens(this.rules, this.recipe.side));
+    const rep = this.view.paintLens(this.rules, this.recipe.side);
+    this.hud.setAttack(rep);
+    this.moments.storm(rep.score, rep.enemyKing);
     this.hud.say([step?.why ?? 'Good.']);
     this.ply++;
     this.mover.enabled = false;
-    await sleep(1400);
+    if (step?.bait) await this.moments.sacrifice(m.from, m.to, this.recipe.side);
+    else if (!mv.captured) sfx.move();
+    if (this.rules.isCheckmate()) {
+      this.moments.storm(0, null);
+      await this.moments.mate(this.rules.kingSquare(this.rules.turn()), 'you', this.recipe.side);
+    } else if (this.rules.inCheck()) this.moments.check();
+    else this.moments.hit();
+    if (!this.alive) return;
+    await sleep(1100);
     await this.step();
   }
 
   private hint(m: MoveInput, expected: string) {
     this.wrong++;
     this.view.shake(m.from);
+    this.moments.wrong();
     const from = expected.slice(0, 2) as Square;
     const to = expected.slice(2, 4) as Square;
     const step = this.recipe.steps[String(this.ply)];

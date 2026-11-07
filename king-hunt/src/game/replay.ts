@@ -8,6 +8,9 @@ import { PALETTE } from '../board3d/palette';
 import { PRINCIPLE_WHY } from '../content/ladder';
 import type { Replay } from '../content/replays';
 import { recordReplay, type Progress } from './progress';
+import type { Moments } from './moments';
+import { sfx } from '../audio/sfx';
+import { material } from './auditor';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -34,6 +37,7 @@ export class ReplaySession {
     readonly replay: Replay,
     private progress: Progress,
     private onProgress: (p: Progress) => void,
+    private moments: Moments,
   ) {}
 
   async start() {
@@ -42,11 +46,13 @@ export class ReplaySession {
     this.hud.setTitle(`<b>${r.hero}</b> vs ${r.opponent}, ${r.year}`);
     this.hud.setStatus(r.where);
     this.hud.say([]);
-    await this.hud.showCard({ kicker: 'Great hunt', title: r.title, body: r.story + `<br><br>You play ${r.hero}'s moves. When the card asks, find the move he found.`, button: 'Watch the opening' });
-    if (!this.alive) return;
     this.rules = new Rules();
     this.view.setPosition(this.rules);
     this.view.scene.setOrientation(r.heroSide);
+    await this.moments.intro(r.title, `${r.where}, ${r.year}`, `${r.hero} vs ${r.opponent}`, r.heroSide);
+    if (!this.alive) return;
+    await this.hud.showCard({ kicker: 'Great hunt', title: r.title, body: r.story + `<br><br>You play ${r.hero}'s moves. When the card asks, find the move he found.`, button: 'Watch the opening' });
+    if (!this.alive) return;
     this.mover.rules = this.rules;
     this.mover.side = r.heroSide;
     this.mover.onMove = (m) => void this.humanMove(m);
@@ -78,7 +84,14 @@ export class ReplaySession {
   private async autoPlay(ply: number, pause: number) {
     const mv = this.rules.raw().move(this.replay.moves[ply]!);
     this.view.applyMove(mv, true, this.rules);
-    this.hud.setAttack(this.view.paintLens(this.rules, this.replay.heroSide));
+    if (!mv.captured) sfx.move();
+    const rep = this.view.paintLens(this.rules, this.replay.heroSide);
+    this.hud.setAttack(rep);
+    this.moments.storm(rep.score, rep.enemyKing);
+    if (this.rules.isCheckmate()) {
+      this.moments.storm(0, null);
+      await this.moments.mate(this.rules.kingSquare(this.rules.turn()), 'you', this.replay.heroSide);
+    } else if (this.rules.inCheck()) this.moments.check();
     const note = this.replay.notes[String(ply)];
     const who = this.isHeroPly(ply) ? this.replay.hero.split(' ').pop() : this.replay.opponent.split(/[ &]/)[0];
     this.hud.setStatus(`${Math.floor(ply / 2) + 1}${ply % 2 === 0 ? '.' : '…'} ${mv.san}  (${who})`);
@@ -113,6 +126,7 @@ export class ReplaySession {
     if (uci !== expected) {
       this.wrong++;
       this.view.shake(m.from);
+      this.moments.wrong();
       const from = expected.slice(0, 2) as Square;
       const to = expected.slice(2, 4) as Square;
       if (this.wrong === 1) {
@@ -131,11 +145,27 @@ export class ReplaySession {
     if (this.wrong === 0) this.guessedFirst++;
     this.busy = true;
     this.mover.enabled = false;
+    const hero = this.replay.heroSide;
+    const matBefore = material(this.rules.raw(), hero) - material(this.rules.raw(), hero === 'w' ? 'b' : 'w');
     const mv = this.rules.play(m)!;
     this.view.applyMove(mv, true, this.rules);
     this.view.clearHighlights();
-    this.hud.setAttack(this.view.paintLens(this.rules, this.replay.heroSide));
+    const rep = this.view.paintLens(this.rules, hero);
+    this.hud.setAttack(rep);
+    this.moments.storm(rep.score, rep.enemyKing);
     this.hud.say([(this.wrong === 0 ? 'Yes! ' : '') + ask.why]);
+    // A hero move that gives material (or lands on a defended square for less) is a sacrifice moment.
+    const probe = this.rules.clone();
+    const recaptures = probe.legalMoves().filter((x) => x.to === mv.to && x.captured);
+    const sacrificial = recaptures.length > 0 && (mv.captured ? (PIECE_VALUE_OF[mv.captured] ?? 0) : 0) < (PIECE_VALUE_OF[mv.piece] ?? 0);
+    void matBefore;
+    if (this.rules.isCheckmate()) {
+      this.moments.storm(0, null);
+      await this.moments.mate(this.rules.kingSquare(this.rules.turn()), 'you', hero);
+    } else if (sacrificial) await this.moments.sacrifice(m.from, m.to, hero);
+    else if (this.rules.inCheck()) this.moments.check();
+    else this.moments.hit();
+    if (!this.alive) return;
     this.hud.setStatus(`${ask.principle}: ${PRINCIPLE_WHY[ask.principle]}`);
     this.ply++;
     await sleep(2200);
@@ -161,3 +191,5 @@ export class ReplaySession {
     return { fen: this.rules.fen(), ply: this.ply, expected: this.mover.enabled ? this.expectedUci() : null, finished: this.finished, asked: this.asked, guessedFirst: this.guessedFirst };
   }
 }
+
+const PIECE_VALUE_OF: Record<string, number> = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };

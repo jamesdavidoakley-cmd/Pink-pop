@@ -12,6 +12,7 @@ export interface RungProgress {
 
 export interface Settings {
   questions: QuestionMode;
+  sound: boolean;
 }
 
 export interface RecipeProgress {
@@ -51,7 +52,7 @@ export interface Progress {
   whyAsked: number;
 }
 
-export const EMPTY_PROGRESS: Progress = { version: 1, rungs: {}, recipes: {}, replays: {}, today: null, settings: { questions: 'quick' }, whyRecent: [], days: [], whyRight: 0, whyAsked: 0 };
+export const EMPTY_PROGRESS: Progress = { version: 1, rungs: {}, recipes: {}, replays: {}, today: null, settings: { questions: 'quick', sound: true }, whyRecent: [], days: [], whyRight: 0, whyAsked: 0 };
 
 export function rungProgress(p: Progress, id: string): RungProgress {
   const r = p.rungs[id];
@@ -124,6 +125,10 @@ export function recordPrinciple(p: Progress, rungId: string, right: boolean): Pr
 
 export function setQuestions(p: Progress, questions: QuestionMode): Progress {
   return { ...p, settings: { ...p.settings, questions } };
+}
+
+export function setSound(p: Progress, sound: boolean): Progress {
+  return { ...p, settings: { ...p.settings, sound } };
 }
 
 /** Consecutive days ending today or yesterday. */

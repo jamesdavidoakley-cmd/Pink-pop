@@ -3,6 +3,7 @@ import { BloomEffect, EffectComposer, EffectPass, RenderPass, SMAAEffect, Vignet
 import { PALETTE } from './palette';
 import { TILE, squareToWorld } from './coords';
 import { sq, type Square } from '../chess/types';
+import { Director } from './director';
 
 export interface Tile {
   square: Square;
@@ -18,6 +19,7 @@ export class BoardScene {
   readonly tiles = new Map<Square, Tile>();
   readonly piecesGroup = new THREE.Group();
   readonly fxGroup = new THREE.Group();
+  readonly director: Director;
   private clock = new THREE.Clock();
   private tickers = new Set<(dt: number, t: number) => void>();
   private orientation: 'w' | 'b' = 'w';
@@ -57,6 +59,8 @@ export class BoardScene {
 
     this.buildBoard();
     this.scene.add(this.piecesGroup, this.fxGroup);
+    this.director = new Director(this.camera);
+    this.director.onFinish = () => this.restoreFraming();
 
     this.composer = new EffectComposer(this.renderer, { multisampling: 0 });
     this.composer.addPass(new RenderPass(this.scene, this.camera));
@@ -121,6 +125,15 @@ export class BoardScene {
     this.applyProjection();
   }
 
+  /** Snaps back to the normal framing after a cut scene. */
+  restoreFraming() {
+    const f = this.framing();
+    this.camTarget.set(0, f.y, this.orientation === 'w' ? f.z : -f.z);
+    this.camera.position.copy(this.camTarget);
+    this.camera.lookAt(0, -0.4, 0);
+    this.applyProjection();
+  }
+
   /** Shifts the picture up by `px` screen pixels (used while a card covers the bottom of the screen). */
   setLift(px: number) {
     // On wide screens the far rank already sits near the top bar, so the lift is capped there;
@@ -172,10 +185,13 @@ export class BoardScene {
 
   start() {
     const loop = () => {
-      const dt = Math.min(this.clock.getDelta(), 0.05);
+      const realDt = this.clock.getDelta();
+      const dt = Math.min(realDt, 0.05);
       const t = this.clock.elapsedTime;
       for (const fn of this.tickers) fn(dt, t);
-      if (this.camera.position.distanceToSquared(this.camTarget) > 1e-4) {
+      // Cut scenes run on wall-clock time so they last as designed on slow devices.
+      const driven = this.director.update(Math.min(realDt, 0.5));
+      if (!driven && !this.director.active && this.camera.position.distanceToSquared(this.camTarget) > 1e-4) {
         // Swing around the board rather than cutting through it.
         const cur = this.camera.position;
         const angleNow = Math.atan2(cur.x, cur.z);

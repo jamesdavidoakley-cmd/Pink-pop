@@ -100,3 +100,29 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); 
 @keyframes drain { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 @media (prefers-reduced-motion: reduce) { .auto-fill { animation: none; } .coach.pop { animation: none; } }
 .mode-toggle { pointer-events: auto; margin-top: 6px; border: 0; background: none; color: var(--muted); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- cinema ---------- */
+#cinema { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+#cinema.active { pointer-events: auto; }
+#cinema .bar { position: absolute; left: 0; right: 0; height: 0; background: #05070e; transition: height .5s cubic-bezier(.2,.8,.2,1); }
+#cinema .bar.top { top: 0; } #cinema .bar.bottom { bottom: 0; }
+#cinema.letterbox .bar { height: 11vh; }
+#cinema .flash { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+#cinema .title { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; padding: 0 max(16px, env(safe-area-inset-left, 0px)); opacity: 0; pointer-events: none; }
+#cinema .title .kicker { color: var(--warm); font-weight: 900; letter-spacing: 3px; text-transform: uppercase; font-size: clamp(11px, 1.6vw, 14px); opacity: 0; transform: translateY(10px); }
+#cinema .title .big { font-size: clamp(34px, 9vw, 96px); font-weight: 900; letter-spacing: -1px; line-height: .95; text-transform: uppercase; text-shadow: 0 10px 50px rgba(0,0,0,.7), 0 0 60px rgba(255,106,26,.35); transform: scale(1.4); opacity: 0; text-wrap: balance; }
+#cinema .title .sub { margin-top: 10px; color: #d7deee; font-size: clamp(14px, 2.2vw, 20px); font-weight: 700; opacity: 0; transform: translateY(-8px); }
+#cinema .title.in { opacity: 1; }
+#cinema .title.in .big { animation: slam .55s cubic-bezier(.1,.9,.2,1.2) forwards; }
+#cinema .title.in .kicker { animation: rise-in .5s .25s ease-out forwards; }
+#cinema .title.in .sub { animation: rise-in .5s .4s ease-out forwards; }
+@keyframes slam { from { transform: scale(1.5); opacity: 0; } 60% { transform: scale(.97); opacity: 1; } to { transform: scale(1); opacity: 1; } }
+@keyframes rise-in { to { opacity: 1; transform: none; } }
+#cinema .skip-hint { position: absolute; right: max(18px, env(safe-area-inset-right, 0px)); bottom: calc(11vh + 10px); color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; opacity: 0; transition: opacity .4s; }
+#cinema.letterbox .skip-hint { opacity: .8; }
+#cinema.danger::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 120px 40px rgba(255,59,26,.55); animation: danger .7s ease-out forwards; pointer-events: none; }
+@keyframes danger { from { opacity: 1; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  #cinema .bar { transition: none; }
+  #cinema .title.in .big, #cinema .title.in .kicker, #cinema .title.in .sub { animation: none; opacity: 1; transform: none; }
+}

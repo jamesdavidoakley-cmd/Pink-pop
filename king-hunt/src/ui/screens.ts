@@ -12,6 +12,7 @@ export class Screens {
   onReplay: ((replay: Replay) => void) | null = null;
   onDaily: (() => void) | null = null;
   onQuestions: ((mode: (typeof QUESTION_MODES)[number]) => void) | null = null;
+  onSound: ((on: boolean) => void) | null = null;
 
   constructor(private root: HTMLElement) {}
 
@@ -36,8 +37,12 @@ export class Screens {
           <button class="btn big ghost" data-act="play">Play a game</button>
         </div>
         <div class="streak">${days > 0 ? `🔥 ${days}-day streak` : 'Hunt every day to start a streak'}</div>
-        <button class="mode-toggle" data-act="questions" title="Quick asks the why-questions only when they teach something; every puzzle asks always; off never asks but still explains.">${QUESTION_MODE_LABEL[progress.settings.questions]}</button>
+        <div class="toggles">
+          <button class="mode-toggle" data-act="questions" title="Quick asks the why-questions only when they teach something; every puzzle asks always; off never asks but still explains.">${QUESTION_MODE_LABEL[progress.settings.questions]}</button>
+          <button class="mode-toggle" data-act="sound">${progress.settings.sound ? 'Sound: on' : 'Sound: off'}</button>
+        </div>
       </div>`;
+    this.root.querySelector('[data-act="sound"]')!.addEventListener('click', () => this.onSound?.(!progress.settings.sound));
     this.root.querySelector('[data-act="questions"]')!.addEventListener('click', () => {
       const i = QUESTION_MODES.indexOf(progress.settings.questions);
       this.onQuestions?.(QUESTION_MODES[(i + 1) % QUESTION_MODES.length]!);

@@ -11,7 +11,8 @@ const errors = [];
 page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 page.on('pageerror', (e) => errors.push(String(e)));
 await page.goto(url, { waitUntil: 'load' });
-await page.waitForFunction(() => !!window.__app && !!window.__app.current, null, { timeout: 20000 });
+// Wait for the intro cut scene to finish and the mover to be live.
+await page.waitForFunction(() => !!window.__app && !!window.__app.current && window.__app.mover.enabled, null, { timeout: 30000 });
 const fen0 = await page.evaluate(() => window.__app.state().fen);
 const fen1 = await page.evaluate(async () => {
   await window.__app.current.humanMove({ from: 'e2', to: 'e4' });

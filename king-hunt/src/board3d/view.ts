@@ -8,6 +8,7 @@ import type { BoardScene } from './scene';
 import { AttackEffects } from './effects';
 import { PALETTE } from './palette';
 import { analyseAttack, type AttackReport } from '../chess/attack-lens';
+import { Fx } from './fx';
 
 /**
  * Owns the piece meshes and their animation for whatever position the
@@ -16,17 +17,27 @@ import { analyseAttack, type AttackReport } from '../chess/attack-lens';
  */
 export class BoardView {
   readonly effects: AttackEffects;
+  readonly fx: Fx;
   private meshes = new Map<Square, PieceMesh>();
   private tweens = new Set<Tween>();
+  /** Bumped on every setPosition so delayed effects from a previous position are dropped. */
+  private generation = 0;
+  /** 1 = normal; < 1 slows piece animation (sacrifice slow-motion). */
+  timeScale = 1;
+  /** Called with the captured piece's world position and colour (for sound and camera). */
+  onCapture: ((at: THREE.Vector3, victim: PieceMesh) => void) | null = null;
 
   constructor(readonly scene: BoardScene) {
     this.effects = new AttackEffects(scene);
+    this.fx = new Fx(scene);
     scene.onTick((dt) => {
-      for (const t of this.tweens) if (!t.update(dt)) this.tweens.delete(t);
+      const d = dt * this.timeScale;
+      for (const t of this.tweens) if (!t.update(d)) this.tweens.delete(t);
     });
   }
 
   setPosition(rules: Rules) {
+    this.generation++;
     for (const m of this.meshes.values()) this.scene.piecesGroup.remove(m);
     this.meshes.clear();
     this.tweens.clear();
@@ -58,7 +69,17 @@ export class BoardView {
       const victim = this.meshes.get(capSquare);
       if (victim) {
         this.meshes.delete(capSquare);
-        this.tweens.add(tweenVanish(victim, () => this.scene.piecesGroup.remove(victim)));
+        const at = victim.position.clone();
+        const color = (victim.material as THREE.MeshStandardMaterial).color.getHex();
+        // The capture lands when the mover arrives: shatter then.
+        const delay = animate ? 0.22 / Math.max(0.05, this.timeScale) : 0;
+        const gen = this.generation;
+        window.setTimeout(() => {
+          this.scene.piecesGroup.remove(victim);
+          if (gen !== this.generation) return; // the board was reset meanwhile
+          this.fx.shatter(at, color);
+          this.onCapture?.(at, victim);
+        }, delay * 1000);
       }
     }
     this.meshes.delete(from);
@@ -83,6 +104,25 @@ export class BoardView {
       this.meshes.delete(to);
       this.add(to, mv.promotion, mv.color);
     }
+  }
+
+  /** The mated king falls over. */
+  topple(square: Square, towards: THREE.Vector3) {
+    const m = this.meshes.get(square);
+    if (!m) return;
+    const dir = towards.clone().sub(m.position).setY(0).normalize();
+    const axis = new THREE.Vector3(0, 1, 0).cross(dir).normalize();
+    let t = 0;
+    const base = m.position.clone();
+    this.tweens.add({
+      update(dt) {
+        t = Math.min(1, t + dt / 0.9);
+        const k = t < 0.7 ? Math.pow(t / 0.7, 2) : 1 + Math.sin((t - 0.7) / 0.3 * Math.PI) * 0.06 * (1 - t);
+        m.quaternion.setFromAxisAngle(axis, (Math.PI / 2) * Math.min(1, k));
+        m.position.copy(base).addScaledVector(dir, 0.35 * Math.min(1, k));
+        return t < 1;
+      },
+    });
   }
 
   /** Lifts a piece while dragging; `null` drops it back. */

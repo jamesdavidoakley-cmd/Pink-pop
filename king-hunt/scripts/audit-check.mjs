@@ -8,13 +8,14 @@ const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
 await page.goto(`${base}/?mode=play`, { waitUntil: 'load' });
-await page.waitForFunction(() => !!window.__app && !!window.__app.current, null, { timeout: 20000 });
+await page.waitForFunction(() => !!window.__app && !!window.__app.current && window.__app.mover.enabled, null, { timeout: 30000 });
 
 async function run(fen, moves) {
   return page.evaluate(async ({ fen, moves }) => {
     const app = window.__app;
     app.goPlay({ fen, bot: { id: 't', name: 'Tester', blurb: '', skillLevel: 20, depth: 6, multiPv: 1, slack: 0, flaws: {} } });
     const s = app.current;
+    for (let i = 0; i < 200 && !app.mover.enabled; i++) await new Promise((r) => setTimeout(r, 100)); // intro cut scene
     const settle = async () => { for (let i = 0; i < 100 && s.state().thinking; i++) await new Promise((r) => setTimeout(r, 100)); await new Promise((r) => setTimeout(r, 300)); };
     for (let m of moves) {
       if (m === 'adapt') {

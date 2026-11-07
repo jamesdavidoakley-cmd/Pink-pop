@@ -103,3 +103,28 @@ James on a phone: the board overflowed the screen and the question card sat on t
 - The camera is now framed from the screen's aspect: phones look more top-down, and the vertical FOV is derived from the horizontal angle the board needs at the camera's distance, so the whole board always fits (never narrower than 44°).
 - Cards anchor to the bottom of the screen. While one is open the projection renders the bottom of a taller virtual frame (`setViewOffset` with the full frame's aspect), lifting the board above the card: by the card's height on portrait screens (capped at half the screen), by a little on wide screens where the far rank already sits near the top bar. Smaller card type and padding under 640px.
 - Checked at 412×915, 820×1180 and 1280×800 with the question open. Republished.
+
+## P4 — Cinematic layer (2026-11-07)
+
+James: "needs to be more exciting, cut scenes, very cinematic."
+
+**Built**
+- **Camera director** (`src/board3d/director.ts`): shot lists with easing, holds and FOV changes; shake and punch-in; runs on wall-clock time so cut scenes last as designed on slow devices; tap anywhere to skip; hands control back to the normal framing when done.
+- **Moments** (`src/game/moments.ts`), called by every mode at its beats:
+  - *Intro*: letterbox bars, a low sweep from the far side round to behind the player's army, under a slammed-in title (rung, recipe, bot, or "Paris Opera, 1858 · Morphy vs Duke of Brunswick").
+  - *Sacrifice*: piece animation at 22% speed, camera push-in on the landing square, shockwave, thud, orange flash, shake. Fires on recipe bait moves, hero sacrifices in replays, and in live games when a ledger opens.
+  - *Check*: red edge pulse, sting, small shake.
+  - *Storm*: clouds gather over the enemy king as the attack score passes 60 and lightning strikes now and then at the top of the scale, with thunder and a flash.
+  - *Checkmate*: close-up on the king, lightning strike, the king topples toward the attacker, shockwave, "CHECKMATE" title with fanfare while the camera orbits the fallen king.
+  - *Hit* (puzzle solved, plan step landed): chime and punch-in. *Rung unlocked*: flash and title.
+- **Effects** (`src/board3d/fx.ts`): captured pieces shatter into shards that bounce and fade; shockwave rings; jagged additive lightning with a point-light flash; sprite storm clouds; drifting dust motes for ambience.
+- **Sound** (`src/audio/sfx.ts`): everything synthesised with WebAudio (no assets): move, capture, check, thud, whoosh, thunder, chime, fanfare, wrong. Unlocked on the first pointer down; *Sound: on/off* toggle on the home screen, saved.
+- `prefers-reduced-motion` shortens every moment to a title only, with no shake or slow motion.
+
+**Decisions**
+- Piece animation uses a `timeScale` on the view's tween clock, so slow motion affects only the pieces while cards, timers and the director run at normal speed.
+- Delayed capture effects carry a board generation and are dropped if the position was reset in between (switching modes mid-animation used to leave shards behind).
+- Headless checks now wait for the mover to be live (after the intro) instead of the session merely existing.
+
+**Gate evidence**
+- typecheck clean · 40 tests · boot, puzzle, audit, recipe, replay, daily checks OK after the cut scenes were added · frames captured of the intro, sacrifice and mate moments. Republished.

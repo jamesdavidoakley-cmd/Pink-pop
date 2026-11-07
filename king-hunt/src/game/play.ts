@@ -7,6 +7,8 @@ import type { BoardView } from '../board3d/view';
 import type { Hud } from '../ui/hud';
 import type { HumanMover } from './mover';
 import type { Color, MoveInput } from '../chess/types';
+import type { Moments } from './moments';
+import { sfx } from '../audio/sfx';
 
 export interface PlayOptions {
   bot?: BotSpec;
@@ -51,12 +53,32 @@ export class PlaySession {
     private mover: HumanMover,
     private engine: Engine,
     private opts: PlayOptions = {},
+    private moments: Moments,
   ) {
     this.human = opts.side ?? 'w';
     this.bot = opts.bot ?? BOTS[0]!;
   }
 
+  private introDone = false;
+
   start() {
+    void this.begin();
+  }
+
+  private async begin() {
+    this.rules = new Rules(this.opts.fen);
+    this.view.setPosition(this.rules);
+    this.view.scene.setOrientation(this.human);
+    this.mover.enabled = false;
+    if (!this.introDone) {
+      this.introDone = true;
+      await this.moments.intro(this.bot.name, this.opts.label ?? 'Spar', this.bot.blurb, this.human);
+      if (!this.alive) return;
+    }
+    this.setup();
+  }
+
+  private setup() {
     this.rules = new Rules(this.opts.fen);
     this.turns = [];
     this.pending = null;
@@ -70,8 +92,9 @@ export class PlaySession {
     this.hud.maskMeter(false);
     this.hud.hideCard();
     this.hud.setTitle(`${this.opts.label ? `<b>${this.opts.label}</b> · ` : ''}vs <b>${this.bot.name}</b>`);
-    this.hud.setActions([{ label: 'New game', onClick: () => this.start() }]);
+    this.hud.setActions([{ label: 'New game', onClick: () => this.setup() }]);
     this.hud.say([`${this.bot.name}: ${this.bot.blurb}`]);
+    this.moments.storm(0, null);
     this.hud.setStatus(`You are ${this.human === 'w' ? 'White' : 'Black'}. ${this.bot.name} is ${this.human === 'w' ? 'Black' : 'White'}.`);
     this.paint();
     if (this.rules.turn() !== this.human) void this.botMove();
@@ -84,7 +107,10 @@ export class PlaySession {
   }
 
   private paint() {
-    return this.hud.setAttack(this.view.paintLens(this.rules, this.human));
+    const rep = this.view.paintLens(this.rules, this.human);
+    this.hud.setAttack(rep);
+    this.moments.storm(rep.score, rep.enemyKing);
+    return rep;
   }
 
   async humanMove(m: MoveInput) {
@@ -96,6 +122,8 @@ export class PlaySession {
     if (!mv) return;
     this.pending = { fenBefore, san: mv.san, moveNo: this.rules.history().length, scoreBefore: before.score };
     this.view.applyMove(mv, true, this.rules);
+    if (!mv.captured) sfx.move();
+    if (this.rules.inCheck() && !this.rules.isCheckmate()) this.moments.check();
     const after = analyseAttack(this.rules.raw(), this.human);
     const diagAfter = diagnoseKing(this.rules.raw(), this.human);
     this.paint();
@@ -114,9 +142,10 @@ export class PlaySession {
     this.thinking = false;
     if (!mv) return this.hud.setStatus('Engine returned an odd move; your turn.');
     this.view.applyMove(mv, true, this.rules);
-    const report = this.paint();
+    if (!mv.captured) sfx.move();
+    if (this.rules.inCheck() && !this.rules.isCheckmate()) this.moments.check();
+    this.paint();
     this.hud.setStatus(`${this.bot.name} played ${mv.san}. Your move.`);
-    void report;
     const gameOver = this.checkGameOver();
     // Close the turn. A sacrifice opens a ledger; it is settled as soon as the
     // payoff arrives, or at the end of the window with the engine as the truth-teller.
@@ -134,6 +163,10 @@ export class PlaySession {
         if (!gameOver) {
           this.hud.say([`You gave ${quick.gave}. Now show me what it buys.`]);
           said = true;
+          // The sacrifice moment: the camera pushes in on the square it landed on.
+          const last = this.rules.history().at(-2);
+          if (last && quick.gave >= 2) await this.moments.sacrifice(last.from as Parameters<Moments['sacrifice']>[0], last.to as Parameters<Moments['sacrifice']>[1], this.human);
+          if (!this.alive) return;
         }
       }
       // Settle open ledgers.
@@ -196,8 +229,18 @@ export class PlaySession {
     }
     this.hud.say([headline]);
     this.hud.setStatus('Game over');
-    void this.debrief(headline);
+    void this.finale(headline);
     return true;
+  }
+
+  private async finale(headline: string) {
+    if (this.rules.isCheckmate()) {
+      const youWon = this.result === 'win';
+      const mated = this.rules.kingSquare(this.rules.turn());
+      await this.moments.mate(mated, youWon ? 'you' : 'them', this.human);
+      if (!this.alive) return;
+    }
+    await this.debrief(headline);
   }
 
   /** Best moment, any giveaway, and one missed chance (engine-checked). */
@@ -216,7 +259,7 @@ export class PlaySession {
     await this.hud.showCard({ kicker: 'Debrief', title: headline, body: lines.join('<br><br>'), button: this.onGameOver ? 'Done' : 'Play again' });
     if (!this.alive) return;
     if (this.onGameOver) this.onGameOver(this.result);
-    else this.start();
+    else this.setup();
   }
 
   private async findMissedChance(): Promise<{ moveNo: number; played: string; better: string; why: string } | null> {

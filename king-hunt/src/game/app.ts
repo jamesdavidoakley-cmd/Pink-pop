@@ -12,7 +12,10 @@ import { ReplaySession } from './replay';
 import { Daily } from './daily';
 import { REPLAYS } from '../content/replays';
 import { botById } from './bots';
-import { currentRungIndex, loadProgress, saveProgress, setQuestions, type Progress } from './progress';
+import { currentRungIndex, loadProgress, saveProgress, setQuestions, setSound, type Progress } from './progress';
+import { CinemaOverlay } from '../cinema/overlay';
+import { Moments } from './moments';
+import { sfx } from '../audio/sfx';
 import { LADDER } from '../content/ladder';
 import { RECIPES } from '../content/recipes';
 
@@ -24,6 +27,8 @@ export class App {
   readonly hud: Hud;
   readonly screens: Screens;
   readonly mover: HumanMover;
+  readonly overlay: CinemaOverlay;
+  readonly moments: Moments;
   progress: Progress;
   current: Session | null = null;
   readonly daily = new Daily(this);
@@ -38,7 +43,12 @@ export class App {
     this.hud = new Hud(hudRoot);
     this.screens = new Screens(screensRoot);
     this.mover = new HumanMover(this.view, new BoardInput(scene), this.hud);
+    this.overlay = new CinemaOverlay(hudRoot.parentElement ?? document.body);
+    this.moments = new Moments(scene, this.view, this.overlay);
     this.progress = loadProgress();
+    sfx.enabled = this.progress.settings.sound;
+    // Audio can only start after a gesture: unlock on the first pointer down anywhere.
+    window.addEventListener('pointerdown', () => sfx.unlock(), { once: false, passive: true });
     this.hud.onBack = () => this.goHome();
     // Cards sit at the bottom; lift the board so the squares stay visible above them.
     this.hud.onCard = (h) => scene.setLift(h);
@@ -51,12 +61,21 @@ export class App {
       this.saveP(setQuestions(this.progress, mode));
       this.goHome();
     };
+    this.screens.onSound = (on) => {
+      this.saveP(setSound(this.progress, on));
+      sfx.enabled = on;
+      this.goHome();
+    };
     (window as unknown as { __app: App }).__app = this;
   }
 
   private swap(next: Session | null) {
     this.current?.dispose();
     this.mover.reset();
+    this.view.timeScale = 1;
+    this.view.fx.storm(0, null);
+    this.overlay.letterbox(false);
+    this.overlay.hideTitle();
     this.current = next;
   }
 
@@ -89,7 +108,7 @@ export class App {
   }
 
   goPlay(opts: PlayOptions = {}) {
-    const s = new PlaySession(this.view, this.hud, this.mover, this.engine, { bot: this.currentBot(), ...opts });
+    const s = new PlaySession(this.view, this.hud, this.mover, this.engine, { bot: this.currentBot(), ...opts }, this.moments);
     this.swap(s);
     this.screens.hide();
     this.hud.show(true);
@@ -100,7 +119,7 @@ export class App {
   async goPuzzle(rungIndex: number, opts: { targetSolves?: number; skipIntro?: boolean } = {}) {
     const rung = LADDER.rungs[rungIndex];
     if (!rung) return null;
-    const s = new PuzzleSession(this.view, this.hud, this.mover, rung, this.progress, this.saveP);
+    const s = new PuzzleSession(this.view, this.hud, this.mover, rung, this.progress, this.saveP, this.moments);
     if (opts.targetSolves) s.targetSolves = opts.targetSolves;
     if (opts.skipIntro) s.skipIntro = true;
     this.swap(s);
@@ -113,7 +132,7 @@ export class App {
   async goRecipe(id: string) {
     const recipe = RECIPES.find((r) => r.id === id);
     if (!recipe) return null;
-    const s = new RecipeSession(this.view, this.hud, this.mover, recipe, this.progress, this.saveP);
+    const s = new RecipeSession(this.view, this.hud, this.mover, recipe, this.progress, this.saveP, this.moments);
     s.onFinished = (r, fen) => {
       // Try it live: same start, against a bot that takes bait.
       const rungBot = botById(LADDER.rungs.find((x) => x.id === r.rung)?.bot ?? 'pawnsworth');
@@ -130,7 +149,7 @@ export class App {
   async goReplay(id: string) {
     const replay = REPLAYS.find((r) => r.id === id);
     if (!replay) return null;
-    const s = new ReplaySession(this.view, this.hud, this.mover, replay, this.progress, this.saveP);
+    const s = new ReplaySession(this.view, this.hud, this.mover, replay, this.progress, this.saveP, this.moments);
     s.onFinished = () => this.goHome();
     this.swap(s);
     this.screens.hide();

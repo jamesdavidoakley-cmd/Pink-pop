@@ -8,7 +8,11 @@ import { PuzzleRunner } from './puzzle-runner';
 import { LADDER, LICHESS_TO_PACK, PRINCIPLES, PRINCIPLE_WHY, THEME_IDEA, loadPack, type Pack, type Puzzle, type Rung } from '../content/ladder';
 import { recordPrinciple, recordSolve, recordWhy, rungProgress, type Progress } from './progress';
 import { readMs, shouldAskPrinciple, shouldAskWhy } from './questions';
+import type { Moments } from './moments';
+import { LADDER as LADDER_ALL } from '../content/ladder';
+import { isUnlocked } from './progress';
 import { PALETTE } from '../board3d/palette';
+import { sfx } from '../audio/sfx';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -77,10 +81,14 @@ export class PuzzleSession {
     readonly rung: Rung,
     private progress: Progress,
     private onProgress: (p: Progress) => void,
+    private moments: Moments,
   ) {}
 
   async start() {
     this.hud.setActions([{ label: 'Skip', onClick: () => void this.next() }]);
+    this.view.setPosition(new Rules());
+    await this.moments.intro(this.rung.title, `Rung ${LADDER.rungs.indexOf(this.rung) + 1} · ${this.rung.principle}`, this.rung.idea);
+    if (!this.alive) return;
     if (!this.introShown && !this.skipIntro) {
       this.introShown = true;
       await this.hud.showCard({ kicker: `Rung ${LADDER.rungs.indexOf(this.rung) + 1} · ${this.rung.principle}`, title: this.rung.title, body: `${this.rung.idea}<br><br><b>Why it works:</b> ${this.rung.why}`, button: 'Start hunting' });
@@ -129,8 +137,13 @@ export class PuzzleSession {
     await sleep(700);
     if (!this.alive) return;
     const setup = this.rules.playUci(this.runner.setupMove());
-    if (setup) this.view.applyMove(setup, true, this.rules);
-    this.hud.setAttack(this.view.paintLens(this.rules, this.side));
+    if (setup) {
+      this.view.applyMove(setup, true, this.rules);
+      if (!setup.captured) sfx.move();
+    }
+    const rep0 = this.view.paintLens(this.rules, this.side);
+    this.hud.setAttack(rep0);
+    this.moments.storm(rep0.score, rep0.enemyKing);
     await sleep(500);
     if (!this.alive) return;
 
@@ -184,7 +197,11 @@ export class PuzzleSession {
     if (result === 'wrong') return this.wrong(m);
     const mv = this.rules.play(m)!;
     this.view.applyMove(mv, true, this.rules);
-    this.hud.setAttack(this.view.paintLens(this.rules, this.side));
+    if (!mv.captured) sfx.move();
+    const rep = this.view.paintLens(this.rules, this.side);
+    this.hud.setAttack(rep);
+    this.moments.storm(rep.score, rep.enemyKing);
+    if (this.rules.inCheck() && !isMate) this.moments.check();
     if (result === 'complete') {
       void this.solved(); // not awaited: solved() waits on the player answering the why-question
       return;
@@ -211,6 +228,7 @@ export class PuzzleSession {
   private async wrong(m: MoveInput) {
     if (!this.runner) return;
     this.view.shake(m.from);
+    this.moments.wrong();
     const level = this.runner.hintLevel();
     const expected = this.runner.expected()!;
     const from = expected.slice(0, 2) as Square;
@@ -237,8 +255,23 @@ export class PuzzleSession {
     this.solvedThisSession++;
     const firstTry = this.runner.firstTry();
     if (firstTry) this.firstTriesThisSession++;
+    const rungIndex = LADDER_ALL.rungs.indexOf(this.rung);
+    const nextUnlockedBefore = isUnlocked(this.progress, LADDER_ALL, rungIndex + 1);
     this.progress = recordSolve(this.progress, this.rung.id, { firstTry, revealed: this.runner.revealed });
     this.onProgress(this.progress);
+    // The moment: mate gets the full treatment, anything else a hit.
+    if (this.rules.isCheckmate()) {
+      this.moments.storm(0, null);
+      await this.moments.mate(this.rules.kingSquare(this.side === 'w' ? 'b' : 'w'), 'you', this.side);
+    } else {
+      this.moments.hit();
+    }
+    if (!this.alive) return;
+    const nextRung = LADDER_ALL.rungs[rungIndex + 1];
+    if (nextRung && !nextUnlockedBefore && isUnlocked(this.progress, LADDER_ALL, rungIndex + 1)) {
+      await this.moments.unlock(nextRung.title);
+      if (!this.alive) return;
+    }
     this.hud.say([firstTry ? 'First try. That is how Tal does it.' : 'Solved. Next time you will see it faster.']);
     await sleep(700);
     if (!this.alive) return;
