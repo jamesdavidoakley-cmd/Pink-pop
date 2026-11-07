@@ -45,22 +45,24 @@ The goal is not "aim your pieces at the king". The goal is that Max understands 
 
 ## 3 · The attack ladder (curriculum spine)
 
-Each rung has: a 2-minute taught idea, a themed puzzle pack (from the Lichess CC0 database, see `content/puzzles/`), and a sparring bot whose flaw rewards that rung. Rungs unlock in order; earlier packs stay available for "warm-ups".
+Opening up the king is taught from the start (rungs 2–5), before the tactical tools, because Max will not understand *why* a fork or a pin matters until he knows what he is trying to reach. Each rung has a taught idea with its why, themed puzzle packs (Lichess CC0, `content/puzzles/`), and a sparring bot whose flaw rewards that rung. Rungs unlock after 10 solves; earlier packs stay available for warm-ups.
 
-| # | Rung | Idea Max learns | Puzzle packs | Bot flaw it punishes |
+| # | Rung | Idea Max learns | Puzzle packs | Principle |
 |---|---|---|---|---|
-| 1 | **Finish him** | Mate in 1. The king is the target. | mate-in-1 | wanders into mates |
-| 2 | **Back door** | Back-rank mate; the rook/queen checks on the last rank. | back-rank, mate-in-1 | never makes luft |
-| 3 | **Two-pronged** | Fork: one move, two targets. | fork, hanging-piece | leaves pieces loose |
-| 4 | **Stuck** | Pin and skewer: pieces in a line. | pin, skewer | lines king and queen up |
-| 5 | **Surprise!** | Discovered attack and double check. | discovered-attack, double-check | ignores batteries |
-| 6 | **Castle, then charge** | Castle early *so you can* attack. King safety as fuel. | f7-attack, exposed-king | castles late |
-| 7 | **Bring everyone** | Count attackers vs defenders on the king zone. | kingside-attack, queenside-attack | defends with too few |
-| 8 | **Open the door** | Pawn levers and sacrifices that rip open the king's shelter. | sacrifice, clearance, attraction | over-pushes shelter pawns |
-| 9 | **Smother & trap** | Smothered, Arabian, Anastasia, hook mates. | smothered, arabian, anastasia, hook | boxes in its own king |
-| 10 | **Deflect & decoy** | Overload the defender; drag the king out. | deflection, capture-defender, interference | relies on one defender |
-| 11 | **Ignore the threat** | Zwischenzug: check or mate threat before responding. | zwischenzug, mate-in-2 | assumes recaptures |
-| 12 | **Finishing school** | Mate in 3, promotion races. K+Q and K+R mates to close games. | mate-in-3, promotion, advanced-pawn | runs to endgames |
+| 1 | **Finish him** | Mate in 1. The king is the target: when every square it could go to is covered, one check ends the game. | mate-in-1 | The king cannot run |
+| 2 | **The weak spot** | Before you can mate, you have to get at the king. f7 is the one square only the king guards. | f7-attack, hanging-piece | Initiative |
+| 3 | **Keep him in the middle** | A king in the centre is a target. Open the centre before it can castle. | exposed-king, attraction | The king cannot run |
+| 4 | **Castle, then charge** | Make your own king safe in one move, so every other piece is free to attack. | kingside-attack, queenside-attack | Tempo |
+| 5 | **Rip the roof** | The pawns in front of the king are its roof. Give a pawn or a piece to tear them off. | sacrifice, clearance | Material is fuel |
+| 6 | **Bring everyone** | Count attackers against defenders around the king. More attackers wins. | mate-in-2, kingside-attack | Initiative |
+| 7 | **Back door** | The king's own pawn wall becomes its prison. A rook check from behind is mate. | back-rank | The king cannot run |
+| 8 | **Two-pronged** | A fork attacks two things with one move. They can only save one. | fork, hanging-piece | Tempo |
+| 9 | **Stuck** | Pins and skewers: when pieces line up, the front one cannot move or the back one falls. | pin, skewer | Initiative |
+| 10 | **Surprise!** | Move one piece to unmask another. Two threats appear in one move. | discovered-attack, double-check | Tempo |
+| 11 | **Smother & trap** | Some mates use the king's own pieces as the prison walls. | smothered, arabian, anastasia, hook | The king cannot run |
+| 12 | **Deflect & decoy** | Pull the defender away, or drag the king onto a bad square. | deflection, capture-defender, interference | Initiative |
+| 13 | **Ignore the threat** | When attacked, look for a check or a bigger threat first. Then deal with theirs. | zwischenzug, mate-in-3 | Tempo |
+| 14 | **Finishing school** | Promotions and longer mates. King and queen, king and rook: close the game. | promotion, advanced-pawn, mate-in-3 | Open lines |
 
 Each rung in `content/ladder.json` carries `why` (the mechanism in plain words) and `principle` (one of the five above).
 
@@ -106,7 +108,7 @@ TypeScript strict · Vite · Three.js + `postprocessing` · chess.js · Stockfis
 | Phase | Ships | Gate |
 |---|---|---|
 | **P0 Skeleton** ✅ | 3D board, legal play vs a soft bot, Attack Lens + heat/fire/ring visuals, attack meter HUD, puzzle packs built from Lichess | typecheck · tests · `boot-check.mjs` zero console errors + bot replies |
-| **P1 Puzzles** | Why-first puzzle mode on the ladder's packs (diagnose → move → name the principle), hints that show mechanism, rung progression, save | puzzle-check script solves/fails a pack headless |
+| **P1 Puzzles** ✅ | Why-first puzzle mode on the ladder's packs (diagnose → move → name the principle), hints that show mechanism, rung progression, save | puzzle-check script solves/fails a pack headless |
 | **P2 Bots with flaws** | 12 bots in JSON, flaw-biased move choice, bot clock, debrief | ai-sim proves each bot exhibits its flaw ≥ N% of games |
 | **P3 Lessons & replays** | Why-stories per rung, Tal/Morphy/Anderssen guess-the-move replays with reasons, why-first debriefs, daily session flow | session-check completes a full 15-minute loop |
 | **P4 Voice & polish** | Coach voice (Web Speech API), storm/lightning, sacrifice slow-mo, mate replay camera | voice degrades gracefully; 60 fps on mid laptop |

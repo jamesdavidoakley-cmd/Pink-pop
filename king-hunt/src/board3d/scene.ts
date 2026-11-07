@@ -20,6 +20,8 @@ export class BoardScene {
   readonly fxGroup = new THREE.Group();
   private clock = new THREE.Clock();
   private tickers = new Set<(dt: number, t: number) => void>();
+  private orientation: 'w' | 'b' = 'w';
+  private camTarget = new THREE.Vector3(0, 8.6, 8.2);
 
   constructor(canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
@@ -109,6 +111,15 @@ export class BoardScene {
     this.camera.updateProjectionMatrix();
   }
 
+  /** Which side sits at the bottom of the screen. The camera swings round smoothly. */
+  setOrientation(side: 'w' | 'b') {
+    this.orientation = side;
+    this.camTarget.set(0, 8.6, side === 'w' ? 8.2 : -8.2);
+  }
+  getOrientation() {
+    return this.orientation;
+  }
+
   onTick(fn: (dt: number, t: number) => void) {
     this.tickers.add(fn);
     return () => this.tickers.delete(fn);
@@ -119,6 +130,20 @@ export class BoardScene {
       const dt = Math.min(this.clock.getDelta(), 0.05);
       const t = this.clock.elapsedTime;
       for (const fn of this.tickers) fn(dt, t);
+      if (this.camera.position.distanceToSquared(this.camTarget) > 1e-4) {
+        // Swing around the board rather than cutting through it.
+        const cur = this.camera.position;
+        const angleNow = Math.atan2(cur.x, cur.z);
+        const angleTo = Math.atan2(this.camTarget.x, this.camTarget.z);
+        let d = angleTo - angleNow;
+        while (d > Math.PI) d -= Math.PI * 2;
+        while (d < -Math.PI) d += Math.PI * 2;
+        const a = angleNow + d * Math.min(1, dt * 4);
+        const r = Math.hypot(this.camTarget.x, this.camTarget.z);
+        cur.set(Math.sin(a) * r, this.camTarget.y, Math.cos(a) * r);
+        if (Math.abs(d) < 0.002) cur.copy(this.camTarget);
+        this.camera.lookAt(0, -0.4, 0);
+      }
       this.composer.render(dt);
       requestAnimationFrame(loop);
     };

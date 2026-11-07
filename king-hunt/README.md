@@ -18,11 +18,14 @@ npm run dev        # → http://localhost:5174
 | `npm run typecheck` | TypeScript strict check |
 | `npm test` | Unit tests (Vitest) |
 | `npm run ci` | typecheck + test + build |
-| `node scripts/boot-check.mjs http://localhost:5174 shot.png` | Headless boot: zero console errors, engine replies, screenshot |
+| `node scripts/boot-check.mjs http://localhost:5174 shot.png` | Headless boot into Play: zero console errors, engine replies, screenshot |
+| `node scripts/puzzle-check.mjs http://localhost:5174` | Headless why-first puzzle loop: question → hint → solve → principle → saved |
 | `npm run electron` | Run the desktop shell against `dist/` |
 | `npm run dist` | Build desktop installers for this OS into `release/` |
 
 Downloadable installers for Windows, macOS and Linux are built by the `king-hunt-release` GitHub Actions workflow on every tag `king-hunt-v*`.
+
+Dev URLs: `?mode=play` boots into a game, `?rung=3` boots into ladder rung 4.
 
 ## Content
 

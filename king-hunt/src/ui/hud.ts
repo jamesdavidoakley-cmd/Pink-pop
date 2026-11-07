@@ -1,41 +1,73 @@
 import type { AttackReport } from '../chess/attack-lens';
 
+export interface QuestionOption {
+  text: string;
+  correct: boolean;
+}
+
+/**
+ * The in-game overlay: attack meter, coach line, status, and modal cards
+ * (rung intro, why-questions, promotion picker). All DOM, no Three.js.
+ */
 export class Hud {
-  private root: HTMLElement;
   private meterFill: HTMLElement;
   private meterLabel: HTMLElement;
   private coach: HTMLElement;
   private status: HTMLElement;
-  private newGameBtn: HTMLButtonElement;
-  onNewGame: (() => void) | null = null;
+  private title: HTMLElement;
+  private actions: HTMLElement;
+  private card: HTMLElement;
+  onBack: (() => void) | null = null;
 
-  constructor(root: HTMLElement, botName: string) {
-    this.root = root;
+  constructor(private root: HTMLElement) {
     root.innerHTML = `
       <div class="hud-top">
-        <div class="brand">King Hunt</div>
+        <button class="btn ghost back" aria-label="Back">‹ Home</button>
         <div class="meter" aria-label="Attack meter">
           <div class="meter-fill"></div>
           <div class="meter-label">Attack 0</div>
         </div>
-        <div class="opponent">vs <b>${botName}</b></div>
+        <div class="title"></div>
       </div>
+      <div class="card hidden"></div>
       <div class="hud-bottom">
         <div class="coach" role="status"></div>
         <div class="row">
           <div class="status"></div>
-          <button class="btn new-game">New game</button>
+          <div class="actions"></div>
         </div>
       </div>`;
     this.meterFill = root.querySelector('.meter-fill')!;
     this.meterLabel = root.querySelector('.meter-label')!;
     this.coach = root.querySelector('.coach')!;
     this.status = root.querySelector('.status')!;
-    this.newGameBtn = root.querySelector('.new-game')!;
-    this.newGameBtn.addEventListener('click', () => this.onNewGame?.());
+    this.title = root.querySelector('.title')!;
+    this.actions = root.querySelector('.actions')!;
+    this.card = root.querySelector('.card')!;
+    root.querySelector('.back')!.addEventListener('click', () => this.onBack?.());
   }
 
+  show(visible: boolean) {
+    this.root.classList.toggle('hidden', !visible);
+  }
+  setTitle(html: string) {
+    this.title.innerHTML = html;
+  }
+  private masked = false;
+  private lastReport: AttackReport | null = null;
+  /** Hide the meter while a why-question is open so the board, not the HUD, gives the answer. */
+  maskMeter(on: boolean) {
+    this.masked = on;
+    if (on) {
+      this.meterFill.style.width = '0%';
+      this.meterLabel.textContent = 'Look at the board…';
+    } else if (this.lastReport) {
+      this.setAttack(this.lastReport);
+    }
+  }
   setAttack(report: AttackReport) {
+    this.lastReport = report;
+    if (this.masked) return;
     this.meterFill.style.width = `${report.score}%`;
     this.meterFill.dataset.level = report.score >= 70 ? 'hot' : report.score >= 35 ? 'warm' : 'cool';
     this.meterLabel.textContent = report.mateInOne ? 'MATE IS ON!' : `Attack ${report.score}`;
@@ -48,5 +80,77 @@ export class Hud {
   }
   setStatus(text: string) {
     this.status.textContent = text;
+  }
+  setActions(buttons: { label: string; onClick: () => void; primary?: boolean }[]) {
+    this.actions.innerHTML = '';
+    for (const b of buttons) {
+      const el = document.createElement('button');
+      el.className = 'btn' + (b.primary ? '' : ' ghost');
+      el.textContent = b.label;
+      el.addEventListener('click', b.onClick);
+      this.actions.appendChild(el);
+    }
+  }
+
+  /** A full-width card with a title, body and one button. Resolves when dismissed. */
+  showCard(opts: { kicker?: string; title: string; body: string; button: string }): Promise<void> {
+    return new Promise((resolve) => {
+      this.card.innerHTML = `
+        ${opts.kicker ? `<div class="kicker">${opts.kicker}</div>` : ''}
+        <h2>${opts.title}</h2>
+        <p>${opts.body}</p>
+        <button class="btn">${opts.button}</button>`;
+      this.card.classList.remove('hidden');
+      this.card.querySelector('button')!.addEventListener('click', () => {
+        this.card.classList.add('hidden');
+        resolve();
+      });
+    });
+  }
+
+  /** A multiple-choice why-question. Resolves with the chosen option's index. */
+  ask(prompt: string, options: QuestionOption[], kicker = 'Why?'): Promise<number> {
+    return new Promise((resolve) => {
+      this.card.innerHTML = `
+        <div class="kicker">${kicker}</div>
+        <h2>${prompt}</h2>
+        <div class="options"></div>`;
+      const box = this.card.querySelector('.options')!;
+      options.forEach((o, i) => {
+        const el = document.createElement('button');
+        el.className = 'btn option';
+        el.textContent = o.text;
+        el.addEventListener('click', () => {
+          this.card.classList.add('hidden');
+          resolve(i);
+        });
+        box.appendChild(el);
+      });
+      this.card.classList.remove('hidden');
+    });
+  }
+
+  /** Promotion picker. Resolves with the chosen piece letter. */
+  pickPromotion(): Promise<'q' | 'r' | 'b' | 'n'> {
+    return new Promise((resolve) => {
+      this.card.innerHTML = `<div class="kicker">Promote</div><h2>Your pawn becomes a…</h2><div class="options row-options"></div>`;
+      const box = this.card.querySelector('.options')!;
+      const names: [('q' | 'r' | 'b' | 'n'), string][] = [['q', '♕ Queen'], ['r', '♖ Rook'], ['b', '♗ Bishop'], ['n', '♘ Knight']];
+      for (const [p, label] of names) {
+        const el = document.createElement('button');
+        el.className = 'btn option';
+        el.textContent = label;
+        el.addEventListener('click', () => {
+          this.card.classList.add('hidden');
+          resolve(p);
+        });
+        box.appendChild(el);
+      }
+      this.card.classList.remove('hidden');
+    });
+  }
+
+  hideCard() {
+    this.card.classList.add('hidden');
   }
 }

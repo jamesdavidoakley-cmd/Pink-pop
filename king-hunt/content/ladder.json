@@ -1,153 +1,176 @@
 {
-  "version": 1,
+  "version": 2,
+  "unlockAfter": 10,
   "rungs": [
     {
       "id": "finish-him",
       "title": "Finish him",
-      "idea": "The king is the target. If you can checkmate, nothing else matters.",
+      "idea": "Mate in 1. The king is the target: when every square it could go to is covered, one check ends the game.",
+      "why": "A king only moves one square. If every square it could step to is covered, a check it cannot block or capture is checkmate.",
+      "principle": "The king cannot run",
       "packs": [
         "mate-in-1"
       ],
-      "bot": "pawnsworth",
-      "principle": "The king cannot run",
-      "why": "A king only moves one square. If every square it could go to is covered, one check ends the game."
+      "bot": "pawnsworth"
     },
     {
-      "id": "back-door",
-      "title": "Back door",
-      "idea": "A rook or queen on the last rank is checkmate when the king has no escape square.",
+      "id": "the-weak-spot",
+      "title": "The weak spot",
+      "idea": "Before you can mate, you have to get at the king. f7 is the one square only the king guards.",
+      "why": "Every other square near the king has helpers. f7 (f2 for White) has only the king. Hit it twice and the king must come out into the open, where it can be hunted.",
+      "principle": "Initiative",
       "packs": [
-        "back-rank",
-        "mate-in-1"
-      ],
-      "bot": "lady-lockstep",
-      "principle": "The king cannot run",
-      "why": "The king's own pawns are a wall in front of it. From behind, a rook check has no answer unless there is an escape square."
-    },
-    {
-      "id": "two-pronged",
-      "title": "Two-pronged",
-      "idea": "A fork attacks two things at once. They can only save one.",
-      "packs": [
-        "fork",
+        "f7-attack",
         "hanging-piece"
       ],
-      "bot": "sir-scatter",
-      "principle": "Tempo",
-      "why": "One move makes two threats. They get one move to answer, so one target is always lost."
+      "bot": "sir-scatter"
     },
     {
-      "id": "stuck",
-      "title": "Stuck",
-      "idea": "Pins and skewers: when pieces line up, the one in front cannot move or the one behind falls.",
+      "id": "keep-him-in-the-middle",
+      "title": "Keep him in the middle",
+      "idea": "A king in the centre is a target. Open the centre before it can castle.",
+      "why": "Castling is the king's escape to safety. If you open the e-file and d-file first, with checks and threats, it never gets there and every line points at it.",
+      "principle": "The king cannot run",
       "packs": [
-        "pin",
-        "skewer"
+        "exposed-king",
+        "attraction"
       ],
-      "bot": "colonel-column",
-      "principle": "Initiative",
-      "why": "A pinned piece cannot move, so it cannot defend anything else. Attack the thing it was guarding."
-    },
-    {
-      "id": "surprise",
-      "title": "Surprise!",
-      "idea": "Move one piece to unmask another. Double check cannot be blocked.",
-      "packs": [
-        "discovered-attack",
-        "double-check"
-      ],
-      "bot": "madame-mask",
-      "principle": "Tempo",
-      "why": "Moving one piece reveals a second attack. Two threats appear in one move. A double check cannot be blocked at all."
+      "bot": "baron-dawdle"
     },
     {
       "id": "castle-then-charge",
       "title": "Castle, then charge",
-      "idea": "Castle early so your king is safe and your rook joins the hunt. f7 is the weak spot.",
+      "idea": "Make your own king safe in one move, so every other piece is free to attack.",
+      "why": "Castling tucks your king away and brings a rook toward the centre in a single move. With nothing to defend, you can spend pieces on the hunt without fear.",
+      "principle": "Tempo",
       "packs": [
-        "f7-attack",
-        "exposed-king"
+        "kingside-attack",
+        "queenside-attack"
       ],
-      "bot": "baron-dawdle",
-      "principle": "The king cannot run",
-      "why": "Castling tucks your king away and brings a rook to the centre in one move. Now you can attack without fear. f7 is weak because only the king defends it."
+      "bot": "duchess-thin"
+    },
+    {
+      "id": "rip-the-roof",
+      "title": "Rip the roof",
+      "idea": "The pawns in front of the king are its roof. Give a pawn or a piece to tear them off.",
+      "why": "A castled king hides behind three pawns. Sacrifice on h7, g7 or f7 and all three lines open at once. The piece you gave is worth less than the king you can now reach.",
+      "principle": "Material is fuel",
+      "packs": [
+        "sacrifice",
+        "clearance"
+      ],
+      "bot": "captain-pusher"
     },
     {
       "id": "bring-everyone",
       "title": "Bring everyone",
       "idea": "Count attackers against defenders around the king. More attackers wins.",
-      "packs": [
-        "kingside-attack",
-        "queenside-attack"
-      ],
-      "bot": "duchess-thin",
+      "why": "Around the king, count your pieces and theirs. If you have more, something breaks. Every extra piece you bring makes the break certain, so bring them before you strike.",
       "principle": "Initiative",
-      "why": "Around the king, count your attackers and their defenders. If you have more, something breaks. Every extra piece you bring makes it certain."
+      "packs": [
+        "mate-in-2",
+        "kingside-attack"
+      ],
+      "bot": "duchess-thin"
     },
     {
-      "id": "open-the-door",
-      "title": "Open the door",
-      "idea": "Give up a pawn or a piece to rip open the shelter in front of the king.",
+      "id": "back-door",
+      "title": "Back door",
+      "idea": "The king's own pawn wall becomes its prison. A rook check from behind is mate.",
+      "why": "A castled king with no hole in front of it cannot step forward. A rook or queen landing on the back rank with check has no answer unless something can block or capture.",
+      "principle": "The king cannot run",
       "packs": [
-        "sacrifice",
-        "clearance",
-        "attraction"
+        "back-rank"
       ],
-      "bot": "captain-pusher",
-      "principle": "Material is fuel",
-      "why": "The pawns in front of the king are its roof. Give a pawn or a piece to remove them and every line to the king opens at once."
+      "bot": "lady-lockstep"
+    },
+    {
+      "id": "two-pronged",
+      "title": "Two-pronged",
+      "idea": "A fork attacks two things with one move. They can only save one.",
+      "why": "One move, two threats. They get one move to answer, so one target is always lost. Forks with check are best: the king must move and the other piece falls.",
+      "principle": "Tempo",
+      "packs": [
+        "fork",
+        "hanging-piece"
+      ],
+      "bot": "sir-scatter"
+    },
+    {
+      "id": "stuck",
+      "title": "Stuck",
+      "idea": "Pins and skewers: when pieces line up, the front one cannot move or the back one falls.",
+      "why": "A pinned piece cannot move, so it cannot defend anything else and cannot run away. Attack the thing it was guarding, or pile on the pinned piece itself.",
+      "principle": "Initiative",
+      "packs": [
+        "pin",
+        "skewer"
+      ],
+      "bot": "colonel-column"
+    },
+    {
+      "id": "surprise",
+      "title": "Surprise!",
+      "idea": "Move one piece to unmask another. Two threats appear in one move.",
+      "why": "A discovered attack makes two threats with one move. A double check cannot be blocked or captured: the king must move, and often it has nowhere to go.",
+      "principle": "Tempo",
+      "packs": [
+        "discovered-attack",
+        "double-check"
+      ],
+      "bot": "madame-mask"
     },
     {
       "id": "smother-and-trap",
       "title": "Smother & trap",
-      "idea": "Some mates use the king's own pieces as the walls of its prison.",
+      "idea": "Some mates use the king's own pieces as the prison walls.",
+      "why": "A king surrounded by its own pieces has no escape squares at all. One knight check is smothered mate; a rook and knight together make the Arabian and Anastasia mates.",
+      "principle": "The king cannot run",
       "packs": [
         "smothered",
         "arabian",
         "anastasia",
         "hook"
       ],
-      "bot": "earl-boxed",
-      "principle": "The king cannot run",
-      "why": "A king surrounded by its own pieces has no escape squares at all. One check from a knight or a rook is mate."
+      "bot": "earl-boxed"
     },
     {
       "id": "deflect-and-decoy",
       "title": "Deflect & decoy",
       "idea": "Pull the defender away, or drag the king onto a bad square.",
+      "why": "If one piece guards two things, it can only do one job. Give it a second job and the first one fails. Dragging the king forward with a sacrifice puts it where your pieces are.",
+      "principle": "Initiative",
       "packs": [
         "deflection",
         "capture-defender",
         "interference"
       ],
-      "bot": "one-guard-gwen",
-      "principle": "Initiative",
-      "why": "If one piece guards two things, it can only do one job. Give it a second job and the first one fails."
+      "bot": "one-guard-gwen"
     },
     {
       "id": "ignore-the-threat",
       "title": "Ignore the threat",
-      "idea": "When attacked, look for a check or a bigger threat first. Then recapture.",
+      "idea": "When attacked, look for a check or a bigger threat first. Then deal with theirs.",
+      "why": "A check or a mate threat must be answered first. Make yours before you deal with theirs, and you keep the tempo. This is how Tal escaped trouble: by making bigger trouble.",
+      "principle": "Tempo",
       "packs": [
         "zwischenzug",
-        "mate-in-2"
+        "mate-in-3"
       ],
-      "bot": "professor-assume",
-      "principle": "Tempo",
-      "why": "A check or a mate threat must be answered first. Make yours before you deal with theirs, and you keep the tempo."
+      "bot": "professor-assume"
     },
     {
       "id": "finishing-school",
       "title": "Finishing school",
-      "idea": "Longer mates and pawn promotions. King and queen, king and rook: close the game.",
-      "packs": [
-        "mate-in-3",
-        "promotion",
-        "advanced-pawn"
-      ],
-      "bot": "marathon-mo",
+      "idea": "Promotions and longer mates. King and queen, king and rook: close the game.",
+      "why": "A pawn that reaches the end becomes a queen, and a queen is the mate-maker. With king and queen or king and rook, drive the enemy king to the edge where it cannot run.",
       "principle": "Open lines",
-      "why": "A pawn that reaches the end becomes a queen. With king and queen, or king and rook, drive the enemy king to the edge where it cannot run."
+      "packs": [
+        "promotion",
+        "advanced-pawn",
+        "mate-in-3"
+      ],
+      "bot": "marathon-mo"
     }
   ]
 }
