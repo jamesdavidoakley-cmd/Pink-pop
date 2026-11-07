@@ -29,7 +29,18 @@ npm run dev        # → http://localhost:5174
 | `npm run electron` | Run the desktop shell against `dist/` |
 | `npm run dist` | Build desktop installers for this OS into `release/` |
 
-Downloadable installers for Windows, macOS and Linux are built by the `king-hunt-release` GitHub Actions workflow on every tag `king-hunt-v*`.
+## Download / desktop
+
+```bash
+npm run build && npm run dist      # installer for this OS into release/ (Linux AppImage verified here)
+xvfb-run npx electron . --no-sandbox --smoke   # headless smoke test of the desktop shell
+```
+
+Installers for Windows, macOS and Linux are built by the `king-hunt-release` GitHub Actions workflow on every tag `king-hunt-v*` (Windows needs a Windows runner or wine; macOS needs a Mac).
+
+## Settings (home screen)
+
+Questions (quick / every puzzle / off) · Sound · Cinema (full / light / off) · Voice · Graphics (auto / high / low).
 
 Dev URLs: `?mode=play` boots into a game, `?rung=3` boots into ladder rung 4, `?recipe=greek-gift` boots into a recipe, `?replay=opera-1858` into a Great hunt, `?daily` into Today's hunt.
 

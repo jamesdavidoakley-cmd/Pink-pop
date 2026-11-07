@@ -12,7 +12,8 @@ import { ReplaySession } from './replay';
 import { Daily } from './daily';
 import { REPLAYS } from '../content/replays';
 import { botById } from './bots';
-import { currentRungIndex, loadProgress, saveProgress, setCinema, setQuestions, setSound, type Progress } from './progress';
+import { currentRungIndex, loadProgress, saveProgress, setCinema, setQuality, setQuestions, setSound, setVoice, type Progress } from './progress';
+import { voice } from '../audio/voice';
 import { CinemaOverlay } from '../cinema/overlay';
 import { Moments } from './moments';
 import { sfx } from '../audio/sfx';
@@ -48,6 +49,7 @@ export class App {
     this.progress = loadProgress();
     sfx.enabled = this.progress.settings.sound;
     this.moments.level = this.progress.settings.cinema ?? 'full';
+    voice.enabled = this.progress.settings.voice ?? true;
     // Audio can only start after a gesture: unlock on the first pointer down anywhere.
     window.addEventListener('pointerdown', () => sfx.unlock(), { once: false, passive: true });
     this.hud.onBack = () => this.goHome();
@@ -67,6 +69,17 @@ export class App {
       this.moments.level = level;
       this.goHome();
     };
+    this.screens.onVoice = (on) => {
+      this.saveP(setVoice(this.progress, on));
+      voice.enabled = on;
+      if (!on) voice.stop();
+      this.goHome();
+    };
+    this.screens.onQuality = (q) => {
+      this.saveP(setQuality(this.progress, q));
+      // The renderer is built once; the new preset applies on the next load.
+      location.reload();
+    };
     this.screens.onSound = (on) => {
       this.saveP(setSound(this.progress, on));
       sfx.enabled = on;
@@ -77,6 +90,7 @@ export class App {
   }
 
   private swap(next: Session | null) {
+    voice.stop();
     this.current?.dispose();
     this.mover.reset();
     this.view.timeScale = 1;

@@ -40,18 +40,20 @@ export class Fx {
     const tex = Fx.softDisc();
     this.disc = tex;
     // Four torches at the arena corners: a warm flicker against the cold key light.
+    let torchIndex = 0;
     for (const [x, z] of [[-5.3, -5.3], [5.3, -5.3], [-5.3, 5.3], [5.3, 5.3]] as const) {
-      const light = new THREE.PointLight(0xffa24a, 6, 9, 1.8);
+      const light = new THREE.PointLight(0xffa24a, torchIndex++ < scene.quality.torchLights ? 6 : 0, 9, 1.8);
       light.position.set(x, 1.4, z);
       const flame = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, color: 0xffb060, transparent: true, opacity: 0.9, depthWrite: false, blending: THREE.AdditiveBlending }));
       flame.position.set(x, 1.45, z);
       flame.scale.set(0.5, 0.8, 1);
       const post = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 1.5, 8), new THREE.MeshStandardMaterial({ color: 0x1a1612, roughness: 0.9 }));
       post.position.set(x, 0.35, z);
+      light.userData.off = light.intensity === 0;
       scene.scene.add(light, flame, post);
       this.torches.push({ light, flame, seed: Math.random() * 10 });
     }
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < scene.quality.clouds; i++) {
       const mat = new THREE.SpriteMaterial({ map: tex, color: 0x1a2236, transparent: true, opacity: 0, depthWrite: false });
       const s = new THREE.Sprite(mat);
       s.scale.setScalar(1.6 + Math.random() * 1.4);
@@ -59,7 +61,7 @@ export class Fx {
       scene.fxGroup.add(s);
       this.clouds.push(s);
     }
-    this.dust = Fx.makeDust();
+    this.dust = Fx.makeDust(scene.quality.dust);
     scene.fxGroup.add(this.dust);
     scene.onTick((dt, t) => this.tick(dt, t));
   }
@@ -239,6 +241,7 @@ export class Fx {
     // torches flicker
     for (const tc of this.torches) {
       const f = 0.75 + 0.25 * Math.sin(t * 11 + tc.seed) * Math.sin(t * 7.3 + tc.seed * 2) + 0.08 * Math.random();
+      if (tc.light.userData.off) continue;
       tc.light.intensity = 5 * f;
       tc.flame.scale.set(0.45 + 0.1 * f, 0.7 + 0.25 * f, 1);
       (tc.flame.material as THREE.SpriteMaterial).opacity = 0.6 + 0.35 * f;
@@ -267,8 +270,7 @@ export class Fx {
     return tex;
   }
 
-  private static makeDust(): THREE.Points {
-    const n = 160;
+  private static makeDust(n: number): THREE.Points {
     const arr = new Float32Array(n * 3);
     for (let i = 0; i < n; i++) {
       arr[i * 3] = (Math.random() - 0.5) * 12;

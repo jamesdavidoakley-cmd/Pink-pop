@@ -129,3 +129,4 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); 
   #cinema .bar { transition: none; }
   #cinema .title.in .big, #cinema .title.in .kicker, #cinema .title.in .sub { animation: none; opacity: 1; transform: none; }
 }
+.toggles { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; max-width: 520px; }

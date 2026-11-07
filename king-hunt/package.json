@@ -31,5 +31,11 @@
     "vite": "^6.0.3",
     "vitest": "^2.1.8"
   },
-  "main": "electron/main.cjs"
+  "main": "electron/main.cjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamesdavidoakley-cmd/Pink-pop.git",
+    "directory": "king-hunt"
+  },
+  "author": "King Hunt"
 }

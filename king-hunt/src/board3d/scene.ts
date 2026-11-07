@@ -6,6 +6,7 @@ import { sq, type Square } from '../chess/types';
 import { Director } from './director';
 import { stoneTexture } from './pieces';
 import { BoardLabels } from './labels';
+import { resolveQuality, qualityFromStorage, type QualityPreset } from './quality';
 
 export interface Tile {
   square: Square;
@@ -23,6 +24,7 @@ export class BoardScene {
   readonly fxGroup = new THREE.Group();
   readonly director: Director;
   readonly labels: BoardLabels;
+  readonly quality: QualityPreset;
   private clock = new THREE.Clock();
   private tickers = new Set<(dt: number, t: number, realDt: number) => void>();
   private orientation: 'w' | 'b' = 'w';
@@ -30,8 +32,9 @@ export class BoardScene {
   private liftPx = 0;
 
   constructor(canvas: HTMLCanvasElement) {
+    this.quality = resolveQuality(qualityFromStorage());
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.quality.pixelRatio));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -49,7 +52,7 @@ export class BoardScene {
     const key = new THREE.DirectionalLight(0xfff1dc, 2.4);
     key.position.set(-5, 10, 6);
     key.castShadow = true;
-    key.shadow.mapSize.set(2048, 2048);
+    key.shadow.mapSize.set(this.quality.shadowMap, this.quality.shadowMap);
     key.shadow.camera.left = -6;
     key.shadow.camera.right = 6;
     key.shadow.camera.top = 6;
@@ -70,9 +73,9 @@ export class BoardScene {
 
     this.composer = new EffectComposer(this.renderer, { multisampling: 0 });
     this.composer.addPass(new RenderPass(this.scene, this.camera));
-    const bloom = new BloomEffect({ intensity: 1.15, luminanceThreshold: 0.5, luminanceSmoothing: 0.25, mipmapBlur: true });
+    const bloom = new BloomEffect({ intensity: this.quality.bloom, luminanceThreshold: 0.5, luminanceSmoothing: 0.25, mipmapBlur: true });
     const vignette = new VignetteEffect({ darkness: 0.55, offset: 0.25 });
-    this.composer.addPass(new EffectPass(this.camera, bloom, vignette, new SMAAEffect()));
+    this.composer.addPass(this.quality.smaa ? new EffectPass(this.camera, bloom, vignette, new SMAAEffect()) : new EffectPass(this.camera, bloom, vignette));
 
     window.addEventListener('resize', () => this.resize());
     this.resize();

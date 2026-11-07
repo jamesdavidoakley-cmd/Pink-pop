@@ -154,3 +154,13 @@ James: "like wizard chess" and, mid-build, "when it does the little video for ch
 **Coordinates.** James: "make it so the board is labelled, i.e. b2, as often we're not sure where." Camera-facing letter and number sprites sit on the frame along all four edges (so they read from either side), and the labels of any highlighted square light up amber, so "f7" in a caption is also visibly f and 7 on the board.
 
 **The execution.** James: "show the piece taking the king, not just how it can't move." After the escape tour the checking piece now walks over, winds up and strikes the king in its own style; the king bursts into rubble, the attacker takes the square, lightning and the title follow. A caption names it ("The rook on a8 takes the king."). Found and fixed on the way: on slow frames the strike's short blow phase could be stepped over and the impact never fired (the victim stayed, and the cut scene waited forever); impact is now guaranteed by time, not by phase.
+
+## P4b + P5 — Voice, graphics presets, installers (2026-11-07)
+
+**Built**
+- **Voice coach** (`src/audio/voice.ts`): the browser's speech synthesis reads every coach line and cut-scene caption (square names spoken as "F 7"), preferring an en-GB voice, cancelling the previous line when a new one arrives, silent where speech synthesis is missing. *Voice: on/off* on the home screen.
+- **Graphics presets** (`src/board3d/quality.ts`): *auto* detects phones and small machines (touch + small screen, ≤4 cores or ≤4 GB) and uses the low preset: pixel ratio 1.25, 1024 shadow map, softer bloom, 50 dust motes, 8 clouds, two lit torches, no SMAA. High keeps everything. *Graphics: auto/high/low* on the home screen (reloads to rebuild the renderer).
+- **Installers**: `build/icon.png` (generated), `publish: null` and repository metadata so electron-builder runs without a publish provider; `--smoke` flag in the Electron main process. The **Linux AppImage builds here** (118 MB) and the Electron shell loads the game under a virtual display ("smoke ok: page loaded"). Windows needs wine and macOS needs a Mac, so those build in the `king-hunt-release` GitHub Actions workflow on every `king-hunt-v*` tag.
+
+**Gate evidence**
+- typecheck clean · 44 tests · boot and puzzle checks OK · AppImage built · Electron smoke OK.

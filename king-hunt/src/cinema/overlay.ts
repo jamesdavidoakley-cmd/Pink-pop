@@ -2,6 +2,8 @@
  * DOM layer for cut scenes: letterbox bars, title cards, a full-screen flash
  * and a "tap to skip" affordance. Pure presentation; the director drives timing.
  */
+import { voice } from '../audio/voice';
+
 export class CinemaOverlay {
   private root: HTMLElement;
   private title: HTMLElement;
@@ -61,6 +63,7 @@ export class CinemaOverlay {
   /** Lower-third caption during a sequence; empty string hides it. */
   caption(text: string) {
     const el = this.root.querySelector('.caption') as HTMLElement;
+    if (text) voice.say(text);
     el.textContent = text;
     el.classList.toggle('in', !!text);
     if (text) {

@@ -1,4 +1,5 @@
 import type { AttackReport } from '../chess/attack-lens';
+import { voice } from '../audio/voice';
 
 export interface QuestionOption {
   text: string;
@@ -84,6 +85,7 @@ export class Hud {
     this.meterLabel.textContent = report.mateInOne ? 'MATE IS ON!' : `Attack ${report.score}`;
   }
   say(lines: string[]) {
+    if (lines.length) voice.say(lines.join(' '));
     this.coach.textContent = lines.join(' ');
     this.coach.classList.remove('pop');
     void this.coach.offsetWidth;
