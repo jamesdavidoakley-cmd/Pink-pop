@@ -62,13 +62,64 @@ export class Moments {
     const right = new THREE.Vector3(-side.z, 0, side.x);
     // Knights and queens rise, so the camera sits a little higher and further back to keep them in frame.
     const tall = attacker === 'n' || attacker === 'q';
-    const pos = at.clone().addScaledVector(side, tall ? -2.3 : -1.9).addScaledVector(right, 1.1).setY(tall ? 1.3 : 0.9);
+    const f = this.far();
+    const pos = at.clone().addScaledVector(side, (tall ? -2.6 : -2.2) * f).addScaledVector(right, 1.3 * f).setY((tall ? 1.5 : 1.1) * f);
     await this.scene.director.play([{ pos, look: at.clone().setY(0.5), duration: 0.35, fov: 52, ease: Director.easeOut, hold: tall ? 1.15 : 0.95 }]);
     this.view.timeScale = 1;
   }
 
   private side(sideFacing: Color) {
     return sideFacing === 'w' ? 1 : -1;
+  }
+
+  /** Portrait screens are narrow: pull shots further out and higher so the king's zone fits. */
+  private far() {
+    const aspect = window.innerWidth / Math.max(1, window.innerHeight);
+    return aspect < 0.8 ? 1.5 : aspect < 1.1 ? 1.25 : 1;
+  }
+
+  /**
+   * A shot that frames all of `points` whatever the screen shape: look at their centre from
+   * `angle` (around the up axis) at `elevationDeg`, far enough back that the group fits the
+   * narrower of the two fields of view with `pad` of air.
+   */
+  private fit(points: THREE.Vector3[], angle: number, elevationDeg = 52, fovMin = 44, pad = 1.25): { pos: THREE.Vector3; look: THREE.Vector3; fov: number } {
+    const c = new THREE.Vector3();
+    for (const p of points) c.add(p);
+    c.divideScalar(Math.max(1, points.length));
+    let r = 0.9;
+    for (const p of points) r = Math.max(r, p.distanceTo(c) + 0.7);
+    const aspect = window.innerWidth / Math.max(1, window.innerHeight);
+    const narrow = Math.min(1, aspect); // on portrait the width is the limit
+    // Keep the camera at a comfortable distance and widen the lens instead of flying off into
+    // the fog; only when the lens is as wide as it may go does the distance grow.
+    let dist = Math.min(11, Math.max(4.5, r * pad * 1.9));
+    let half = Math.atan((r * pad) / (dist * narrow));
+    const maxHalf = (82 / 2) * (Math.PI / 180);
+    if (half > maxHalf) {
+      half = maxHalf;
+      dist = (r * pad) / (Math.tan(half) * narrow);
+    }
+    const fov = Math.max(fovMin, (half * 2 * 180) / Math.PI);
+    const el = elevationDeg * (Math.PI / 180);
+    const pos = c.clone().add(new THREE.Vector3(Math.sin(angle) * dist * Math.cos(el), dist * Math.sin(el), Math.cos(angle) * dist * Math.cos(el)));
+    return { pos, look: c.clone().setY(narrow < 1 ? -0.5 : 0.2), fov }; // tilt down a touch on portrait so the board sits higher
+  }
+
+  /** Squares that matter in a mate: the king's zone, the checker(s) and the pieces covering escapes. */
+  private mateFocus(fen: string, kingSquare: Square): THREE.Vector3[] {
+    const pts: THREE.Vector3[] = [];
+    const kf = kingSquare.charCodeAt(0) - 97;
+    const kr = Number(kingSquare[1]) - 1;
+    for (let df = -1; df <= 1; df++) for (let dr = -1; dr <= 1; dr++) {
+      const f = kf + df, r = kr + dr;
+      if (f >= 0 && f < 8 && r >= 0 && r < 8) pts.push(squareToWorld(`${'abcdefgh'[f]}${r + 1}` as Square));
+    }
+    try {
+      for (const b of checkers(fen).by) pts.push(squareToWorld(b));
+      for (const beat of explainMate(fen, 5).beats) if (beat.by) pts.push(squareToWorld(beat.by));
+    } catch { /* fen unavailable */ }
+    return pts;
   }
 
   /** Opening: a low sweep across the board under a title. */
@@ -105,7 +156,7 @@ export class Moments {
     const fromDir = squareToWorld(from).sub(target);
     this.view.timeScale = 0.22;
     sfx.whoosh();
-    const shot = Director.closeUp(target, fromDir.length() > 0.1 ? fromDir : new THREE.Vector3(0, 0, this.side(facing)), 3.2, 2.0);
+    const shot = Director.closeUp(target, fromDir.length() > 0.1 ? fromDir : new THREE.Vector3(0, 0, this.side(facing)), 3.8 * this.far(), 2.4 * this.far());
     await this.scene.director.play([{ ...shot, duration: 0.9, fov: 36, ease: Director.easeOut, hold: 0.5 }]);
     this.view.timeScale = 1;
     this.view.fx.shockwave(target);
@@ -163,8 +214,12 @@ export class Moments {
     this.overlay.letterbox(true);
     this.view.fx.storm(1, king);
     const dir = new THREE.Vector3(0.6, 0, this.side(facing)).normalize();
-    const close = Director.closeUp(king, dir, 2.6, 1.5);
-    await this.scene.director.play([{ ...close, duration: 0.8, fov: 34, ease: Director.easeOut, hold: 0.15 }]);
+    const f = this.far();
+    const a0 = Math.atan2(dir.x, dir.z);
+    // Wide enough to see the king, every square around it, and the pieces doing the mating.
+    const focus = fen ? this.mateFocus(fen, kingSquare) : [king];
+    const close = this.fit(focus, a0 - 0.4);
+    await this.scene.director.play([{ ...close, duration: 0.9, ease: Director.easeOut, hold: 0.15 }]);
     if (fen) await this.escapeTour(fen, kingSquare, dir);
     if (this.skipTour) this.skipTour = false;
     // The execution: the checking piece comes for the king.
@@ -181,9 +236,9 @@ export class Moments {
           this.overlay.caption(`The ${name} on ${attacker} takes the king.`);
           const run = this.view.executeKing(attacker, kingSquare);
           // Low three-quarter shot: between attacker and king, off to the side, looking at the king.
-          const dist = Math.min(3.2, Math.max(1.8, from.distanceTo(king) * 0.6));
-          const pos = king.clone().addScaledVector(approachDir, -dist).addScaledVector(side, 1.7).setY(1.5);
-          void this.scene.director.play([{ pos, look: king.clone().setY(0.45), duration: 0.5, fov: 46, ease: Director.easeOut, hold: 8 }]);
+          void side;
+          const shot = this.fit([king, from, ...this.mateFocus(fen, kingSquare).slice(0, 9)], Math.atan2(approachDir.x, approachDir.z) + 0.9, 38, 46, 1.2);
+          void this.scene.director.play([{ ...shot, duration: 0.5, ease: Director.easeOut, hold: 8 }]);
           this.view.timeScale = 0.7;
           await run.impact;
           this.view.timeScale = 1;
@@ -208,11 +263,11 @@ export class Moments {
     this.overlay.caption('');
     const title = this.overlay.showTitle(winner === 'you' ? 'Checkmate' : 'Mated', winner === 'you' ? 'The king hunt is complete' : 'Their hunt got there first', '', 2600);
     if (winner === 'you') sfx.fanfare();
-    const look = king.clone().setY(0.4);
-    const a0 = Math.atan2(dir.x, dir.z);
+    const zone = fen ? this.mateFocus(fen, kingSquare).slice(0, 9) : [king];
     await this.scene.director.play([
-      { pos: king.clone().add(new THREE.Vector3(Math.sin(a0 + 1.2) * 3.4, 2.2, Math.cos(a0 + 1.2) * 3.4)), look, duration: 2.4, fov: 38, ease: Director.easeInOut, hold: 0.3 },
+      { ...this.fit(zone, a0 + 1.3, 45, 40, 1.4), duration: 2.4, ease: Director.easeInOut, hold: 0.3 },
     ]);
+    void f;
     await title;
     this.view.fx.storm(0, null);
     this.overlay.letterbox(false);
@@ -234,14 +289,18 @@ export class Moments {
       this.scene.director.skip();
     };
     const king = squareToWorld(kingSquare);
-    const look = king.clone().setY(0.4);
     const a0 = Math.atan2(dir.x, dir.z);
-    // A slow drift around the king while the tour plays (not awaited).
+    // A slow drift while the tour plays (not awaited): the escape zone, the checker and the
+    // pieces covering the escapes all stay in frame on any screen.
     const total = info.beats.length * 1.75 + 0.6;
+    const focus = this.mateFocus(fen, kingSquare);
+    const start = this.fit(focus, a0 - 0.4);
+    const end = this.fit(focus, a0 + 0.5);
     void this.scene.director.play([
-      { pos: king.clone().add(new THREE.Vector3(Math.sin(a0 - 0.5) * 3.0, 1.9, Math.cos(a0 - 0.5) * 3.0)), look, duration: 0.01 },
-      { pos: king.clone().add(new THREE.Vector3(Math.sin(a0 + 0.7) * 3.0, 2.1, Math.cos(a0 + 0.7) * 3.0)), look, duration: total, fov: 40, ease: (t) => t },
+      { ...start, duration: 0.01 },
+      { ...end, duration: total, ease: (t) => t },
     ]);
+    void king;
     this.overlay.caption(`${info.mated === 'w' ? 'White' : 'Black'}'s king looks for a way out.`);
     sfx.windup();
     await sleep(900);

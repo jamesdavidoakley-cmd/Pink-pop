@@ -164,3 +164,5 @@ James: "like wizard chess" and, mid-build, "when it does the little video for ch
 
 **Gate evidence**
 - typecheck clean · 44 tests · boot and puzzle checks OK · AppImage built · Electron smoke OK.
+
+**Mate camera, fitted.** James on a phone: "camera still too close, a bit further out so we can see where the king tries to go." Fixed distances could never suit every mate (a back-rank rook is seven squares away; a smothered knight is next door) or every screen, so the mate shots now use a *fit* camera: it frames the king's 3×3 zone plus the checker and every piece covering an escape, from a chosen angle and elevation, and sizes the shot to the narrower field of view. On portrait it widens the lens (up to 82°) rather than retreating into the fog, which an earlier attempt did. Used for the close-up, the tour drift, the execution and the final orbit; sacrifice and strike dives pull back a little on portrait too.
