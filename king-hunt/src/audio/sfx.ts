@@ -26,9 +26,55 @@ export class Sfx {
     }
   }
 
+  private ambienceNodes: AudioNode[] = [];
+
   /** Call from any pointer handler so the context is unlocked before the first cue. */
   unlock() {
     this.ensure();
+    this.ambience(true);
+  }
+
+  /** A very quiet bed: wind through the arena and torch crackle. */
+  ambience(on: boolean) {
+    const ctx = this.ensure();
+    if (!ctx || !this.master) return;
+    if (!on || this.ambienceNodes.length) {
+      if (!on) {
+        for (const n of this.ambienceNodes) try { (n as AudioScheduledSourceNode).stop?.(); n.disconnect(); } catch { /* already stopped */ }
+        this.ambienceNodes = [];
+      }
+      return;
+    }
+    const len = ctx.sampleRate * 4;
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < len; i++) {
+      // brown-ish noise for wind
+      last = (last + (Math.random() * 2 - 1) * 0.02) * 0.995;
+      d[i] = last * 3;
+      // sparse crackle
+      if (Math.random() < 0.00035) d[i] = (d[i] ?? 0) + (Math.random() - 0.5) * 0.8;
+    }
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+    const f = ctx.createBiquadFilter();
+    f.type = 'lowpass';
+    f.frequency.value = 900;
+    const g = ctx.createGain();
+    g.gain.value = 0.0001;
+    g.gain.exponentialRampToValueAtTime(0.07, ctx.currentTime + 3);
+    // slow swell so the wind breathes
+    const lfo = ctx.createOscillator();
+    lfo.frequency.value = 0.07;
+    const lfoGain = ctx.createGain();
+    lfoGain.gain.value = 0.03;
+    lfo.connect(lfoGain).connect(g.gain);
+    src.connect(f).connect(g).connect(this.master);
+    src.start();
+    lfo.start();
+    this.ambienceNodes = [src, lfo, f, g, lfoGain];
   }
 
   private tone(freq: number, dur: number, type: OscillatorType, gain: number, when = 0, slideTo?: number) {

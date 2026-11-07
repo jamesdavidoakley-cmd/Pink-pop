@@ -147,3 +147,6 @@ James: "like wizard chess" and, mid-build, "when it does the little video for ch
 
 **Gate evidence**
 - typecheck clean · 44 tests (incl. mate-explain) · boot, puzzle, audit, recipe, replay, daily checks OK · frames: model close-up, a queen's chop frozen mid-fight.
+
+**P4.1 addendum.** Victims brace (lean away) during the attacker's wind-up; moves slide with weight and squash on landing; the side to move breathes (a 1% pulse, staggered per piece); every piece stands on a sculpted plinth ring; a very quiet arena bed (wind and torch crackle) starts with the first tap and follows the sound toggle.
+**Finding: faceted shading.** The pieces had shown vertical shading bands since the stone pass. Not geometry (normals tested smooth per triangle and around a ring), not bump, not shadows, not the torches: swapping geometry and material between a real pawn and fresh test meshes pinned it to the merged lathe geometry, and the cause was `computeVertexNormals()` overriding LatheGeometry's analytic normals. Removed; pieces are smooth again. Parts now merge through BufferGeometryUtils so UVs and normals survive.

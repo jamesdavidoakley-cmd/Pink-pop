@@ -52,7 +52,9 @@ export class BoardScene {
     key.shadow.camera.right = 6;
     key.shadow.camera.top = 6;
     key.shadow.camera.bottom = -6;
-    key.shadow.bias = -0.0006;
+    key.shadow.bias = -0.0002;
+    key.shadow.normalBias = 0.05; // no acne stripes on the curved pieces
+    key.shadow.radius = 3;
     this.scene.add(key);
     const rim = new THREE.DirectionalLight(0x6aa0ff, 0.8);
     rim.position.set(6, 4, -8);

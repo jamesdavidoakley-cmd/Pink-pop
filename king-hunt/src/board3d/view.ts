@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import type { Move } from 'chess.js';
 import type { Rules } from '../chess/rules';
 import { sq, type Color, type PieceType, type Square } from '../chess/types';
-import { makePiece, sequence, strikeStyle, tweenMove, tweenStrike, type PieceMesh, type Tween } from './pieces';
+import { makePiece, sequence, strikeStyle, tweenBrace, tweenMove, tweenStrike, type PieceMesh, type Tween } from './pieces';
 import { sfx } from '../audio/sfx';
 import { squareToWorld } from './coords';
 import type { BoardScene } from './scene';
@@ -30,19 +30,33 @@ export class BoardView {
   /** Called when a fight begins: the attacker has arrived beside its victim and is winding up. */
   onStrike: ((at: THREE.Vector3, fromDir: THREE.Vector3, mover: PieceMesh, victim: PieceMesh) => void) | null = null;
   private awake: PieceMesh | null = null;
+  /** Pieces of this side breathe very slightly: they are alive and it is their move. */
+  liveSide: Color | null = null;
+  private breath = 0;
 
   constructor(readonly scene: BoardScene) {
     this.effects = new AttackEffects(scene);
     this.fx = new Fx(scene);
     // Piece animation runs on wall-clock time (capped) so choreography keeps its timing on slow devices.
-    scene.onTick((_dt, _t, realDt) => {
+    scene.onTick((_dt, t, realDt) => {
       const d = realDt * this.timeScale;
-      for (const t of this.tweens) if (!t.update(d)) this.tweens.delete(t);
+      for (const tw of this.tweens) if (!tw.update(d)) this.tweens.delete(tw);
+      // Idle breathing: a 1% scale pulse on the side to move, staggered per piece.
+      this.breath = t;
+      if (this.liveSide && this.tweens.size === 0) {
+        for (const m of this.meshes.values()) {
+          if (m.userData.color !== this.liveSide || m === this.awake) continue;
+          const seed = m.position.x * 1.7 + m.position.z * 2.3;
+          const k = 1 + 0.01 * Math.sin(t * 1.6 + seed);
+          m.scale.set(1, k, 1);
+        }
+      }
     });
   }
 
   setPosition(rules: Rules) {
     this.generation++;
+    this.liveSide = rules.turn();
     for (const m of this.meshes.values()) this.scene.piecesGroup.remove(m);
     this.meshes.clear();
     this.tweens.clear();
@@ -106,6 +120,7 @@ export class BoardView {
             if (gen === this.generation) {
               this.onStrike?.(at, dir, mover, victim);
               sfx.swing(style);
+              this.tweens.add(tweenBrace(victim, mover.position.clone()));
             }
             return tweenStrike(mover, dir, style, () => {
               this.scene.piecesGroup.remove(victim);
@@ -292,6 +307,7 @@ export class BoardView {
 
   /** Recomputes the lens for `side` and paints it. Returns our report. */
   paintLens(rules: Rules, side: Color): AttackReport {
+    this.liveSide = rules.isGameOver() ? null : rules.turn();
     const chess = rules.raw();
     const ours = analyseAttack(chess, side);
     const theirs = analyseAttack(chess, side === 'w' ? 'b' : 'w');

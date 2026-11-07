@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { mergeGeometries as mergeBuffers } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import type { Color, PieceType, Square } from '../chess/types';
 import { PALETTE } from './palette';
 import { squareToWorld } from './coords';
@@ -21,9 +22,8 @@ const geometryCache = new Map<PieceType, THREE.BufferGeometry>();
 
 function latheFrom(profile: Profile): THREE.BufferGeometry {
   const pts = profile.map(([r, h]) => new THREE.Vector2(r, h));
-  const g = new THREE.LatheGeometry(pts, 40);
-  g.computeVertexNormals();
-  return g;
+  // Keep LatheGeometry's own analytic normals: recomputing them from faces banded the shading.
+  return new THREE.LatheGeometry(pts, 40);
 }
 
 function knightGeometry(): THREE.BufferGeometry {
@@ -116,19 +116,27 @@ function bishopMitre(): THREE.BufferGeometry {
   return mergeGeometries([slit, ball]);
 }
 
-/** Minimal non-indexed merge so we avoid pulling in the examples bundle. */
+/** Merge parts keeping each part's own normals and UVs (so stone grain and smooth lathes survive). */
 function mergeGeometries(list: THREE.BufferGeometry[]): THREE.BufferGeometry {
-  const nonIndexed = list.map((g) => (g.index ? g.toNonIndexed() : g));
-  const positions: number[] = [];
-  const normals: number[] = [];
-  for (const g of nonIndexed) {
-    positions.push(...(g.getAttribute('position').array as Float32Array));
-    normals.push(...(g.getAttribute('normal').array as Float32Array));
-  }
-  const out = new THREE.BufferGeometry();
-  out.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  out.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
-  return out;
+  const parts = list.map((g) => {
+    const n = g.index ? g.toNonIndexed() : g;
+    if (!n.getAttribute('uv')) {
+      const count = n.getAttribute('position').count;
+      n.setAttribute('uv', new THREE.Float32BufferAttribute(new Float32Array(count * 2), 2));
+    }
+    return n;
+  });
+  const merged = mergeBuffers(parts, false);
+  if (!merged) throw new Error('piece geometry merge failed');
+  return merged;
+}
+
+function baseRing(): THREE.BufferGeometry {
+  // A sculpted plinth ring under every piece.
+  const r = new THREE.TorusGeometry(0.33, 0.035, 8, 32);
+  r.rotateX(Math.PI / 2);
+  r.translate(0, 0.045, 0);
+  return r;
 }
 
 export function pieceGeometry(type: PieceType): THREE.BufferGeometry {
@@ -140,6 +148,7 @@ export function pieceGeometry(type: PieceType): THREE.BufferGeometry {
   else if (type === 'q') g = mergeGeometries([latheFrom(PROFILES.q), queenCrown()]);
   else if (type === 'b') g = mergeGeometries([latheFrom(PROFILES.b), bishopMitre()]);
   else g = latheFrom(PROFILES[type as 'p']);
+  g = mergeGeometries([g, baseRing()]);
   geometryCache.set(type, g);
   return g;
 }
@@ -165,12 +174,12 @@ export function stoneTexture(size = 256, contrast = 0.5): THREE.CanvasTexture {
   return tex;
 }
 
-const grain = stoneTexture(256, 0.4);
-grain.repeat.set(3, 2); // fine grain around the lathe, no streaks along it
+// Stone by roughness alone: a bump texture on the lathes produced per-facet banding
+// under derivative-based bump mapping, so the grain lives on the board, not the pieces.
 const materials: Record<Color, THREE.MeshStandardMaterial> = {
   // Pale sandstone and dark basalt: living statues, not plastic.
-  w: new THREE.MeshStandardMaterial({ color: PALETTE.whitePiece, roughness: 0.82, metalness: 0.0, bumpMap: grain, bumpScale: 0.006 }),
-  b: new THREE.MeshStandardMaterial({ color: PALETTE.blackPiece, roughness: 0.74, metalness: 0.05, emissive: PALETTE.blackPieceEmissive, emissiveIntensity: 0.3, bumpMap: grain, bumpScale: 0.008 }),
+  w: new THREE.MeshStandardMaterial({ color: PALETTE.whitePiece, roughness: 0.86, metalness: 0.0 }),
+  b: new THREE.MeshStandardMaterial({ color: PALETTE.blackPiece, roughness: 0.78, metalness: 0.05, emissive: PALETTE.blackPieceEmissive, emissiveIntensity: 0.3 }),
 };
 
 export interface PieceMesh extends THREE.Mesh {
@@ -192,16 +201,47 @@ export interface Tween {
   update(dt: number): boolean; // returns false when finished
 }
 
-export function tweenMove(mesh: THREE.Object3D, to: THREE.Vector3, duration = 0.28, hop = 0.35): Tween {
+/** A statue slides with weight: fast out, eased in, a low arc, and a squash as it lands. */
+export function tweenMove(mesh: THREE.Object3D, to: THREE.Vector3, duration = 0.34, hop = 0.16): Tween {
   const from = mesh.position.clone();
+  const settle = 0.14;
   let t = 0;
   return {
     update(dt) {
-      t = Math.min(1, t + dt / duration);
-      const e = 1 - Math.pow(1 - t, 3);
-      mesh.position.lerpVectors(from, to, e);
-      mesh.position.y = from.y + Math.sin(e * Math.PI) * hop;
-      return t < 1;
+      t += dt;
+      if (t < duration) {
+        const k = Math.min(1, t / duration);
+        const e = 1 - Math.pow(1 - k, 3);
+        mesh.position.lerpVectors(from, to, e);
+        mesh.position.y = from.y + Math.sin(e * Math.PI) * hop;
+        return true;
+      }
+      // landing squash: compress then spring back
+      const k = Math.min(1, (t - duration) / settle);
+      const sq = 1 - 0.08 * Math.sin(k * Math.PI);
+      mesh.position.copy(to);
+      mesh.scale.set(1 + (1 - sq) * 0.6, sq, 1 + (1 - sq) * 0.6);
+      if (k >= 1) {
+        mesh.scale.set(1, 1, 1);
+        return false;
+      }
+      return true;
+    },
+  };
+}
+
+/** The victim braces: leans away from the attacker during the wind-up, then is struck. */
+export function tweenBrace(mesh: THREE.Object3D, awayFrom: THREE.Vector3, duration = 0.3): Tween {
+  const away = mesh.position.clone().sub(awayFrom).setY(0).normalize();
+  const axis = new THREE.Vector3(0, 1, 0).cross(away).normalize().negate();
+  const q0 = mesh.quaternion.clone();
+  let t = 0;
+  return {
+    update(dt) {
+      t += dt;
+      const k = Math.min(1, t / duration);
+      mesh.quaternion.copy(q0).multiply(new THREE.Quaternion().setFromAxisAngle(axis, -0.28 * Math.sin((k * Math.PI) / 2)));
+      return t < duration + 0.6; // hold the brace until the blow lands
     },
   };
 }

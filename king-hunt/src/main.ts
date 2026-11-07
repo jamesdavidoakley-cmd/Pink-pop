@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { BoardScene } from './board3d/scene';
 import { Engine } from './chess/engine';
 import { App } from './game/app';
@@ -14,6 +15,7 @@ engine.whenReady().then(
   (e) => console.error('[king-hunt] engine failed', e),
 );
 const app = new App(scene, hudRoot, screensRoot, engine);
+(window as unknown as { __THREE: typeof THREE }).__THREE = THREE; // dev tooling
 scene.start();
 
 // Dev convenience: ?mode=play | ?rung=<n> | ?recipe=<id> | ?replay=<id> | ?daily boots straight into a mode.

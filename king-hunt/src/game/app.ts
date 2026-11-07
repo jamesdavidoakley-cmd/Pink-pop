@@ -70,6 +70,7 @@ export class App {
     this.screens.onSound = (on) => {
       this.saveP(setSound(this.progress, on));
       sfx.enabled = on;
+      sfx.ambience(on);
       this.goHome();
     };
     (window as unknown as { __app: App }).__app = this;
