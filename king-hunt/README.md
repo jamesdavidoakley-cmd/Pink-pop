@@ -25,6 +25,7 @@ npm run dev        # → http://localhost:5174
 | `node scripts/replay-check.mjs http://localhost:5174 opera-1858` | Headless Great hunt: guess loop with hints, finale, saved tallies |
 | `node scripts/daily-check.mjs http://localhost:5174` | Headless Today's hunt: warm-up → three puzzles → plan/spar → resumes after reload |
 | `node scripts/mirror-recipes.mjs` | Regenerates the Black-side recipes by mirroring the White ones |
+| `node scripts/make-artifact-page.mjs` | After `npm run build`: writes `dist/artifact.html`, the page without a document skeleton, for hosts that wrap it themselves |
 | `npm run electron` | Run the desktop shell against `dist/` |
 | `npm run dist` | Build desktop installers for this OS into `release/` |
 

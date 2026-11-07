@@ -7,7 +7,8 @@ const hudRoot = document.getElementById('hud') as HTMLElement;
 const screensRoot = document.getElementById('screens') as HTMLElement;
 
 const scene = new BoardScene(canvas);
-const engine = new Engine(new URL('./engine/stockfish.js', document.baseURI).href);
+// Resolve the engine relative to this bundle (dev: /src/main.ts, build: assets/index-*.js) so it works from any host path.
+const engine = new Engine(new URL('../engine/stockfish.js', import.meta.url).href);
 engine.whenReady().then(
   () => console.log('[king-hunt] engine ready'),
   (e) => console.error('[king-hunt] engine failed', e),
