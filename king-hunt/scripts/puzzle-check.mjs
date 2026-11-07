@@ -52,13 +52,13 @@ console.log(JSON.stringify(log));
 if (log[0].wrongTries !== 1 || !log[1].complete) { console.error('puzzle loop failed'); process.exit(1); }
 
 // Principle question (after the mate cut scene), then the feedback card leading to the next puzzle.
-await card.waitFor({ timeout: 25000 });
+await card.waitFor({ timeout: 50000 });
 console.log('principle question:', await card.locator('h2').innerText());
 await card.locator('.option').first().click();
 await card.waitFor({ timeout: 5000 });
 console.log('feedback:', await card.locator('h2').innerText());
 await card.locator('button').click();
-await page.waitForFunction(() => window.__app.state().solved === 1 && window.__app.state().expected, null, { timeout: 15000 });
+await page.waitForFunction(() => window.__app.state().solved === 1 && window.__app.state().expected, null, { timeout: 90000 });
 const saved = await page.evaluate(() => localStorage.getItem('king-hunt.progress.v1'));
 console.log('saved progress:', saved);
 await browser.close();

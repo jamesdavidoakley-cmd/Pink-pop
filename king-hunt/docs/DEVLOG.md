@@ -128,3 +128,22 @@ James: "needs to be more exciting, cut scenes, very cinematic."
 
 **Gate evidence**
 - typecheck clean · 40 tests · boot, puzzle, audit, recipe, replay, daily checks OK after the cut scenes were added · frames captured of the intro, sacrifice and mate moments. Republished.
+
+## P4.1 — Living stone: fights, the escape tour, models and audio (2026-11-07)
+
+James: "like wizard chess" and, mid-build, "when it does the little video for checkmate, show where the king can try to move and why it can't, with the pieces, in the same cinematic mode."
+
+**Built**
+- **Fights.** A capture is now a fight: the attacker slides up beside its victim (dust at departure), winds up, strikes, and the victim shatters into rubble that flies away from the blow; then the attacker settles onto the square. Each piece fights its own way (`strikeStyle`): pawns and kings *shove*, knights rear up and *stomp*, bishops *slash* with a sweeping spin, rooks *smash* with a straight battering charge, queens rise and *chop*. When the victim is worth a minor piece or more and cinema is at full, the camera dives to board level for the blow at half speed. Replies wait for the fight to finish (`view.whenIdle`).
+- **The escape tour** (`src/chess/mate-explain.ts`, in the mate cut scene). After the close-up, the mated king looks for a way out: for each escape square a red ghost king slides there (or bumps into its own blocking piece), the covering piece lights up with a beam to that square, and a caption says why: "f8? The rook on a8 sees it." "g7? His own pawn is in the way." "Take the knight on h7? The bishop on d3 guards it." Then the checker: cannot be taken (pinned taker named) or blocked, or two checks at once. Up to five beats, tap to skip, then the lightning, the topple and the title. Lines through the king's own square are found by analysing the position with the king removed. Tested on back-rank, scholar's and smothered mates.
+- **Models.** Lathe profiles at 40 segments; the king has a crown ring with studs under the cross; the queen eight crown points and a pearl; the bishop a mitre slit and finial; the knight eyes and a mane; rooks keep their battlements. Sandstone and basalt materials with a fine procedural grain (bump only; a roughness map streaked along the lathe and was removed). Pieces wake when picked up: lift and a warm glow.
+- **Arena.** Four flickering torches with warm point lights, deeper fog, stone-grained tiles, stronger bloom, drifting dust.
+- **Audio.** Stone slide for moves; per-piece swings (groan, rising whoosh, charge rumble, long overhead whoosh) and strikes (double thud, crack-and-ring, the big crunch, split stone); creak on the wind-up; the tour uses the "wrong" buzz for each failed escape and the check sting for the checker.
+- **Settings.** *Cinema: full / light / off* on the home screen (light keeps effects but the camera stays put).
+
+**Decisions**
+- Piece animation runs on wall-clock time (capped at 0.25 s a frame) so fights and the tour keep their timing on slow devices; shard physics stays on the capped simulation step.
+- The headless checks now allow much longer waits: software rendering with torches, particles and bloom runs a few frames a second, so cut scenes take several times longer there than on a real GPU. That is a harness property, not a game one, and is noted in each script.
+
+**Gate evidence**
+- typecheck clean · 44 tests (incl. mate-explain) · boot, puzzle, audit, recipe, replay, daily checks OK · frames: model close-up, a queen's chop frozen mid-fight.

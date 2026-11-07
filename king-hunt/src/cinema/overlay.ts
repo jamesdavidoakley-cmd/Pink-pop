@@ -15,6 +15,7 @@ export class CinemaOverlay {
       <div class="bar top"></div><div class="bar bottom"></div>
       <div class="flash"></div>
       <div class="title"><div class="kicker"></div><div class="big"></div><div class="sub"></div></div>
+      <div class="caption"></div>
       <div class="skip-hint">tap to skip</div>`;
     parent.appendChild(this.root);
     this.title = this.root.querySelector('.title')!;
@@ -55,6 +56,18 @@ export class CinemaOverlay {
     void this.flashEl.offsetWidth;
     this.flashEl.style.transition = `opacity ${ms}ms ease-out`;
     this.flashEl.style.opacity = '0';
+  }
+
+  /** Lower-third caption during a sequence; empty string hides it. */
+  caption(text: string) {
+    const el = this.root.querySelector('.caption') as HTMLElement;
+    el.textContent = text;
+    el.classList.toggle('in', !!text);
+    if (text) {
+      el.classList.remove('pop');
+      void el.offsetWidth;
+      el.classList.add('pop');
+    }
   }
 
   /** Red edge pulse (check, danger). */

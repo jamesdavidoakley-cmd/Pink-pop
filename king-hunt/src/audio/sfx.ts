@@ -67,13 +67,43 @@ export class Sfx {
     src.start(t);
   }
 
+  /** A stone statue sliding: a grind, then a soft settle. */
   move() {
-    this.noise(0.12, 0.25, 1800);
-    this.tone(220, 0.08, 'sine', 0.12);
+    this.noise(0.32, 0.22, 700);
+    this.tone(90, 0.16, 'sine', 0.14, 0.22, 60);
   }
+  /** Stone smashing stone. */
   capture() {
-    this.noise(0.25, 0.6, 2500);
-    this.tone(110, 0.25, 'triangle', 0.35, 0, 55);
+    this.noise(0.45, 0.9, 1400);
+    this.noise(0.9, 0.35, 300, 0.05);
+    this.tone(80, 0.4, 'triangle', 0.5, 0, 38);
+  }
+  /** The wind-up before a strike: a low creak. */
+  windup() {
+    this.tone(140, 0.22, 'sawtooth', 0.06, 0, 70);
+    this.noise(0.2, 0.12, 500);
+  }
+
+  /** Each piece swings differently. */
+  swing(style: 'shove' | 'stomp' | 'slash' | 'smash' | 'chop') {
+    switch (style) {
+      case 'stomp': this.tone(60, 0.3, 'sine', 0.3, 0, 90); this.noise(0.25, 0.15, 400); break; // rears up: a groan
+      case 'slash': this.noise(0.28, 0.35, 2600); this.tone(900, 0.18, 'sine', 0.05, 0.02, 1800); break; // whoosh rising
+      case 'smash': this.noise(0.3, 0.3, 500); this.tone(50, 0.3, 'sawtooth', 0.12, 0, 40); break; // charge rumble
+      case 'chop': this.noise(0.36, 0.4, 1800); this.tone(300, 0.3, 'triangle', 0.08, 0, 1200); break; // long overhead whoosh
+      default: this.windup();
+    }
+  }
+
+  /** The blow landing. */
+  strike(style: 'shove' | 'stomp' | 'slash' | 'smash' | 'chop') {
+    switch (style) {
+      case 'stomp': this.tone(55, 0.5, 'sine', 0.9, 0, 28); this.noise(0.5, 0.8, 900); this.tone(55, 0.3, 'sine', 0.4, 0.12, 30); break; // double thud
+      case 'slash': this.noise(0.22, 0.7, 3500); this.tone(2200, 0.5, 'sine', 0.12, 0.02, 1400); this.tone(70, 0.3, 'triangle', 0.3, 0, 40); break; // crack and ring
+      case 'smash': this.noise(0.6, 1.0, 1100); this.noise(1.2, 0.4, 250, 0.05); this.tone(45, 0.6, 'sine', 0.8, 0, 25); break; // the big one
+      case 'chop': this.noise(0.3, 0.9, 1600); this.tone(120, 0.35, 'square', 0.15, 0, 50); this.tone(40, 0.5, 'sine', 0.6, 0.02, 25); break; // split stone
+      default: this.capture();
+    }
   }
   check() {
     this.tone(880, 0.12, 'square', 0.12);

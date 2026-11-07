@@ -2,11 +2,11 @@
 export const PALETTE = {
   background: 0x0b1020,
   fog: 0x0b1020,
-  tileLight: 0xe8dcc3,
-  tileDark: 0x2e4a5c,
+  tileLight: 0xcfc3a8,
+  tileDark: 0x2a3e4c,
   frame: 0x16212e,
-  whitePiece: 0xf4ecd8,
-  blackPiece: 0x1c2233,
+  whitePiece: 0xdcd0b6, // sandstone
+  blackPiece: 0x262a33, // basalt
   blackPieceEmissive: 0x0b2a3a,
   heatHot: 0xff6a1a, // our pressure
   heatCold: 0x3aa0ff, // their pressure on our king

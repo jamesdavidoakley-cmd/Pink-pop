@@ -33,6 +33,7 @@ export class HumanMover {
     this.selected = null;
     this.dragging = null;
     this.view.clearHighlights();
+    this.view.sleep();
   }
 
   private canAct() {
@@ -51,6 +52,7 @@ export class HumanMover {
       this.selected = square;
       this.dragging = piece && piece.userData.square === square ? square : square;
       this.view.showTargets(this.rules, square);
+      this.view.wake(square);
     } else {
       this.reset();
     }

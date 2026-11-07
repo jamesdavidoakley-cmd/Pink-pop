@@ -13,6 +13,7 @@ export class Screens {
   onDaily: (() => void) | null = null;
   onQuestions: ((mode: (typeof QUESTION_MODES)[number]) => void) | null = null;
   onSound: ((on: boolean) => void) | null = null;
+  onCinema: ((level: 'full' | 'light' | 'off') => void) | null = null;
 
   constructor(private root: HTMLElement) {}
 
@@ -40,9 +41,15 @@ export class Screens {
         <div class="toggles">
           <button class="mode-toggle" data-act="questions" title="Quick asks the why-questions only when they teach something; every puzzle asks always; off never asks but still explains.">${QUESTION_MODE_LABEL[progress.settings.questions]}</button>
           <button class="mode-toggle" data-act="sound">${progress.settings.sound ? 'Sound: on' : 'Sound: off'}</button>
+          <button class="mode-toggle" data-act="cinema" title="Full: cut scenes and camera dives. Light: effects, camera stays put. Off: none.">${{ full: 'Cinema: full', light: 'Cinema: light', off: 'Cinema: off' }[progress.settings.cinema ?? 'full']}</button>
         </div>
       </div>`;
     this.root.querySelector('[data-act="sound"]')!.addEventListener('click', () => this.onSound?.(!progress.settings.sound));
+    this.root.querySelector('[data-act="cinema"]')!.addEventListener('click', () => {
+      const order = ['full', 'light', 'off'] as const;
+      const i = order.indexOf(progress.settings.cinema ?? 'full');
+      this.onCinema?.(order[(i + 1) % order.length]!);
+    });
     this.root.querySelector('[data-act="questions"]')!.addEventListener('click', () => {
       const i = QUESTION_MODES.indexOf(progress.settings.questions);
       this.onQuestions?.(QUESTION_MODES[(i + 1) % QUESTION_MODES.length]!);

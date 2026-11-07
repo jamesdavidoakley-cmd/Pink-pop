@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import type { Move } from 'chess.js';
 import type { Rules } from '../chess/rules';
 import { sq, type Color, type PieceType, type Square } from '../chess/types';
-import { makePiece, tweenMove, tweenVanish, type PieceMesh, type Tween } from './pieces';
+import { makePiece, sequence, strikeStyle, tweenMove, tweenStrike, type PieceMesh, type Tween } from './pieces';
+import { sfx } from '../audio/sfx';
 import { squareToWorld } from './coords';
 import type { BoardScene } from './scene';
 import { AttackEffects } from './effects';
@@ -26,12 +27,16 @@ export class BoardView {
   timeScale = 1;
   /** Called with the captured piece's world position and colour (for sound and camera). */
   onCapture: ((at: THREE.Vector3, victim: PieceMesh) => void) | null = null;
+  /** Called when a fight begins: the attacker has arrived beside its victim and is winding up. */
+  onStrike: ((at: THREE.Vector3, fromDir: THREE.Vector3, mover: PieceMesh, victim: PieceMesh) => void) | null = null;
+  private awake: PieceMesh | null = null;
 
   constructor(readonly scene: BoardScene) {
     this.effects = new AttackEffects(scene);
     this.fx = new Fx(scene);
-    scene.onTick((dt) => {
-      const d = dt * this.timeScale;
+    // Piece animation runs on wall-clock time (capped) so choreography keeps its timing on slow devices.
+    scene.onTick((_dt, _t, realDt) => {
+      const d = realDt * this.timeScale;
       for (const t of this.tweens) if (!t.update(d)) this.tweens.delete(t);
     });
   }
@@ -54,7 +59,18 @@ export class BoardView {
     this.scene.piecesGroup.add(m);
   }
 
-  /** Reflects an already-applied chess.js move. */
+  /** Resolves when no piece animation is running (so replies wait for the fight to end). */
+  whenIdle(): Promise<void> {
+    return new Promise((resolve) => {
+      const check = () => {
+        if (this.tweens.size === 0) resolve();
+        else window.setTimeout(check, 60);
+      };
+      check();
+    });
+  }
+
+  /** Reflects an already-applied chess.js move. Captures are fights: approach, wind up, smash, settle. */
   applyMove(mv: Move, animate = true, rules?: Rules) {
     const from = mv.from as Square;
     const to = mv.to as Square;
@@ -63,30 +79,50 @@ export class BoardView {
       if (rules) this.setPosition(rules);
       return;
     }
+    this.sleep();
     let capSquare: Square | null = mv.captured ? to : null;
     if (mv.flags.includes('e')) capSquare = sq(to.charCodeAt(0) - 97, Number(to[1]) - 1 + (mv.color === 'w' ? -1 : 1));
-    if (capSquare) {
-      const victim = this.meshes.get(capSquare);
-      if (victim) {
-        this.meshes.delete(capSquare);
-        const at = victim.position.clone();
-        const color = (victim.material as THREE.MeshStandardMaterial).color.getHex();
-        // The capture lands when the mover arrives: shatter then.
-        const delay = animate ? 0.22 / Math.max(0.05, this.timeScale) : 0;
-        const gen = this.generation;
-        window.setTimeout(() => {
-          this.scene.piecesGroup.remove(victim);
-          if (gen !== this.generation) return; // the board was reset meanwhile
-          this.fx.shatter(at, color);
-          this.onCapture?.(at, victim);
-        }, delay * 1000);
-      }
-    }
+    const victim = capSquare ? this.meshes.get(capSquare) : undefined;
+    if (capSquare && victim) this.meshes.delete(capSquare);
     this.meshes.delete(from);
     this.meshes.set(to, mover);
     mover.userData.square = to;
-    if (animate) this.tweens.add(tweenMove(mover, squareToWorld(to)));
-    else mover.position.copy(squareToWorld(to));
+    const dest = squareToWorld(to);
+    const gen = this.generation;
+    if (!animate) {
+      mover.position.copy(dest);
+      if (victim) this.scene.piecesGroup.remove(victim);
+    } else if (victim) {
+      const at = victim.position.clone();
+      const color = (victim.material as THREE.MeshStandardMaterial).color.getHex();
+      const dir = at.clone().sub(mover.position).setY(0).normalize();
+      const style = strikeStyle(mover.userData.type);
+      const approach = at.clone().addScaledVector(dir, style === 'smash' ? -0.95 : -0.62);
+      this.fx.puff(mover.position.clone(), 3);
+      this.tweens.add(
+        sequence([
+          () => tweenMove(mover, approach, style === 'smash' ? 0.26 : 0.32, style === 'stomp' ? 0.3 : 0.2),
+          () => {
+            if (gen === this.generation) {
+              this.onStrike?.(at, dir, mover, victim);
+              sfx.swing(style);
+            }
+            return tweenStrike(mover, dir, style, () => {
+              this.scene.piecesGroup.remove(victim);
+              if (gen !== this.generation) return;
+              this.fx.shatter(at, color, style === 'smash' || style === 'chop' ? 34 : 24, dir);
+              this.fx.puff(at, style === 'slash' ? 5 : 9, color);
+              sfx.strike(style);
+              this.onCapture?.(at, victim);
+            });
+          },
+          () => tweenMove(mover, dest, 0.22, 0.08),
+        ]),
+      );
+    } else {
+      this.fx.puff(mover.position.clone(), 2);
+      this.tweens.add(tweenMove(mover, dest));
+    }
     if (mv.flags.includes('k') || mv.flags.includes('q')) {
       const rank = mv.color === 'w' ? 0 : 7;
       const rf = mv.flags.includes('k') ? sq(7, rank) : sq(0, rank);
@@ -104,6 +140,89 @@ export class BoardView {
       this.meshes.delete(to);
       this.add(to, mv.promotion, mv.color);
     }
+  }
+
+  /** A translucent red copy of the king that tries an escape square and either arrives or bumps back. */
+  ghostKing(color: Color, from: Square, to: Square, blocked: boolean): Promise<void> {
+    const g = makePiece('k', color, from);
+    const mat = g.material as THREE.MeshStandardMaterial;
+    mat.transparent = true;
+    mat.opacity = 0.55;
+    mat.color.setHex(0xff5a3a);
+    mat.emissive.setHex(0xff3b1a);
+    mat.emissiveIntensity = 0.8;
+    g.castShadow = false;
+    this.scene.piecesGroup.add(g);
+    const dest = squareToWorld(to);
+    const target = blocked ? g.position.clone().lerp(dest, 0.45) : dest;
+    return new Promise((resolve) => {
+      this.tweens.add(
+        sequence([
+          () => tweenMove(g, target, 0.4, 0.18),
+          () => {
+            let t = 0;
+            return {
+              update: (dt) => {
+                t += dt;
+                if (blocked && t < 0.25) g.position.x += Math.sin(t * 60) * 0.02; // bump
+                return t < 0.75;
+              },
+            };
+          },
+          () => {
+            let t = 0;
+            return {
+              update: (dt) => {
+                t += dt;
+                mat.opacity = Math.max(0, 0.55 * (1 - t / 0.3));
+                if (t >= 0.3) {
+                  this.scene.piecesGroup.remove(g);
+                  resolve();
+                  return false;
+                }
+                return true;
+              },
+            };
+          },
+        ]),
+      );
+    });
+  }
+
+  /** Briefly light a piece up (the one that covers an escape square). */
+  flashPiece(square: Square, color = 0xff6a1a, ms = 1100) {
+    const m = this.meshes.get(square);
+    if (!m) return;
+    const mat = m.material as THREE.MeshStandardMaterial;
+    const prevHex = mat.emissive.getHex();
+    const prevI = mat.emissiveIntensity;
+    mat.emissive.setHex(color);
+    mat.emissiveIntensity = 1.1;
+    window.setTimeout(() => {
+      mat.emissive.setHex(prevHex);
+      mat.emissiveIntensity = prevI;
+    }, ms);
+  }
+
+  /** A selected piece wakes: it lifts and glows until it moves or is put back. */
+  wake(square: Square) {
+    this.sleep();
+    const m = this.meshes.get(square);
+    if (!m) return;
+    this.awake = m;
+    const mat = m.material as THREE.MeshStandardMaterial;
+    mat.emissive.setHex(0xffb02e);
+    mat.emissiveIntensity = 0.35;
+    m.position.y = 0.12;
+  }
+  sleep() {
+    const m = this.awake;
+    if (!m) return;
+    this.awake = null;
+    const mat = m.material as THREE.MeshStandardMaterial;
+    mat.emissive.setHex(m.userData.color === 'b' ? 0x0b2a3a : 0x000000);
+    mat.emissiveIntensity = m.userData.color === 'b' ? 0.35 : 0;
+    if (m.position.y === 0.12) m.position.y = 0;
   }
 
   /** The mated king falls over. */

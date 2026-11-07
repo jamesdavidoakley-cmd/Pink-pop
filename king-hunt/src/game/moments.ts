@@ -6,6 +6,8 @@ import { squareToWorld } from '../board3d/coords';
 import type { CinemaOverlay } from '../cinema/overlay';
 import { sfx } from '../audio/sfx';
 import type { Color, Square } from '../chess/types';
+import { explainMate } from '../chess/mate-explain';
+import { PALETTE } from '../board3d/palette';
 
 const reduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -15,8 +17,17 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * drives the camera director, the effects layer, the overlay and the sound,
  * and always resolves (tap to skip, reduced-motion shortens everything).
  */
+export type CinemaLevel = 'full' | 'light' | 'off';
+
 export class Moments {
-  enabled = true;
+  level: CinemaLevel = 'full';
+  get enabled() {
+    return this.level !== 'off';
+  }
+  /** Camera takes part (dives, sweeps) only at full. */
+  private get camera() {
+    return this.level === 'full' && !reduced();
+  }
 
   constructor(
     private scene: BoardScene,
@@ -24,16 +35,36 @@ export class Moments {
     private overlay: CinemaOverlay,
   ) {
     overlay.onSkip = () => scene.director.skip();
-    view.onCapture = (at) => {
-      sfx.capture();
+    view.onCapture = (at, victim) => {
+      // Sound comes from the strike itself; here the camera reacts to the weight of the blow.
+      const value = ({ p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 } as Record<string, number>)[victim.userData.type] ?? 1;
       view.fx.shockwave(at, 0xffffff);
-      scene.director.shakeCamera(0.05, 0.25);
+      scene.director.shakeCamera(0.05 + value * 0.012, 0.25 + value * 0.03);
+      if (value >= 5) overlay.flash('rgba(255,255,255,.25)', 160);
     };
     view.fx.onLightning = () => {
       overlay.flash('rgba(200,225,255,.55)', 180);
       sfx.thunder();
       scene.director.shakeCamera(0.06, 0.4);
     };
+    // The fight: when an attacker winds up beside a valuable victim, dive to board level to watch.
+    view.onStrike = (at, fromDir, mover, victim) => {
+      const value = ({ p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 } as Record<string, number>)[victim.userData.type] ?? 0;
+      if (!this.camera || value < 3 || scene.director.active) return;
+      void this.strike(at, fromDir, mover.userData.type);
+    };
+  }
+
+  /** Low, wide shot of the smash from the attacker's shoulder, then back to the game. */
+  async strike(at: THREE.Vector3, fromDir: THREE.Vector3, attacker: string = 'p') {
+    this.view.timeScale = 0.55;
+    const side = fromDir.clone().setY(0).normalize();
+    const right = new THREE.Vector3(-side.z, 0, side.x);
+    // Knights and queens rise, so the camera sits a little higher and further back to keep them in frame.
+    const tall = attacker === 'n' || attacker === 'q';
+    const pos = at.clone().addScaledVector(side, tall ? -2.3 : -1.9).addScaledVector(right, 1.1).setY(tall ? 1.3 : 0.9);
+    await this.scene.director.play([{ pos, look: at.clone().setY(0.5), duration: 0.35, fov: 52, ease: Director.easeOut, hold: tall ? 1.15 : 0.95 }]);
+    this.view.timeScale = 1;
   }
 
   private side(sideFacing: Color) {
@@ -42,7 +73,8 @@ export class Moments {
 
   /** Opening: a low sweep across the board under a title. */
   async intro(big: string, kicker = '', sub = '', facing: Color = 'w') {
-    if (!this.enabled || reduced()) {
+    if (!this.enabled) return;
+    if (!this.camera) {
       await this.overlay.showTitle(big, kicker, sub, 900);
       return;
     }
@@ -63,7 +95,12 @@ export class Moments {
 
   /** A piece is given away on purpose: slow motion, push-in, thud. */
   async sacrifice(from: Square, to: Square, facing: Color = 'w') {
-    if (!this.enabled || reduced()) return;
+    if (!this.enabled) return;
+    if (!this.camera) {
+      sfx.thud();
+      this.view.fx.shockwave(squareToWorld(to));
+      return;
+    }
     const target = squareToWorld(to);
     const fromDir = squareToWorld(from).sub(target);
     this.view.timeScale = 0.22;
@@ -104,11 +141,22 @@ export class Moments {
     this.view.fx.storm(this.enabled ? level : 0, kingSquare ? squareToWorld(kingSquare) : null);
   }
 
-  /** Checkmate: lightning, the king topples, the camera swoops, the title slams. */
-  async mate(kingSquare: Square, winner: 'you' | 'them', facing: Color = 'w') {
+  private skipTour = false;
+
+  /**
+   * Checkmate. First the lesson: the king tries each escape as a red ghost while the
+   * piece that covers it lights up with a beam and a caption says why. Then lightning,
+   * the topple, the title. Tap skips the tour.
+   */
+  async mate(kingSquare: Square, winner: 'you' | 'them', facing: Color = 'w', fen?: string) {
     const king = squareToWorld(kingSquare);
-    if (!this.enabled || reduced()) {
+    if (!this.enabled) {
       this.view.topple(kingSquare, king.clone().add(new THREE.Vector3(0, 0, this.side(facing))));
+      return;
+    }
+    if (!this.camera) {
+      this.view.topple(kingSquare, king.clone().add(new THREE.Vector3(0, 0, this.side(facing))));
+      if (winner === 'you') sfx.fanfare();
       await this.overlay.showTitle(winner === 'you' ? 'Checkmate' : 'Mated', winner === 'you' ? 'The king hunt is complete' : '', '', 1400);
       return;
     }
@@ -117,6 +165,8 @@ export class Moments {
     const dir = new THREE.Vector3(0.6, 0, this.side(facing)).normalize();
     const close = Director.closeUp(king, dir, 2.6, 1.5);
     await this.scene.director.play([{ ...close, duration: 0.8, fov: 34, ease: Director.easeOut, hold: 0.15 }]);
+    if (fen) await this.escapeTour(fen, kingSquare, dir);
+    if (this.skipTour) this.skipTour = false;
     this.view.fx.lightning(king);
     await sleep(140);
     this.view.topple(kingSquare, king.clone().add(dir));
@@ -132,6 +182,66 @@ export class Moments {
     await title;
     this.view.fx.storm(0, null);
     this.overlay.letterbox(false);
+  }
+
+  /** The king tries every way out and the board answers each one. */
+  private async escapeTour(fen: string, kingSquare: Square, dir: THREE.Vector3) {
+    let info: ReturnType<typeof explainMate>;
+    try {
+      info = explainMate(fen, 5);
+    } catch {
+      return;
+    }
+    if (info.beats.length === 0) return;
+    this.skipTour = false;
+    const prevSkip = this.overlay.onSkip;
+    this.overlay.onSkip = () => {
+      this.skipTour = true;
+      this.scene.director.skip();
+    };
+    const king = squareToWorld(kingSquare);
+    const look = king.clone().setY(0.4);
+    const a0 = Math.atan2(dir.x, dir.z);
+    // A slow drift around the king while the tour plays (not awaited).
+    const total = info.beats.length * 1.75 + 0.6;
+    void this.scene.director.play([
+      { pos: king.clone().add(new THREE.Vector3(Math.sin(a0 - 0.5) * 3.0, 1.9, Math.cos(a0 - 0.5) * 3.0)), look, duration: 0.01 },
+      { pos: king.clone().add(new THREE.Vector3(Math.sin(a0 + 0.7) * 3.0, 2.1, Math.cos(a0 + 0.7) * 3.0)), look, duration: total, fov: 40, ease: (t) => t },
+    ]);
+    this.overlay.caption(`${info.mated === 'w' ? 'White' : 'Black'}'s king looks for a way out.`);
+    sfx.windup();
+    await sleep(900);
+    for (const b of info.beats) {
+      if (this.skipTour) break;
+      this.overlay.caption(b.text);
+      const tiles = new Map<Square, THREE.Color>();
+      tiles.set(b.square, new THREE.Color(b.kind === 'own' ? PALETTE.selected : PALETTE.captureTarget));
+      if (b.by) tiles.set(b.by, new THREE.Color(PALETTE.heatHot));
+      this.view.effects.setHighlights(tiles);
+      if (b.kind === 'covered' || b.kind === 'own' || b.kind === 'guarded') {
+        if (b.by) {
+          this.view.flashPiece(b.by);
+          this.view.fx.beam(squareToWorld(b.by), squareToWorld(b.square));
+        }
+        sfx.wrong();
+        await this.view.ghostKing(info.mated, kingSquare, b.square, b.kind === 'own');
+      } else {
+        // The checker: light it, beam to the king, and the would-be taker if any.
+        this.view.flashPiece(b.square, 0xffffff);
+        this.view.fx.beam(squareToWorld(b.square), king, 0xffffff);
+        if (b.by) this.view.flashPiece(b.by, 0x3aa0ff);
+        sfx.check();
+        await sleep(1500);
+      }
+      if (this.skipTour) break;
+      await sleep(250);
+    }
+    this.view.clearHighlights();
+    this.overlay.caption(this.skipTour ? '' : 'No way out.');
+    if (!this.skipTour) await sleep(700);
+    this.overlay.caption('');
+    this.scene.director.cancel();
+    this.overlay.onSkip = prevSkip;
   }
 
   /** A rung unlocked: title over a slow pull-back. */

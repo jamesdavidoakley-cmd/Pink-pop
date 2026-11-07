@@ -12,7 +12,7 @@ import { ReplaySession } from './replay';
 import { Daily } from './daily';
 import { REPLAYS } from '../content/replays';
 import { botById } from './bots';
-import { currentRungIndex, loadProgress, saveProgress, setQuestions, setSound, type Progress } from './progress';
+import { currentRungIndex, loadProgress, saveProgress, setCinema, setQuestions, setSound, type Progress } from './progress';
 import { CinemaOverlay } from '../cinema/overlay';
 import { Moments } from './moments';
 import { sfx } from '../audio/sfx';
@@ -47,6 +47,7 @@ export class App {
     this.moments = new Moments(scene, this.view, this.overlay);
     this.progress = loadProgress();
     sfx.enabled = this.progress.settings.sound;
+    this.moments.level = this.progress.settings.cinema ?? 'full';
     // Audio can only start after a gesture: unlock on the first pointer down anywhere.
     window.addEventListener('pointerdown', () => sfx.unlock(), { once: false, passive: true });
     this.hud.onBack = () => this.goHome();
@@ -59,6 +60,11 @@ export class App {
     this.screens.onDaily = () => void this.daily.run();
     this.screens.onQuestions = (mode) => {
       this.saveP(setQuestions(this.progress, mode));
+      this.goHome();
+    };
+    this.screens.onCinema = (level) => {
+      this.saveP(setCinema(this.progress, level));
+      this.moments.level = level;
       this.goHome();
     };
     this.screens.onSound = (on) => {

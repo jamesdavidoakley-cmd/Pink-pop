@@ -4,6 +4,7 @@ import { PALETTE } from './palette';
 import { TILE, squareToWorld } from './coords';
 import { sq, type Square } from '../chess/types';
 import { Director } from './director';
+import { stoneTexture } from './pieces';
 
 export interface Tile {
   square: Square;
@@ -21,7 +22,7 @@ export class BoardScene {
   readonly fxGroup = new THREE.Group();
   readonly director: Director;
   private clock = new THREE.Clock();
-  private tickers = new Set<(dt: number, t: number) => void>();
+  private tickers = new Set<(dt: number, t: number, realDt: number) => void>();
   private orientation: 'w' | 'b' = 'w';
   private camTarget = new THREE.Vector3(0, 8.6, 8.2);
   private liftPx = 0;
@@ -32,10 +33,10 @@ export class BoardScene {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.05;
+    this.renderer.toneMappingExposure = 1.12;
 
     this.scene.background = new THREE.Color(PALETTE.background);
-    this.scene.fog = new THREE.Fog(PALETTE.fog, 14, 30);
+    this.scene.fog = new THREE.Fog(PALETTE.fog, 12, 26);
 
     this.camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
     this.camera.position.set(0, 8.6, 8.2);
@@ -43,7 +44,7 @@ export class BoardScene {
 
     const hemi = new THREE.HemisphereLight(0xbfd4ff, 0x1a1020, 0.55);
     this.scene.add(hemi);
-    const key = new THREE.DirectionalLight(0xfff1dc, 2.2);
+    const key = new THREE.DirectionalLight(0xfff1dc, 2.4);
     key.position.set(-5, 10, 6);
     key.castShadow = true;
     key.shadow.mapSize.set(2048, 2048);
@@ -64,7 +65,7 @@ export class BoardScene {
 
     this.composer = new EffectComposer(this.renderer, { multisampling: 0 });
     this.composer.addPass(new RenderPass(this.scene, this.camera));
-    const bloom = new BloomEffect({ intensity: 0.9, luminanceThreshold: 0.55, luminanceSmoothing: 0.2, mipmapBlur: true });
+    const bloom = new BloomEffect({ intensity: 1.15, luminanceThreshold: 0.5, luminanceSmoothing: 0.25, mipmapBlur: true });
     const vignette = new VignetteEffect({ darkness: 0.55, offset: 0.25 });
     this.composer.addPass(new EffectPass(this.camera, bloom, vignette, new SMAAEffect()));
 
@@ -74,12 +75,13 @@ export class BoardScene {
 
   private buildBoard() {
     const geo = new THREE.BoxGeometry(TILE, 0.18, TILE);
+    const grain = stoneTexture(128, 0.35);
     for (let f = 0; f < 8; f++) {
       for (let r = 0; r < 8; r++) {
         const s = sq(f, r);
         const light = (f + r) % 2 === 1;
         const base = new THREE.Color(light ? PALETTE.tileLight : PALETTE.tileDark);
-        const mat = new THREE.MeshStandardMaterial({ color: base, roughness: 0.55, metalness: 0.05, emissive: 0x000000 });
+        const mat = new THREE.MeshStandardMaterial({ color: base, roughness: 0.8, metalness: 0.02, emissive: 0x000000, bumpMap: grain, bumpScale: 0.01, roughnessMap: grain });
         const mesh = new THREE.Mesh(geo, mat);
         mesh.position.copy(squareToWorld(s, -0.09));
         mesh.receiveShadow = true;
@@ -178,7 +180,7 @@ export class BoardScene {
     return this.orientation;
   }
 
-  onTick(fn: (dt: number, t: number) => void) {
+  onTick(fn: (dt: number, t: number, realDt: number) => void) {
     this.tickers.add(fn);
     return () => this.tickers.delete(fn);
   }
@@ -188,7 +190,7 @@ export class BoardScene {
       const realDt = this.clock.getDelta();
       const dt = Math.min(realDt, 0.05);
       const t = this.clock.elapsedTime;
-      for (const fn of this.tickers) fn(dt, t);
+      for (const fn of this.tickers) fn(dt, t, Math.min(realDt, 0.25));
       // Cut scenes run on wall-clock time so they last as designed on slow devices.
       const driven = this.director.update(Math.min(realDt, 0.5));
       if (!driven && !this.director.active && this.camera.position.distanceToSquared(this.camTarget) > 1e-4) {

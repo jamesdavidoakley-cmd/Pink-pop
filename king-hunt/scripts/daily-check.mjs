@@ -17,14 +17,17 @@ if (!/warm-up/i.test(kicker)) { console.error('expected the warm-up card'); proc
 await card.locator('button').click();
 
 // Solve puzzles until the hunt step is recorded.
-const deadline = Date.now() + 150000;
+const deadline = Date.now() + 480000; // three puzzles, each with a mate cut scene, in software rendering
 let solved = 0;
 while (Date.now() < deadline) {
   const steps = await page.evaluate(() => (JSON.parse(localStorage.getItem('king-hunt.progress.v1') || '{}').today || {}).steps || []);
   if (steps.includes('hunt')) break;
   if (await card.count()) {
-    const opts = card.locator('.option');
-    if (await opts.count()) await opts.first().click(); else await card.locator('button').click();
+    try {
+      const opts = card.locator('.option');
+      if (await opts.count()) await opts.first().click({ timeout: 15000 });
+      else await card.locator('button.btn').first().click({ timeout: 15000 });
+    } catch { /* the card changed under us; loop again */ }
     await page.waitForTimeout(250);
     continue;
   }

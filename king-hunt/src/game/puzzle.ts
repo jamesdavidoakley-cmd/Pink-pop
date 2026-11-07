@@ -208,7 +208,8 @@ export class PuzzleSession {
     }
     this.hud.say(['Yes! Keep the pressure on.']);
     this.mover.enabled = false;
-    await sleep(600);
+    await this.view.whenIdle();
+    await sleep(450);
     if (!this.alive) return;
     const reply = this.runner.opponentReply();
     if (reply) {
@@ -262,7 +263,7 @@ export class PuzzleSession {
     // The moment: mate gets the full treatment, anything else a hit.
     if (this.rules.isCheckmate()) {
       this.moments.storm(0, null);
-      await this.moments.mate(this.rules.kingSquare(this.side === 'w' ? 'b' : 'w'), 'you', this.side);
+      await this.moments.mate(this.rules.kingSquare(this.side === 'w' ? 'b' : 'w'), 'you', this.side, this.rules.fen());
     } else {
       this.moments.hit();
     }

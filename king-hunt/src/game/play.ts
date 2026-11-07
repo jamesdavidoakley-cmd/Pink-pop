@@ -138,6 +138,8 @@ export class PlaySession {
     this.hud.setStatus(`${this.bot.name} is thinking…`);
     const uci = await pickBotMove(this.engine, this.rules.fen(), this.bot);
     if (!this.alive) return;
+    await this.view.whenIdle(); // let our fight finish before theirs starts
+    if (!this.alive) return;
     const mv = this.rules.playUci(uci);
     this.thinking = false;
     if (!mv) return this.hud.setStatus('Engine returned an odd move; your turn.');
@@ -237,7 +239,7 @@ export class PlaySession {
     if (this.rules.isCheckmate()) {
       const youWon = this.result === 'win';
       const mated = this.rules.kingSquare(this.rules.turn());
-      await this.moments.mate(mated, youWon ? 'you' : 'them', this.human);
+      await this.moments.mate(mated, youWon ? 'you' : 'them', this.human, this.rules.fen());
       if (!this.alive) return;
     }
     await this.debrief(headline);

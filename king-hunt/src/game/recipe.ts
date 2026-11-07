@@ -108,7 +108,8 @@ export class RecipeSession {
       return;
     }
     this.mover.enabled = false;
-    await sleep(650);
+    await this.view.whenIdle();
+    await sleep(500);
     if (!this.alive) return;
     const mv = this.rules.raw().move(this.recipe.moves[this.ply]!);
     this.view.applyMove(mv, true, this.rules);
@@ -189,7 +190,7 @@ export class RecipeSession {
     else if (!mv.captured) sfx.move();
     if (this.rules.isCheckmate()) {
       this.moments.storm(0, null);
-      await this.moments.mate(this.rules.kingSquare(this.rules.turn()), 'you', this.recipe.side);
+      await this.moments.mate(this.rules.kingSquare(this.rules.turn()), 'you', this.recipe.side, this.rules.fen());
     } else if (this.rules.inCheck()) this.moments.check();
     else this.moments.hit();
     if (!this.alive) return;

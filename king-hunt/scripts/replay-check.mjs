@@ -33,7 +33,7 @@ for (let guard = 0; guard < 120; guard++) {
   await page.evaluate((exp) => { void window.__app.current.humanMove({ from: exp.slice(0, 2), to: exp.slice(2, 4), promotion: exp[4] }); }, st.expected);
   await page.waitForTimeout(500);
 }
-await card.waitFor({ timeout: 30000 });
+await card.waitFor({ timeout: 150000 }); // the mate cut scene includes the escape tour (slow in software rendering)
 console.log('finale:', await card.locator('.kicker').innerText(), '|', (await card.locator('p').innerText()).slice(0, 100));
 const st = await page.evaluate(() => window.__app.state());
 console.log('asked', st.asked, 'guessedFirst', st.guessedFirst);

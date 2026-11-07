@@ -82,6 +82,7 @@ export class ReplaySession {
   }
 
   private async autoPlay(ply: number, pause: number) {
+    await this.view.whenIdle();
     const mv = this.rules.raw().move(this.replay.moves[ply]!);
     this.view.applyMove(mv, true, this.rules);
     if (!mv.captured) sfx.move();
@@ -90,7 +91,7 @@ export class ReplaySession {
     this.moments.storm(rep.score, rep.enemyKing);
     if (this.rules.isCheckmate()) {
       this.moments.storm(0, null);
-      await this.moments.mate(this.rules.kingSquare(this.rules.turn()), 'you', this.replay.heroSide);
+      await this.moments.mate(this.rules.kingSquare(this.rules.turn()), 'you', this.replay.heroSide, this.rules.fen());
     } else if (this.rules.inCheck()) this.moments.check();
     const note = this.replay.notes[String(ply)];
     const who = this.isHeroPly(ply) ? this.replay.hero.split(' ').pop() : this.replay.opponent.split(/[ &]/)[0];
@@ -161,7 +162,7 @@ export class ReplaySession {
     void matBefore;
     if (this.rules.isCheckmate()) {
       this.moments.storm(0, null);
-      await this.moments.mate(this.rules.kingSquare(this.rules.turn()), 'you', hero);
+      await this.moments.mate(this.rules.kingSquare(this.rules.turn()), 'you', hero, this.rules.fen());
     } else if (sacrificial) await this.moments.sacrifice(m.from, m.to, hero);
     else if (this.rules.inCheck()) this.moments.check();
     else this.moments.hit();

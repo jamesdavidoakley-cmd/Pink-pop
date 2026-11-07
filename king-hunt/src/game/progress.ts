@@ -10,9 +10,13 @@ export interface RungProgress {
   principleRight: number;
 }
 
+export type CinemaLevel = 'full' | 'light' | 'off';
+
 export interface Settings {
   questions: QuestionMode;
   sound: boolean;
+  /** full: cut scenes and camera dives; light: effects but the camera stays put; off: no cinematics */
+  cinema: CinemaLevel;
 }
 
 export interface RecipeProgress {
@@ -52,7 +56,7 @@ export interface Progress {
   whyAsked: number;
 }
 
-export const EMPTY_PROGRESS: Progress = { version: 1, rungs: {}, recipes: {}, replays: {}, today: null, settings: { questions: 'quick', sound: true }, whyRecent: [], days: [], whyRight: 0, whyAsked: 0 };
+export const EMPTY_PROGRESS: Progress = { version: 1, rungs: {}, recipes: {}, replays: {}, today: null, settings: { questions: 'quick', sound: true, cinema: 'full' }, whyRecent: [], days: [], whyRight: 0, whyAsked: 0 };
 
 export function rungProgress(p: Progress, id: string): RungProgress {
   const r = p.rungs[id];
@@ -129,6 +133,10 @@ export function setQuestions(p: Progress, questions: QuestionMode): Progress {
 
 export function setSound(p: Progress, sound: boolean): Progress {
   return { ...p, settings: { ...p.settings, sound } };
+}
+
+export function setCinema(p: Progress, cinema: CinemaLevel): Progress {
+  return { ...p, settings: { ...p.settings, cinema } };
 }
 
 /** Consecutive days ending today or yesterday. */
