@@ -41,6 +41,9 @@ export class PlaySession {
   private open: { turnIndex: number; fenBefore: string; san: string; moveNo: number }[] = [];
   lastAudit: Audit | null = null;
   static readonly AUDIT_WINDOW = 3;
+  /** Daily hunt hook: called after the debrief instead of restarting. */
+  onGameOver: ((result: 'win' | 'loss' | 'draw') => void) | null = null;
+  private result: 'win' | 'loss' | 'draw' = 'draw';
 
   constructor(
     private view: BoardView,
@@ -185,8 +188,12 @@ export class PlaySession {
     let headline: string;
     if (this.rules.isCheckmate()) {
       const youWon = this.rules.turn() !== this.human;
+      this.result = youWon ? 'win' : 'loss';
       headline = youWon ? 'CHECKMATE! The king hunt is complete.' : `Checkmate. ${this.bot.name} got there first.`;
-    } else headline = 'Draw. No king fell this time.';
+    } else {
+      this.result = 'draw';
+      headline = 'Draw. No king fell this time.';
+    }
     this.hud.say([headline]);
     this.hud.setStatus('Game over');
     void this.debrief(headline);
@@ -206,8 +213,10 @@ export class PlaySession {
     if (giveaway) lines.push(`<b>Giveaway:</b> move ${giveaway.moveNo} ${giveaway.san}. ${giveaway.audit!.text}`);
     if (missed) lines.push(`<b>Missed chance:</b> at move ${missed.moveNo} you played ${missed.played}; <b>${missed.better}</b> was there. ${missed.why}`);
     if (lines.length === 0) lines.push('Short game. Next time, look for the king\'s problem before every move.');
-    await this.hud.showCard({ kicker: 'Debrief', title: headline, body: lines.join('<br><br>'), button: 'Play again' });
-    if (this.alive) this.start();
+    await this.hud.showCard({ kicker: 'Debrief', title: headline, body: lines.join('<br><br>'), button: this.onGameOver ? 'Done' : 'Play again' });
+    if (!this.alive) return;
+    if (this.onGameOver) this.onGameOver(this.result);
+    else this.start();
   }
 
   private async findMissedChance(): Promise<{ moveNo: number; played: string; better: string; why: string } | null> {

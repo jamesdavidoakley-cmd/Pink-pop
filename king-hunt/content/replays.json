@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "replays": [
+    {
+      "id": "opera-1858",
+      "title": "Morphy at the opera",
+      "hero": "Paul Morphy", "heroSide": "w", "opponent": "Duke of Brunswick & Count Isouard", "year": 1858, "where": "Paris Opera",
+      "story": "Morphy was dragged to the opera and asked to play during the show. He wanted to watch the stage, so he finished the game in 17 moves. Every move makes a threat; the king never gets to castle.",
+      "moves": ["e4","e5","Nf3","d6","d4","Bg4","dxe5","Bxf3","Qxf3","dxe5","Bc4","Nf6","Qb3","Qe7","Nc3","c6","Bg5","b5","Nxb5","cxb5","Bxb5+","Nbd7","O-O-O","Rd8","Rxd7","Rxd7","Rd1","Qe6","Bxd7+","Nxd7","Qb8+","Nxb8","Rd8#"],
+      "start": 10,
+      "asks": {
+        "10": { "prompt": "Black just traded the bishop. Where does Morphy's bishop belong?", "hint": "Aim at the weak spot.", "why": "Bc4 points at f7, the square only the king guards, and threatens to take it with the queen. Development with a threat.", "principle": "Tempo" },
+        "12": { "prompt": "Make two threats with one move.", "hint": "The queen can hit two pawns at once.", "why": "Qb3 attacks f7 and b7 together. Black can only answer one, and must use the queen to defend, which blocks its own bishop.", "principle": "Tempo" },
+        "16": { "prompt": "Develop again, with a pin.", "hint": "The knight on f6 guards the king. Tie it down.", "why": "Bg5 pins the knight to the queen. A pinned piece cannot defend anything else.", "principle": "Initiative" },
+        "18": { "prompt": "They attack your bishop with b5. Morphy does not retreat. What does he do?", "hint": "Give a piece to keep the king in the middle.", "why": "Nxb5! If they take, the b-file and the a4-e8 diagonal open onto a king that has not castled. Retreating would give Black time to castle. Tal would have played this too.", "principle": "Initiative" },
+        "22": { "prompt": "Castle, but with a purpose.", "hint": "Which way puts a rook on the open file?", "why": "O-O-O brings the rook to the d-file in one move, aimed at the pinned knight on d7. Castling is an attacking move here.", "principle": "Tempo" },
+        "24": { "prompt": "Remove the piece holding everything together.", "hint": "The pinned knight is the only defender. Count what happens after they recapture.", "why": "Rxd7! A rook for a knight, but the second rook comes to d1 and the pin is back with one defender fewer. Material is fuel.", "principle": "Material is fuel" },
+        "26": { "prompt": "Bring everyone.", "hint": "The rook you spent needs a replacement.", "why": "Rd1. Same file, same pin, same threats, and Black is a move slower.", "principle": "Initiative" },
+        "30": { "prompt": "The final trick. The knight on d7 is the last defender of d8.", "hint": "Pull it away. Give whatever it takes.", "why": "Qb8+! A deflection: the knight must take, and when it leaves d7 the d-file is open for Rd8 mate.", "principle": "Material is fuel" }
+      },
+      "notes": { "6": "Morphy opens the centre at once.", "8": "The queen comes to f3 and already looks at f7.", "20": "Check and a pin together.", "32": "Checkmate. Morphy gave a knight, a rook and a queen, and every one of them bought a line or a tempo." },
+      "finale": "Seventeen moves. Black never castled because Morphy never gave him a free move."
+    },
+    {
+      "id": "immortal-1851",
+      "title": "The Immortal Game",
+      "hero": "Adolf Anderssen", "heroSide": "w", "opponent": "Lionel Kieseritzky", "year": 1851, "where": "London, a café",
+      "story": "A friendly game between rounds of a tournament. Anderssen gives a bishop, both rooks and the queen, and mates with the three small pieces he has left.",
+      "moves": ["e4","e5","f4","exf4","Bc4","Qh4+","Kf1","b5","Bxb5","Nf6","Nf3","Qh6","d3","Nh5","Nh4","Qg5","Nf5","c6","g4","Nf6","Rg1","cxb5","h4","Qg6","h5","Qg5","Qf3","Ng8","Bxf4","Qf6","Nc3","Bc5","Nd5","Qxb2","Bd6","Bxg1","e5","Qxa1+","Ke2","Na6","Nxg7+","Kd8","Qf6+","Nxf6","Be7#"],
+      "start": 20,
+      "asks": {
+        "20": { "prompt": "Black attacks your bishop with c6. Anderssen leaves it there. What does he play instead?", "hint": "Get a rook behind the g-pawn, so every pawn push hits the queen.", "why": "Rg1! The bishop is bait. The rook behind the g-pawn means g4-g5 will come with threats on the queen, and every one of those is a free move.", "principle": "Material is fuel" },
+        "22": { "prompt": "Chase the queen.", "hint": "A pawn with tempo.", "why": "h4 attacks the queen. She must move again. Black's only developed piece is being kicked around while White brings everyone.", "principle": "Tempo" },
+        "26": { "prompt": "Bring the queen in with a threat.", "hint": "Threaten the f4 pawn and point at f7.", "why": "Qf3 threatens Bxf4 winning the queen's last square, and the queen eyes the kingside.", "principle": "Tempo" },
+        "32": { "prompt": "Bring the last piece in with a threat.", "hint": "The knight can jump to a square that threatens Nc7 with a fork.", "why": "Nd5 threatens Nc7+, forking king and rook. Now every White piece is in the attack.", "principle": "Initiative" },
+        "34": { "prompt": "Black took b2 and threatens both rooks. Anderssen's answer is the most famous move in chess.", "hint": "Let the rooks go. Block the queen's way back.", "why": "Bd6!! Both rooks hang, but the bishop shuts the black queen out of the defence and prepares Be7 mate. Material is fuel.", "principle": "Material is fuel" },
+        "36": { "prompt": "Black took the rook on g1. Keep the queen out.", "hint": "A pawn move that cuts the long diagonal.", "why": "e5! The queen on a1 cannot come back to defend g7 along the diagonal. The second rook is also left to be taken.", "principle": "Open lines" },
+        "40": { "prompt": "Rip the roof.", "hint": "A knight check that takes a pawn.", "why": "Nxg7+ drives the king to d8 and opens the way for the queen.", "principle": "The king cannot run" },
+        "42": { "prompt": "Finish with a sacrifice.", "hint": "Give the queen so the bishop can mate.", "why": "Qf6+! The knight must take, and Be7 is mate: the king on d8 is boxed in by its own pieces.", "principle": "The king cannot run" }
+      },
+      "notes": { "24": "Another push, another tempo on the queen.", "28": "Bxf4 with tempo again.", "38": "The king steps aside. Anderssen is now down a bishop and both rooks.", "44": "Checkmate with a bishop and two knights." },
+      "finale": "Anderssen gave almost everything and kept the only thing that matters: the initiative."
+    },
+    {
+      "id": "evergreen-1852",
+      "title": "The Evergreen Game",
+      "hero": "Adolf Anderssen", "heroSide": "w", "opponent": "Jean Dufresne", "year": 1852, "where": "Berlin",
+      "story": "Anderssen gives pawns early to open roads, keeps Black's king in the middle, and finishes with a rook sacrifice, a queen sacrifice and a double check.",
+      "moves": ["e4","e5","Nf3","Nc6","Bc4","Bc5","b4","Bxb4","c3","Ba5","d4","exd4","O-O","d3","Qb3","Qf6","e5","Qg6","Re1","Nge7","Ba3","b5","Qxb5","Rb8","Qa4","Bb6","Nbd2","Bb7","Ne4","Qf5","Bxd3","Qh5","Nf6+","gxf6","exf6","Rg8","Rad1","Qxf3","Rxe7+","Nxe7","Qxd7+","Kxd7","Bf5+","Ke8","Bd7+","Kf8","Bxe7#"],
+      "start": 12,
+      "asks": {
+        "12": { "prompt": "White is a pawn down and Black threatens to take another. Castle or save the pawn?", "hint": "Your king first; the pawns were spent on purpose.", "why": "O-O. The pawns bought open lines and time. Castling makes the king safe and brings the rook toward the centre.", "principle": "Tempo" },
+        "14": { "prompt": "Hit two things with the queen.", "hint": "f7 and b7.", "why": "Qb3 eyes f7, guarded only by the king, and b7 behind it.", "principle": "Tempo" },
+        "16": { "prompt": "Attack the queen and open lines.", "hint": "A pawn push with tempo.", "why": "e5 kicks the queen and opens the long diagonal for the bishop that will come to a3.", "principle": "Open lines" },
+        "18": { "prompt": "Bring a rook to the king in the middle.", "hint": "Which file points at e8?", "why": "Re1. The e-file is half-open and the black king is still on e8.", "principle": "Initiative" },
+        "20": { "prompt": "Stop the king from castling.", "hint": "A bishop that watches e7 and f8.", "why": "Ba3 pins the knight on e7 and covers f8. The king is stuck in the middle for good.", "principle": "The king cannot run" },
+        "32": { "prompt": "Rip the roof open.", "hint": "A knight check that forces a pawn to move.", "why": "Nf6+! gxf6 opens the g-file and the e-file at once, and exf6 shuts the knight on e7 in.", "principle": "Material is fuel" },
+        "36": { "prompt": "Black threatens Qxf3 and mate on g2. Anderssen ignores it. What does he play?", "hint": "Bring the last rook. Count the checks you will have.", "why": "Rad1!! The famous quiet move. White lets Black take the knight because every White piece is now aimed at the king, and the checks come first.", "principle": "Initiative" },
+        "38": { "prompt": "Start the checks. Give a rook.", "hint": "The knight on e7 is the king's bodyguard.", "why": "Rxe7+! Deflects the knight that guards d7 and opens the e-file.", "principle": "Material is fuel" },
+        "40": { "prompt": "Give the queen.", "hint": "Drag the king onto a square where a double check is coming.", "why": "Qxd7+!! Kxd7 and the king stands on d7 in front of two bishops.", "principle": "The king cannot run" },
+        "42": { "prompt": "Double check.", "hint": "Move the bishop with check so the rook checks too.", "why": "Bf5+ is double check from bishop and rook. The king must move, and it has two squares, both losing.", "principle": "Tempo" }
+      },
+      "notes": { "6": "The Evans Gambit: a pawn for time and lines.", "30": "Bxd3 wins back a pawn and points at h7.", "44": "Bd7+ and the king is driven onto f8.", "46": "Bxe7 is mate." },
+      "finale": "Two pawns, a knight, a rook and the queen, each one bought a line or a check."
+    },
+    {
+      "id": "tal-tringov-1964",
+      "title": "Tal and the poisoned pawn",
+      "hero": "Mikhail Tal", "heroSide": "w", "opponent": "Georgi Tringov", "year": 1964, "where": "Amsterdam",
+      "story": "Black grabs a pawn on b2 and goes shopping with the queen. Tal lets him. Every move Black spends with the queen is a move Tal spends bringing a piece to the king.",
+      "moves": ["e4","g6","d4","Bg7","Nc3","d6","Nf3","c6","Bg5","Qb6","Qd2","Qxb2","Rb1","Qa3","Bc4","Qa5","O-O","e6","Rfe1","a6","Bf4","e5","dxe5","dxe5","Qd6","Qxc3","Red1","Nd7","Bxf7+","Kxf7","Ng5+","Ke8","Qe6+"],
+      "start": 10,
+      "asks": {
+        "10": { "prompt": "Black's queen attacks b2. Defend it, or offer it?", "hint": "A pawn far from the king is bait. Develop instead.", "why": "Qd2 leaves b2 hanging. If the queen takes, she is three moves from home and White gets those three moves.", "principle": "Material is fuel" },
+        "14": { "prompt": "Develop with a threat on the queen.", "hint": "The bishop goes to the diagonal of f7 and hits the queen's square.", "why": "Bc4 develops, attacks the queen on a3's escape squares and already looks at f7. Tempo.", "principle": "Tempo" },
+        "16": { "prompt": "Castle ready.", "hint": "King safe, rook joins.", "why": "O-O. Black has made four queen moves and developed one bishop. Count the pieces in play.", "principle": "Tempo" },
+        "18": { "prompt": "Bring a rook to the centre.", "hint": "The e-file points at the king.", "why": "Rfe1. The black king is still in the middle; the e-file is where the rook belongs.", "principle": "Initiative" },
+        "24": { "prompt": "Tal's move. The queen goes somewhere amazing.", "hint": "Into the heart of Black's position, offering a knight.", "why": "Qd6!! The queen on d6 stops the king from castling and sits next to it. The knight on c3 hangs: Tal does not care, because taking it costs Black another move.", "principle": "Material is fuel" },
+        "26": { "prompt": "Black took the knight. Ignore it and bring the rook.", "hint": "The queen on c3 is far from the fight.", "why": "Red1. White has queen and two rooks on the central files; Black's queen is on c3 doing nothing. Every piece counts, but only the ones near the king.", "principle": "Initiative" },
+        "28": { "prompt": "Rip the roof.", "hint": "Give the bishop on f7.", "why": "Bxf7+! Kxf7 drags the king out, and Ng5+ comes with tempo.", "principle": "The king cannot run" },
+        "30": { "prompt": "Check with tempo.", "hint": "The knight.", "why": "Ng5+ forces the king back to e8, and now Qe6+ is crushing: Qe6+ Kd8 Nf7 mate.", "principle": "Tempo" }
+      },
+      "notes": { "12": "Rb1 kicks the queen again: another free move.", "20": "Bf4 aims at d6.", "32": "Qe6+ and Black resigned: Kd8 Nf7 is mate. Black's queen never came home." },
+      "finale": "Tal gave a pawn and a knight. Black's queen took both and lost the game: tempo beats material."
+    },
+    {
+      "id": "tal-smyslov-1959",
+      "title": "Tal leaves a bishop hanging",
+      "hero": "Mikhail Tal", "heroSide": "w", "opponent": "Vasily Smyslov", "year": 1959, "where": "Bled",
+      "story": "Against a former world champion, Tal castles on the opposite side, jumps a knight into d6, and leaves a whole bishop hanging for two moves because every move of his makes a threat.",
+      "moves": ["e4","c6","d3","d5","Nd2","e5","Ngf3","Nd7","d4","dxe4","Nxe4","exd4","Qxd4","Ngf6","Bg5","Be7","O-O-O","O-O","Nd6","Qa5","Bc4","b5","Bd2","Qa6","Nf5","Bd8","Qh4","bxc4","Qg5","Nh5","Nh6+","Kh8","Qxh5","Qxa2","Bc3","Nf6","Qxf7","Qa1+","Kd2","Rxf7","Nxf7+","Kg8","Rxa1","Kxf7","Ne5+","Ke6","Nxc6","Ne4+","Ke3","Bb6+","Bd4"],
+      "start": 16,
+      "asks": {
+        "16": { "prompt": "Castle. Which side puts a rook on the open file?", "hint": "The d-file is open.", "why": "O-O-O. The rook lands on d1 behind the queen on d4, and White's kingside pawns are free to charge.", "principle": "Tempo" },
+        "18": { "prompt": "Jump a knight into Black's camp.", "hint": "A square the pawns cannot reach, next to the king's defenders.", "why": "Nd6 attacks f7 and b7 and cramps the whole position. A knight on d6 is worth a rook.", "principle": "Initiative" },
+        "20": { "prompt": "Aim at the weak spot.", "hint": "Bishop to the f7 diagonal.", "why": "Bc4 points at f7, which only the king defends.", "principle": "Initiative" },
+        "24": { "prompt": "Black attacks the bishop with the queen on a6 and threatens to take it. Tal leaves it. What does he play?", "hint": "Bring the knight to the king's side.", "why": "Nf5! The bishop is bait. Taking it costs Black a move, and Tal uses that move to bring the knight next to the king.", "principle": "Material is fuel" },
+        "26": { "prompt": "Still leave the bishop. Bring the queen.", "hint": "Queen toward h7.", "why": "Qh4 threatens Qxh7 ideas with the knight on f5 and bishop on g5. Black finally takes the bishop, but it has cost two moves.", "principle": "Tempo" },
+        "28": { "prompt": "Threaten mate.", "hint": "Queen next to the king with a threat on g7.", "why": "Qg5 threatens Qxg7 mate. Black must give something.", "principle": "The king cannot run" },
+        "30": { "prompt": "Rip the roof with check.", "hint": "The knight.", "why": "Nh6+ forces the king into the corner. Now the h-file and g7 are weak.", "principle": "The king cannot run" },
+        "36": { "prompt": "Tal gives the queen.", "hint": "Qxf7! Count: Rxf7 Nxf7+ forks king and rook.", "why": "Qxf7! If Rxf7 then Nxf7+ wins the rook back with check and White is ahead. Calculated, not hoped.", "principle": "Material is fuel" }
+      },
+      "notes": { "22": "Bd2 steps back and keeps the knight on d6 protected; the c4 bishop is left hanging on purpose.", "32": "Qxh5 wins back the piece with the attack still running.", "38": "Qa1+ is a last check. Tal walks away from it.", "50": "Bd4 and Smyslov resigned. Tal is a pawn up with the better position after a storm of sacrifices." }
+    }
+  ]
+}

@@ -69,3 +69,21 @@
 - typecheck clean · 32 unit tests (recipes: every line legal, every player ply annotated, every bait raises pressure by its payoff ply) · boot-check, puzzle-check, recipe-check ×5, audit-check all OK.
 
 **Next (P3)**: the daily 15-minute session (warm-up idea → three puzzles → one recipe or live game → debrief), Tal/Morphy/Anderssen guess-the-move replays with reasons, and more recipes including Black-side ones.
+
+## P3 — Today's hunt, Great hunts, Black-side recipes (2026-11-07)
+
+**Built**
+- **Today's hunt** (`src/game/daily.ts`): the 15-minute session. Warm-up card (the current rung's idea, why and principle) → **Hunt** (three why-first puzzles on the rung, title shows "puzzle 2 of 3") → **Plan** (the rung's least-played recipe) on even days or **Spar** (a game vs the rung's bot, with debrief) on odd days → **Wrap** (minutes, puzzles, first tries, streak, what tomorrow unlocks). Each step is recorded in `progress.today`, so closing the app mid-hunt resumes at the right step. Home shows *Today's hunt · 15 min*, *Continue today's hunt*, or *Today's hunt ✓*.
+- **Great hunts** (`content/replays.json`, `src/game/replay.ts`): guess-the-move through five classics, all verified legal: Morphy at the opera (1858), the Immortal (1851), the Evergreen (1852), Tal–Tringov (1964, the poisoned pawn) and Tal–Smyslov (1959, the bishop left hanging). The opening auto-plays with notes; at 8–10 key hero moves the player must find the move (hint → piece → reveal); every move carries its why and its principle. Finale card and saved tallies (found first time / asked).
+- **Black-side recipes**: `scripts/mirror-recipes.mjs` mirrors a recipe's position, moves and text (squares flipped, colours swapped) so the same plan is learned from both sides. Generated: the Greek gift as Black (…Bxh2+), the battering ram as Black, the f-pawn lever as Black. The recipe test proves the mirrored lines are legal and their baits still pay off.
+- Session hooks (`targetSolves`/`onComplete` on puzzles, `onGameOver` on play, `onFinished` on recipes and replays) so the daily controller can chain modes without the sessions knowing about it.
+
+**Decisions**
+- Recipes and replays that start from a FEN use "player plies alternate from whoever is to move in the start position" instead of assuming White moves at ply 0; the test and the session share the rule.
+- Headless drivers fire `humanMove` without awaiting it: its promise runs the whole auto-play chain to the next question, and awaiting that inside `page.evaluate` made the replay check flaky.
+- Plan/spar alternation is by the count of days played rather than the calendar, so a missed day never skips the plan step.
+
+**Gate evidence**
+- typecheck clean · 35 unit tests · boot, puzzle, recipe (incl. Black side), audit, **replay ×5**, **daily** (warm-up → three puzzles → spar started → resume after reload) all OK.
+
+**Next (P4)**: voice coach (Web Speech API, graceful fallback), storm and lightning over a king under heavy pressure, sacrifice slow-motion, mate replay camera, a clarity pass on the pieces at small sizes; then P5 installers.

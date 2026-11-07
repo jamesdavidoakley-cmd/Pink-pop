@@ -7,12 +7,13 @@ describe('attack recipes', () => {
   for (const r of RECIPES) {
     it(`${r.id}: legal line, player moves annotated, baits pay off`, () => {
       const c = new Chess(r.fen);
+      const startTurn = r.fen ? r.fen.split(' ')[1] : 'w';
       const scores: number[] = [];
       for (let i = 0; i < r.moves.length; i++) {
         const mv = c.move(r.moves[i]!);
         expect(mv, `${r.id} ply ${i} ${r.moves[i]}`).toBeTruthy();
         scores.push(analyseAttack(c, r.side).score);
-        const playerPly = (r.side === 'w' ? 0 : 1) === i % 2;
+        const playerPly = (i % 2 === 0) === (startTurn === r.side);
         if (i >= r.start && playerPly) {
           expect(r.steps[String(i)], `${r.id}: step ${i} (${r.moves[i]}) needs a prompt and why`).toBeTruthy();
         }
@@ -32,7 +33,7 @@ describe('attack recipes', () => {
       // The whole plan raises attack pressure from start to finish.
       expect(scores[scores.length - 1]!).toBeGreaterThan(scores[r.start - 1] ?? 0);
       // Player is to move at `start`.
-      expect((r.side === 'w' ? 0 : 1) === r.start % 2).toBe(true);
+      expect((r.start % 2 === 0) === (startTurn === r.side)).toBe(true);
     });
   }
 });

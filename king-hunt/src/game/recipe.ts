@@ -78,8 +78,10 @@ export class RecipeSession {
     this.hud.hideCard();
   }
 
+  /** Player plies alternate from whoever is to move in the recipe's start position. */
   private isPlayerPly(ply: number) {
-    return (this.recipe.side === 'w' ? 0 : 1) === ply % 2;
+    const startTurn = (this.recipe.fen ?? 'w').split(' ')[1] ?? 'w';
+    return (ply % 2 === 0) === (startTurn === this.recipe.side);
   }
 
   private expectedUci(): string {

@@ -1,12 +1,15 @@
 import { LADDER, type Rung } from '../content/ladder';
 import { RECIPES, type Recipe } from '../content/recipes';
-import { isUnlocked, recipeProgress, rungProgress, streak, type Progress } from '../game/progress';
+import { REPLAYS, type Replay } from '../content/replays';
+import { isUnlocked, recipeProgress, replayProgress, rungProgress, streak, type Progress } from '../game/progress';
 
 /** Full-screen DOM menus that sit over the (still rendering) board. */
 export class Screens {
   onPlay: (() => void) | null = null;
   onRung: ((rung: Rung, index: number) => void) | null = null;
   onRecipe: ((recipe: Recipe) => void) | null = null;
+  onReplay: ((replay: Replay) => void) | null = null;
+  onDaily: (() => void) | null = null;
 
   constructor(private root: HTMLElement) {}
 
@@ -15,16 +18,19 @@ export class Screens {
     this.root.innerHTML = '';
   }
 
-  home(progress: Progress) {
+  home(progress: Progress, daily: { dailyDone: boolean; dailyStarted: boolean } = { dailyDone: false, dailyStarted: false }) {
     const days = streak(progress);
+    const dailyLabel = daily.dailyDone ? "Today's hunt ✓ (play again)" : daily.dailyStarted ? "Continue today's hunt" : "Today's hunt · 15 min";
     this.root.classList.remove('hidden');
     this.root.innerHTML = `
       <div class="screen home">
         <div class="logo">King Hunt</div>
         <div class="tagline">Learn to attack like Tal.</div>
         <div class="menu">
+          <button class="btn big hot" data-act="daily">${dailyLabel}</button>
           <button class="btn big" data-act="ladder">Attack ladder</button>
           <button class="btn big" data-act="recipes">Attack recipes</button>
+          <button class="btn big" data-act="replays">Great hunts</button>
           <button class="btn big ghost" data-act="play">Play a game</button>
         </div>
         <div class="streak">${days > 0 ? `🔥 ${days}-day streak` : 'Hunt every day to start a streak'}</div>
@@ -32,6 +38,35 @@ export class Screens {
     this.root.querySelector('[data-act="play"]')!.addEventListener('click', () => this.onPlay?.());
     this.root.querySelector('[data-act="ladder"]')!.addEventListener('click', () => this.ladder(progress));
     this.root.querySelector('[data-act="recipes"]')!.addEventListener('click', () => this.recipes(progress));
+    this.root.querySelector('[data-act="replays"]')!.addEventListener('click', () => this.replays(progress));
+    this.root.querySelector('[data-act="daily"]')!.addEventListener('click', () => this.onDaily?.());
+  }
+
+  replays(progress: Progress) {
+    this.root.classList.remove('hidden');
+    const items = REPLAYS.map((r) => {
+      const p = replayProgress(progress, r.id);
+      return `
+        <button class="rung" data-id="${r.id}">
+          <div class="rung-num">${p.done > 0 ? '✓' : '→'}</div>
+          <div class="rung-body">
+            <div class="rung-title">${r.title}</div>
+            <div class="rung-idea">${r.hero} vs ${r.opponent}, ${r.where} ${r.year}</div>
+            <div class="rung-idea">${p.done > 0 ? `watched ${p.done}× · found ${p.guessedFirst}/${p.asked} key moves first time` : `${Object.keys(r.asks).length} moves to find`}</div>
+          </div>
+          <div class="rung-principle">${r.hero.split(' ').pop()}</div>
+        </button>`;
+    }).join('');
+    this.root.innerHTML = `
+      <div class="screen ladder">
+        <div class="screen-head"><button class="btn ghost" data-act="home">‹ Home</button><h1>Great hunts</h1></div>
+        <p class="screen-sub">Play the famous attacks move by move. At the big moments, you find the move, and every move tells you why.</p>
+        <div class="rungs">${items}</div>
+      </div>`;
+    this.root.querySelector('[data-act="home"]')!.addEventListener('click', () => this.home(progress));
+    this.root.querySelectorAll<HTMLButtonElement>('.rung').forEach((el) =>
+      el.addEventListener('click', () => this.onReplay?.(REPLAYS.find((r) => r.id === el.dataset.id)!)),
+    );
   }
 
   recipes(progress: Progress) {

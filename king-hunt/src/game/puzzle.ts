@@ -63,6 +63,11 @@ export class PuzzleSession {
   private introShown = false;
   private busy = false;
   solvedThisSession = 0;
+  firstTriesThisSession = 0;
+  /** Stop after this many solves and call onComplete (daily hunt). 0 = endless. */
+  targetSolves = 0;
+  skipIntro = false;
+  onComplete: ((solved: number, firstTries: number) => void) | null = null;
 
   constructor(
     private view: BoardView,
@@ -75,7 +80,7 @@ export class PuzzleSession {
 
   async start() {
     this.hud.setActions([{ label: 'Skip', onClick: () => void this.next() }]);
-    if (!this.introShown) {
+    if (!this.introShown && !this.skipIntro) {
       this.introShown = true;
       await this.hud.showCard({ kicker: `Rung ${LADDER.rungs.indexOf(this.rung) + 1} · ${this.rung.principle}`, title: this.rung.title, body: `${this.rung.idea}<br><br><b>Why it works:</b> ${this.rung.why}`, button: 'Start hunting' });
     }
@@ -115,7 +120,7 @@ export class PuzzleSession {
     this.view.setPosition(this.rules);
     this.view.scene.setOrientation(this.side);
     this.view.clearHighlights();
-    this.hud.setTitle(`<b>${this.rung.title}</b> · ${rungProgress(this.progress, this.rung.id).solved}/${LADDER.unlockAfter} solved`);
+    this.hud.setTitle(this.targetSolves > 0 ? `<b>${this.rung.title}</b> · puzzle ${this.solvedThisSession + 1} of ${this.targetSolves}` : `<b>${this.rung.title}</b> · ${rungProgress(this.progress, this.rung.id).solved}/${LADDER.unlockAfter} solved`);
     this.hud.setStatus(`You are ${this.side === 'w' ? 'White' : 'Black'}. Puzzle ${puzzle.id} · ${puzzle.rating}`);
     this.hud.say(['Watch what they do…']);
     this.hud.maskMeter(true);
@@ -216,6 +221,7 @@ export class PuzzleSession {
     this.mover.enabled = false;
     this.solvedThisSession++;
     const firstTry = this.runner.firstTry();
+    if (firstTry) this.firstTriesThisSession++;
     this.progress = recordSolve(this.progress, this.rung.id, { firstTry, revealed: this.runner.revealed });
     this.onProgress(this.progress);
     this.hud.say([firstTry ? 'First try. That is how Tal does it.' : 'Solved. Next time you will see it faster.']);
@@ -227,14 +233,20 @@ export class PuzzleSession {
     const right = options[pick]?.correct === true;
     this.progress = recordWhy(this.progress, right);
     this.onProgress(this.progress);
+    const last = this.targetSolves > 0 && this.solvedThisSession >= this.targetSolves;
     await this.hud.showCard({
       kicker: right ? 'Exactly' : 'Close',
       title: this.rung.principle,
       body: PRINCIPLE_WHY[this.rung.principle],
-      button: 'Next puzzle',
+      button: last ? 'Done' : 'Next puzzle',
     });
     this.busy = false;
-    if (this.alive) await this.next();
+    if (!this.alive) return;
+    if (last) {
+      this.onComplete?.(this.solvedThisSession, this.firstTriesThisSession);
+      return;
+    }
+    await this.next();
   }
 
   state() {

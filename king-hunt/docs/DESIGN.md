@@ -97,11 +97,14 @@ Puzzles teach moments. Recipes teach **plans**: get castle-ready, offer the bait
 
 Stockfish lite (single-threaded WASM) is the muscle; `content/bots.json` supplies strength (Skill Level, depth, slack) and a **flaw profile** (greedy, blind, late castler, thin defence, roof pusher, no luft, huddle, queen trader) that re-scores the engine's candidate moves toward the rung's teachable weakness. Nothing outside the slack is ever chosen: bots are beatable, not suicidal.
 
-## 8 · Daily session (15 minutes)
+## 8 · Today's hunt (15 minutes)
 
-1. **Warm-up** (3 min): one taught idea or a replay of a famous attack (Morphy, Anderssen, Tal), guess-the-move style.
-2. **Hunt** (4 min): three puzzles from the current rung, attack heat map on.
-3. **Spar** (8 min): one game vs the rung's bot, with a 10-minute clock on the bot only. Attack meter live; a one-line debrief at the end: the best attacking moment, one missed chance.
+1. **Warm-up** (1 min): the current rung's idea, why it works, and its principle.
+2. **Hunt** (5 min): three why-first puzzles from the rung.
+3. **Plan or Spar** (8 min): on alternate days, a recipe for the rung (with its ledger questions) or one game against the rung's bot, with the sacrifice auditor live and a debrief at the end.
+4. **Wrap** (1 min): puzzles, first tries, streak, and what tomorrow unlocks.
+
+Every step is saved, so a hunt interrupted at step two resumes at step three. **Great hunts** (guess-the-move through Morphy, Anderssen and Tal, with the reason at every move) sit beside the daily loop for when he wants more.
 
 Progress, streaks and rung unlocks save locally (`localStorage`, later file-backed in Electron).
 
@@ -116,6 +119,6 @@ TypeScript strict · Vite · Three.js + `postprocessing` · chess.js · Stockfis
 | **P0 Skeleton** ✅ | 3D board, legal play vs a soft bot, Attack Lens + heat/fire/ring visuals, attack meter HUD, puzzle packs built from Lichess | typecheck · tests · `boot-check.mjs` zero console errors + bot replies |
 | **P1 Puzzles** ✅ | Why-first puzzle mode on the ladder's packs (diagnose → move → name the principle), hints that show mechanism, rung progression, save | puzzle-check script solves/fails a pack headless |
 | **P2 Recipes, ledger, bots** ✅ | Attack recipes (Plan Lab) with the payoff ledger before every sacrifice; x-ray roads in the lens; the sacrifice auditor (paid / gamble / giveaway) and end-of-game debrief; 12 bots with flaw profiles; Try it live | recipe test (legal, annotated, baits pay off) · recipe-check ×5 · audit-check |
-| **P3 Lessons & replays** | Why-stories per rung, Tal/Morphy/Anderssen guess-the-move replays with reasons, why-first debriefs, daily session flow | session-check completes a full 15-minute loop |
+| **P3 Today's hunt & Great hunts** ✅ | The 15-minute daily session with resume; guess-the-move replays of five classic attacks with the why at every move; Black-side recipes by mirroring | daily-check (warm-up → 3 puzzles → spar/plan → resume) · replay-check ×5 |
 | **P4 Voice & polish** | Coach voice (Web Speech API), storm/lightning, sacrifice slow-mo, mate replay camera | voice degrades gracefully; 60 fps on mid laptop |
 | **P5 Download** | Electron shell, installers from CI, file-backed saves | installers build green for win/mac/linux |

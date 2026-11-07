@@ -13,10 +13,27 @@ export interface RecipeProgress {
   countAsked: number;
 }
 
+export interface ReplayProgress {
+  done: number;
+  guessedFirst: number;
+  asked: number;
+}
+
+/** Today's 15-minute hunt: which steps are done, so it can be resumed. */
+export interface Today {
+  date: string;
+  steps: string[]; // 'warmup' | 'hunt' | 'plan' | 'spar' | 'wrap'
+  puzzles: number;
+  firstTry: number;
+  startedAt: number; // epoch ms
+}
+
 export interface Progress {
   version: 1;
   rungs: Record<string, RungProgress>;
   recipes: Record<string, RecipeProgress>;
+  replays: Record<string, ReplayProgress>;
+  today: Today | null;
   /** ISO dates (YYYY-MM-DD) of days with at least one solve */
   days: string[];
   /** diagnosis / principle questions: right vs asked */
@@ -24,7 +41,7 @@ export interface Progress {
   whyAsked: number;
 }
 
-export const EMPTY_PROGRESS: Progress = { version: 1, rungs: {}, recipes: {}, days: [], whyRight: 0, whyAsked: 0 };
+export const EMPTY_PROGRESS: Progress = { version: 1, rungs: {}, recipes: {}, replays: {}, today: null, days: [], whyRight: 0, whyAsked: 0 };
 
 export function rungProgress(p: Progress, id: string): RungProgress {
   return p.rungs[id] ?? { solved: 0, firstTry: 0, revealed: 0, attempts: 0 };
@@ -61,6 +78,26 @@ export function recordRecipe(p: Progress, id: string, countRight: number, countA
   const r = recipeProgress(p, id);
   const days = p.days.includes(today) ? p.days : [...p.days, today];
   return { ...p, days, recipes: { ...p.recipes, [id]: { done: r.done + 1, countRight: r.countRight + countRight, countAsked: r.countAsked + countAsked } } };
+}
+
+export function replayProgress(p: Progress, id: string): ReplayProgress {
+  return p.replays[id] ?? { done: 0, guessedFirst: 0, asked: 0 };
+}
+
+export function recordReplay(p: Progress, id: string, guessedFirst: number, asked: number, today = isoToday()): Progress {
+  const r = replayProgress(p, id);
+  const days = p.days.includes(today) ? p.days : [...p.days, today];
+  return { ...p, days, replays: { ...p.replays, [id]: { done: r.done + 1, guessedFirst: r.guessedFirst + guessedFirst, asked: r.asked + asked } } };
+}
+
+export function todayFor(p: Progress, date = isoToday()): Today {
+  return p.today && p.today.date === date ? p.today : { date, steps: [], puzzles: 0, firstTry: 0, startedAt: Date.now() };
+}
+
+export function recordTodayStep(p: Progress, step: string, extra: Partial<Pick<Today, 'puzzles' | 'firstTry'>> = {}, date = isoToday()): Progress {
+  const t = todayFor(p, date);
+  const steps = t.steps.includes(step) ? t.steps : [...t.steps, step];
+  return { ...p, today: { ...t, steps, puzzles: t.puzzles + (extra.puzzles ?? 0), firstTry: t.firstTry + (extra.firstTry ?? 0) } };
 }
 
 export function recordWhy(p: Progress, right: boolean): Progress {

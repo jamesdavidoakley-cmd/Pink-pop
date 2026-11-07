@@ -454,6 +454,230 @@
         }
       },
       "payoff": "You gave one pawn. You got the h-file, a queen on h6 next to the king, and their best defender gone."
+    },
+    {
+      "id": "f-file-lever-black",
+      "title": "The f-pawn lever, as Black",
+      "rung": "castle-then-charge",
+      "principle": "Open lines",
+      "side": "b",
+      "goal": "Castle, chase the pin, then offer the f-pawn so the f-file opens for your rook.",
+      "howWeGotHere": "Mirror image: the same plan with the colours swapped, so you learn to see it from both sides. Both sides developed and castled. Your rook sits on f8, right behind your f-pawn.",
+      "fen": "r1bq1rk1/ppp1nppp/2np4/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQ1RK1 b - - 4 7",
+      "moves": [
+        "Na5",
+        "Bb3",
+        "Nxb3",
+        "axb3",
+        "f5",
+        "exf5",
+        "Nxf5",
+        "Bg5",
+        "Qe8",
+        "Nd5",
+        "Nd4",
+        "Nxd4",
+        "Bxd4",
+        "c3",
+        "Bb6",
+        "Qd2",
+        "Qg6"
+      ],
+      "start": 0,
+      "steps": {
+        "0": {
+          "prompt": "You want to push f5, but you can't yet. Which move fixes that?",
+          "why": "The bishop on c4 pins your f-pawn to your king. A pinned pawn cannot move. Chase the bishop first: that is the preparation."
+        },
+        "2": {
+          "prompt": "Finish the job on the bishop.",
+          "why": "Trade off the piece that was guarding the lever. Your rook still waits on f8."
+        },
+        "4": {
+          "prompt": "Now open the door. Offer the pawn.",
+          "why": "If the e-pawn takes, the f-file half-opens. One knight still stands in the road on f3, so the payoff comes a few moves later. Calculate it before you give the pawn.",
+          "bait": {
+            "give": 1,
+            "get": [
+              "The f-file half-opens: once the f3 knight is gone, your rook on f8 sees f2",
+              "The knight recaptures toward the king with tempo"
+            ],
+            "decoys": [
+              "A pawn is worth nothing anyway",
+              "It trades off the queens",
+              "It defends your king"
+            ],
+            "payoffPly": 12,
+            "count": "Count it: you give 1 pawn now. In four moves the rook on f8 looks straight at f2. That is the payoff, and it is worth more than a pawn."
+          }
+        },
+        "6": {
+          "prompt": "Take back toward the king.",
+          "why": "Recapture with the knight, not away from the fight. The rook now x-rays f2 through your own knight, which will move with a threat."
+        },
+        "8": {
+          "prompt": "Every attack needs the queen. Bring her toward the king.",
+          "why": "Qe8 heads for g6 or h5. One move, and she is on the king's side of the board."
+        },
+        "10": {
+          "prompt": "Jump into the centre with a threat.",
+          "why": "The knight on d4 hits f3, the knight that guards the king. Threats cost them moves."
+        },
+        "12": {
+          "prompt": "Take back and keep the road open.",
+          "why": "The bishop on d4 points down the a7-g1 road to f2 and g1."
+        },
+        "14": {
+          "prompt": "Keep the bishop on the road.",
+          "why": "Step back along the same diagonal. The aim at f2 does not change."
+        },
+        "16": {
+          "prompt": "Queen to the king's side.",
+          "why": "Qg6 eyes g2. Count it: queen, knight, bishop and rook all look at the white king. Four attackers. The pawn you gave bought all of this."
+        }
+      },
+      "payoff": "You gave one pawn. You got: the f-file for your rook, the knight on the king's side, and four pieces aimed at the white king."
+    },
+    {
+      "id": "greek-gift-black",
+      "title": "The Greek gift, as Black",
+      "rung": "rip-the-roof",
+      "principle": "Material is fuel",
+      "side": "b",
+      "goal": "Give the bishop on h2 to drag the king out, then arrive with check and the queen. But only when the conditions are right.",
+      "howWeGotHere": "Mirror image: the same plan with the colours swapped, so you learn to see it from both sides. White castled and tucked the knight on d2. Check the Greek gift conditions before you give anything: your bishop aims at h2; your knight can reach g4 and <b>nothing can take it there</b> (the white queen is on c2, not e2); your queen can reach h4; and your e4 pawn stops a knight coming to f3 to defend. All four are true. Now it is calculation, not a gamble.",
+      "fen": "r1bq1rk1/ppp2ppp/2nb1n2/3p4/2PPp3/1PN1P3/PBQN1PPP/R4RK1 b - - 0 11",
+      "moves": [
+        "Bxh2+",
+        "Kxh2",
+        "Ng4+",
+        "Kg1",
+        "Qh4",
+        "Rfe1",
+        "Qxf2+",
+        "Kh1",
+        "Qh4+",
+        "Kg1",
+        "Qh2+",
+        "Kf1",
+        "Qh1+",
+        "Ke2",
+        "Qxg2+",
+        "Kd1"
+      ],
+      "start": 0,
+      "steps": {
+        "0": {
+          "prompt": "All four conditions are true. Which move starts it?",
+          "why": "The bishop goes first because it is the cheapest piece that can drag the king out. If the king refuses, you have taken the roof for free. If it runs forward to g3 later, the hunt is harder: that one is for another day.",
+          "bait": {
+            "give": 3,
+            "get": [
+              "The king is dragged onto h2 where the knight checks it with tempo",
+              "The knight on g4 cannot be captured, so the queen arrives on h4 with a mate threat"
+            ],
+            "decoys": [
+              "Bishops are not very useful",
+              "It trades bishop for bishop",
+              "It stops them castling"
+            ],
+            "payoffPly": 6,
+            "count": "Count it: you give 3 now. In three moves the queen stands on h4 with mate threatened, and no white piece can take the knight that makes it work. Worth more than a bishop."
+          }
+        },
+        "2": {
+          "prompt": "The king is on h2. Check it with tempo.",
+          "why": "Ng4+ attacks the king and opens the d8-h4 road for the queen. A check that also opens a line is the best kind of tempo. And nothing can take the knight: that was condition two."
+        },
+        "4": {
+          "prompt": "Bring the queen with a mate threat.",
+          "why": "Qh4 threatens Qh2 mate. Count: queen and knight on h2 and the only defender is the king. It must make room with the rook."
+        },
+        "6": {
+          "prompt": "They made room on f1. Take the roof with check.",
+          "why": "Qxf2+ wins a second pawn with tempo and keeps the king in the corner. Two of the three roof pawns are gone."
+        },
+        "8": {
+          "prompt": "Check again. Keep the tempo.",
+          "why": "Every check is a move they do not get to use. Qh4+ drives the king back."
+        },
+        "10": {
+          "prompt": "Check again.",
+          "why": "Qh2+ forces the king onto f1. It is walking away from its home."
+        },
+        "12": {
+          "prompt": "Drive it into the middle.",
+          "why": "Qh1+ pushes the king to e2, the middle of the board, where every piece of yours can reach it."
+        },
+        "14": {
+          "prompt": "Take the last roof pawn with check.",
+          "why": "Qxg2+ removes the third pawn. The king runs to d1. Now count: you gave a bishop (3) and took three pawns (3), so material is even, and their king has no home while yours is safe. The engine calls this winning by more than a rook. That is the payoff."
+        }
+      },
+      "payoff": "You gave a bishop. You took three pawns back, dragged the king from g1 to d1 with six checks in a row, and kept the initiative the whole way. Even on material, winning on the board: that is calculation, not luck."
+    },
+    {
+      "id": "h-pawn-ram-black",
+      "title": "The battering ram, as Black",
+      "rung": "rip-the-roof",
+      "principle": "Open lines",
+      "side": "b",
+      "goal": "You castled queenside so your rook sits on h8. Ram the h-pawn forward and offer it to open the h-file.",
+      "howWeGotHere": "Mirror image: the same plan with the colours swapped, so you learn to see it from both sides. A Sicilian Dragon. You castled on the other side on purpose: your pawns are free to charge and your rook on h8 is already castle-ready.",
+      "fen": "2kr3r/pppq2pp/1bn1bp2/3np3/4N3/3P1NP1/PP1BPPBP/2RQ1RK1 b - - 9 12",
+      "moves": [
+        "h5",
+        "Nc5",
+        "Bxc5",
+        "Rxc5",
+        "h4",
+        "Nxh4",
+        "g5",
+        "Nf3",
+        "Bh3",
+        "Bxh3",
+        "Qxh3"
+      ],
+      "start": 0,
+      "steps": {
+        "0": {
+          "prompt": "Your rook is on h8. Start the ram.",
+          "why": "h5 begins the charge. The rook behind it is the whole point: when the file opens, it is already there."
+        },
+        "2": {
+          "prompt": "They attack your bishop. Trade it for the knight.",
+          "why": "Bxc5 removes a piece that could defend. You keep the pieces that attack."
+        },
+        "4": {
+          "prompt": "Offer the h-pawn.",
+          "why": "h4. If gxh4 or Nxh4, the h-file opens for your rook and queen. If they ignore it, hxg3 opens it anyway.",
+          "bait": {
+            "give": 1,
+            "get": [
+              "The h-file opens for the rook on h8",
+              "A road for the queen to h3, next to the king"
+            ],
+            "decoys": [
+              "Pawns on the edge are useless",
+              "It wins their knight",
+              "It blocks their bishop"
+            ]
+          }
+        },
+        "6": {
+          "prompt": "Kick the knight with tempo.",
+          "why": "g5 attacks the knight. It must move, and that costs them a move."
+        },
+        "8": {
+          "prompt": "Remove the keystone of the roof.",
+          "why": "Bh3 offers to trade the bishop on g2, the piece that holds the whole castle together."
+        },
+        "10": {
+          "prompt": "Take back with the queen.",
+          "why": "Qxh3 puts the queen next to the king. Count: queen and rook on the h-file, two attackers on h2, and only the knight defends. One more kick and it falls."
+        }
+      },
+      "payoff": "You gave one pawn. You got the h-file, a queen on h3 next to the king, and their best defender gone."
     }
   ]
 }
