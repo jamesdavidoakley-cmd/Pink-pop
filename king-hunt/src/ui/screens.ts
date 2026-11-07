@@ -2,6 +2,7 @@ import { LADDER, type Rung } from '../content/ladder';
 import { RECIPES, type Recipe } from '../content/recipes';
 import { REPLAYS, type Replay } from '../content/replays';
 import { isUnlocked, recipeProgress, replayProgress, rungProgress, streak, type Progress } from '../game/progress';
+import { QUESTION_MODES, QUESTION_MODE_LABEL } from '../game/questions';
 
 /** Full-screen DOM menus that sit over the (still rendering) board. */
 export class Screens {
@@ -10,6 +11,7 @@ export class Screens {
   onRecipe: ((recipe: Recipe) => void) | null = null;
   onReplay: ((replay: Replay) => void) | null = null;
   onDaily: (() => void) | null = null;
+  onQuestions: ((mode: (typeof QUESTION_MODES)[number]) => void) | null = null;
 
   constructor(private root: HTMLElement) {}
 
@@ -34,7 +36,12 @@ export class Screens {
           <button class="btn big ghost" data-act="play">Play a game</button>
         </div>
         <div class="streak">${days > 0 ? `🔥 ${days}-day streak` : 'Hunt every day to start a streak'}</div>
+        <button class="mode-toggle" data-act="questions" title="Quick asks the why-questions only when they teach something; every puzzle asks always; off never asks but still explains.">${QUESTION_MODE_LABEL[progress.settings.questions]}</button>
       </div>`;
+    this.root.querySelector('[data-act="questions"]')!.addEventListener('click', () => {
+      const i = QUESTION_MODES.indexOf(progress.settings.questions);
+      this.onQuestions?.(QUESTION_MODES[(i + 1) % QUESTION_MODES.length]!);
+    });
     this.root.querySelector('[data-act="play"]')!.addEventListener('click', () => this.onPlay?.());
     this.root.querySelector('[data-act="ladder"]')!.addEventListener('click', () => this.ladder(progress));
     this.root.querySelector('[data-act="recipes"]')!.addEventListener('click', () => this.recipes(progress));

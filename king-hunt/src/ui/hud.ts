@@ -92,29 +92,42 @@ export class Hud {
     }
   }
 
-  /** A full-width card with a title, body and one button. Resolves when dismissed. */
-  showCard(opts: { kicker?: string; title: string; body: string; button: string }): Promise<void> {
+  private cardTimer: number | null = null;
+
+  /**
+   * A full-width card with a title, body and one button. Resolves when dismissed.
+   * With `autoMs` it also dismisses itself (a thin bar shows the time left).
+   */
+  showCard(opts: { kicker?: string; title: string; body: string; button: string; autoMs?: number }): Promise<void> {
     return new Promise((resolve) => {
+      if (this.cardTimer) window.clearTimeout(this.cardTimer);
       this.card.innerHTML = `
         ${opts.kicker ? `<div class="kicker">${opts.kicker}</div>` : ''}
         <h2>${opts.title}</h2>
         <p>${opts.body}</p>
-        <button class="btn">${opts.button}</button>`;
+        <button class="btn">${opts.button}</button>
+        ${opts.autoMs ? `<div class="auto"><div class="auto-fill" style="animation-duration:${opts.autoMs}ms"></div></div>` : ''}`;
       this.card.classList.remove('hidden');
-      this.card.querySelector('button')!.addEventListener('click', () => {
+      const done = () => {
+        if (this.cardTimer) window.clearTimeout(this.cardTimer);
+        this.cardTimer = null;
         this.card.classList.add('hidden');
         resolve();
-      });
+      };
+      this.card.querySelector('button')!.addEventListener('click', done);
+      if (opts.autoMs) this.cardTimer = window.setTimeout(done, opts.autoMs);
     });
   }
 
-  /** A multiple-choice why-question. Resolves with the chosen option's index. */
-  ask(prompt: string, options: QuestionOption[], kicker = 'Why?'): Promise<number> {
+  /** A multiple-choice why-question. Resolves with the chosen option's index, or -1 if skipped. */
+  ask(prompt: string, options: QuestionOption[], kicker = 'Why?', skipLabel: string | null = 'Skip'): Promise<number> {
     return new Promise((resolve) => {
+      if (this.cardTimer) window.clearTimeout(this.cardTimer);
       this.card.innerHTML = `
         <div class="kicker">${kicker}</div>
         <h2>${prompt}</h2>
-        <div class="options"></div>`;
+        <div class="options"></div>
+        ${skipLabel ? `<button class="skip">${skipLabel}</button>` : ''}`;
       const box = this.card.querySelector('.options')!;
       options.forEach((o, i) => {
         const el = document.createElement('button');
@@ -125,6 +138,10 @@ export class Hud {
           resolve(i);
         });
         box.appendChild(el);
+      });
+      this.card.querySelector('.skip')?.addEventListener('click', () => {
+        this.card.classList.add('hidden');
+        resolve(-1);
       });
       this.card.classList.remove('hidden');
     });

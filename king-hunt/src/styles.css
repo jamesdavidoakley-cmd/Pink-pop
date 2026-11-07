@@ -76,3 +76,10 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); 
 .hud-top .back { padding: 8px 14px; }
 .screen-sub { color: var(--muted); max-width: 760px; margin: -6px 0 4px; text-align: center; }
 .btn.hot { background: var(--hot); color: #fff; box-shadow: 0 8px 24px rgba(255,106,26,.35); }
+.card .skip { pointer-events: auto; margin-top: 12px; border: 0; background: none; color: var(--muted); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.card .skip:hover { color: var(--ink); }
+.auto { height: 3px; margin: 14px -24px -22px; border-radius: 0 0 22px 22px; overflow: hidden; background: rgba(255,255,255,.08); }
+.auto-fill { height: 100%; width: 100%; background: var(--warm); transform-origin: left; animation: drain linear forwards; }
+@keyframes drain { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@media (prefers-reduced-motion: reduce) { .auto-fill { animation: none; } .coach.pop { animation: none; } }
+.mode-toggle { pointer-events: auto; margin-top: 6px; border: 0; background: none; color: var(--muted); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }

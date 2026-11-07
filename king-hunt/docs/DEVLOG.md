@@ -87,3 +87,12 @@
 - typecheck clean · 35 unit tests · boot, puzzle, recipe (incl. Black side), audit, **replay ×5**, **daily** (warm-up → three puzzles → spar started → resume after reload) all OK.
 
 **Next (P4)**: voice coach (Web Speech API, graceful fallback), storm and lightning over a king under heavy pressure, sacrifice slow-motion, mate replay camera, a clarity pass on the pieces at small sizes; then P5 installers.
+
+## P3.1 — Quicker questions (2026-11-07)
+
+James, after playing the hosted build: the why-questions drag. Now **paced and skippable** (`src/game/questions.ts`):
+- **Quick** (default): "what is the king's problem?" is asked on the first puzzle of a sitting, then every third puzzle, and again after any miss. "Why did that work?" is asked until he has named the principle right twice on the rung, and whenever he needed hints. Otherwise the why goes past as one coach line and play continues.
+- **Every puzzle** and **Off** are available from a toggle on the home screen (Off still explains, never asks).
+- Every question has a Skip. Follow-up cards auto-advance with a thin timer bar (sized to the text's reading time) and can still be tapped through. The recipe ledger keeps its question (it is the calculation step) but offers "Just play it", and the ledger then shows briefly instead of blocking.
+- Saves record principle answers per rung and the last five why results; older saves load with defaults.
+Tests 40/40; puzzle, recipe, daily and boot checks OK; republished.

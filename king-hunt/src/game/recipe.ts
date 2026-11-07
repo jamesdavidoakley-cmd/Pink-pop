@@ -8,6 +8,7 @@ import { PALETTE } from '../board3d/palette';
 import { PRINCIPLE_WHY } from '../content/ladder';
 import type { Recipe } from '../content/recipes';
 import { recordRecipe, type Progress } from './progress';
+import { readMs } from './questions';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -143,17 +144,25 @@ export class RecipeSession {
       const b = step.bait;
       const correct = b.get[Math.floor(Math.random() * b.get.length)]!;
       const options = shuffle([{ text: correct, correct: true }, ...shuffle([...b.decoys]).slice(0, 2).map((t) => ({ text: t, correct: false }))]);
-      this.countAsked++;
-      const pick = await this.hud.ask(`You want to give ${b.give === 1 ? 'a pawn' : b.give >= 9 ? 'your queen' : b.give >= 5 ? 'a rook' : 'a piece'} (${b.give}). What does it buy?`, options, 'Count it');
+      const mode = this.progress.settings.questions;
+      const ledger = `${b.get.map((g) => `• ${g}`).join('<br>')}${b.count ? `<br><br>${b.count}` : ''}`;
+      const pick = mode === 'off' ? -1 : await this.hud.ask(`You want to give ${b.give === 1 ? 'a pawn' : b.give >= 9 ? 'your queen' : b.give >= 5 ? 'a rook' : 'a piece'} (${b.give}). What does it buy?`, options, 'Count it', 'Just play it');
       if (!this.alive) return;
-      const right = options[pick]?.correct === true;
-      if (right) this.countRight++;
-      await this.hud.showCard({
-        kicker: right ? 'Right. The ledger' : 'Not that. The ledger',
-        title: `Give ${b.give}. Get:`,
-        body: `${b.get.map((g) => `• ${g}`).join('<br>')}${b.count ? `<br><br>${b.count}` : ''}`,
-        button: right ? 'Play it' : 'Play it anyway, and watch',
-      });
+      if (pick >= 0) {
+        this.countAsked++;
+        const right = options[pick]?.correct === true;
+        if (right) this.countRight++;
+        await this.hud.showCard({
+          kicker: right ? 'Right. The ledger' : 'Not that. The ledger',
+          title: `Give ${b.give}. Get:`,
+          body: ledger,
+          button: right ? 'Play it' : 'Play it anyway, and watch',
+          autoMs: mode === 'quick' && right ? readMs(ledger, mode) : undefined,
+        });
+      } else {
+        // Skipped: the ledger still goes past, briefly, so the calculation is seen.
+        await this.hud.showCard({ kicker: 'The ledger', title: `Give ${b.give}. Get:`, body: ledger, button: 'Play it', autoMs: readMs(ledger, 'quick') });
+      }
       if (!this.alive) return;
       this.baitScores.set(this.ply, analyseAttack(this.rules.raw(), this.recipe.side).score);
       this.busy = false;

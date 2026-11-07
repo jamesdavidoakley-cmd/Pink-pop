@@ -6,7 +6,8 @@ import type { HumanMover } from './mover';
 import type { Color, MoveInput, Square } from '../chess/types';
 import { PuzzleRunner } from './puzzle-runner';
 import { LADDER, LICHESS_TO_PACK, PRINCIPLES, PRINCIPLE_WHY, THEME_IDEA, loadPack, type Pack, type Puzzle, type Rung } from '../content/ladder';
-import { recordSolve, recordWhy, rungProgress, type Progress } from './progress';
+import { recordPrinciple, recordSolve, recordWhy, rungProgress, type Progress } from './progress';
+import { readMs, shouldAskPrinciple, shouldAskWhy } from './questions';
 import { PALETTE } from '../board3d/palette';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -133,22 +134,36 @@ export class PuzzleSession {
     await sleep(500);
     if (!this.alive) return;
 
-    // WHY first.
+    // WHY first: asked when it is informative (see questions.ts); otherwise the why is shown, not asked.
+    const mode = this.progress.settings.questions;
     const diag = diagnoseKing(this.rules.raw(), this.side);
     const q = buildWhyQuestion(this.rules, this.side, packName, puzzle, diag);
-    if (q.squares.length) this.view.highlight(q.squares, PALETTE.heatHot);
-    const choice = await this.hud.ask(q.prompt, q.options, q.kicker);
-    if (!this.alive) return;
-    const right = q.options[choice]?.correct === true;
-    this.hud.maskMeter(false);
-    this.progress = recordWhy(this.progress, right);
-    this.onProgress(this.progress);
-    if (right) {
-      this.hud.say(['Yes. ' + q.explanation]);
-    } else {
-      await this.hud.showCard({ kicker: 'Not quite', title: 'Here is the real problem', body: q.explanation, button: 'Got it' });
+    if (shouldAskWhy(mode, this.solvedThisSession, this.progress.whyRecent ?? [])) {
+      if (q.squares.length) this.view.highlight(q.squares, PALETTE.heatHot);
+      const choice = await this.hud.ask(q.prompt, q.options, q.kicker);
       if (!this.alive) return;
-      this.hud.say(['Now find the move that uses it.']);
+      this.hud.maskMeter(false);
+      if (choice >= 0) {
+        const right = q.options[choice]?.correct === true;
+        this.progress = recordWhy(this.progress, right);
+        this.onProgress(this.progress);
+        if (right) {
+          this.hud.say(['Yes. ' + q.explanation]);
+        } else if (mode === 'full') {
+          await this.hud.showCard({ kicker: 'Not quite', title: 'Here is the real problem', body: q.explanation, button: 'Got it' });
+          if (!this.alive) return;
+          this.hud.say(['Now find the move that uses it.']);
+        } else {
+          this.hud.say(['Not quite. ' + q.explanation]);
+          await sleep(readMs(q.explanation, mode));
+          if (!this.alive) return;
+        }
+      } else {
+        this.hud.say([q.explanation]);
+      }
+    } else {
+      this.hud.maskMeter(false);
+      this.hud.say([diag[0] ? diag[0].text : 'Your move. What is the biggest threat you can make?']);
     }
     this.view.clearHighlights();
     this.mover.rules = this.rules;
@@ -225,21 +240,33 @@ export class PuzzleSession {
     this.progress = recordSolve(this.progress, this.rung.id, { firstTry, revealed: this.runner.revealed });
     this.onProgress(this.progress);
     this.hud.say([firstTry ? 'First try. That is how Tal does it.' : 'Solved. Next time you will see it faster.']);
-    await sleep(900);
+    await sleep(700);
     if (!this.alive) return;
-    const options = shuffle(PRINCIPLES.map((p) => ({ text: p, correct: p === this.rung.principle })));
-    const pick = await this.hud.ask('Why did that work?', options, 'Name it');
-    if (!this.alive) return;
-    const right = options[pick]?.correct === true;
-    this.progress = recordWhy(this.progress, right);
-    this.onProgress(this.progress);
+    const mode = this.progress.settings.questions;
     const last = this.targetSolves > 0 && this.solvedThisSession >= this.targetSolves;
-    await this.hud.showCard({
-      kicker: right ? 'Exactly' : 'Close',
-      title: this.rung.principle,
-      body: PRINCIPLE_WHY[this.rung.principle],
-      button: last ? 'Done' : 'Next puzzle',
-    });
+    const principleLine = `${this.rung.principle}: ${PRINCIPLE_WHY[this.rung.principle]}`;
+    if (shouldAskPrinciple(mode, rungProgress(this.progress, this.rung.id).principleRight, firstTry)) {
+      const options = shuffle(PRINCIPLES.map((p) => ({ text: p, correct: p === this.rung.principle })));
+      const pick = await this.hud.ask('Why did that work?', options, 'Name it');
+      if (!this.alive) return;
+      if (pick >= 0) {
+        const right = options[pick]?.correct === true;
+        this.progress = recordPrinciple(this.progress, this.rung.id, right);
+        this.onProgress(this.progress);
+        if (mode === 'full') {
+          await this.hud.showCard({ kicker: right ? 'Exactly' : 'Close', title: this.rung.principle, body: PRINCIPLE_WHY[this.rung.principle], button: last ? 'Done' : 'Next puzzle' });
+        } else {
+          await this.hud.showCard({ kicker: right ? 'Exactly' : 'Close', title: this.rung.principle, body: PRINCIPLE_WHY[this.rung.principle], button: last ? 'Done' : 'Next puzzle', autoMs: readMs(principleLine, mode) });
+        }
+      } else {
+        this.hud.say([principleLine]);
+        await sleep(readMs(principleLine, mode));
+      }
+    } else {
+      // No question: the why still goes past as a line, then straight on.
+      this.hud.say([principleLine]);
+      await sleep(readMs(principleLine, mode));
+    }
     this.busy = false;
     if (!this.alive) return;
     if (last) {

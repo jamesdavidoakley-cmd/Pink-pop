@@ -12,7 +12,7 @@ import { ReplaySession } from './replay';
 import { Daily } from './daily';
 import { REPLAYS } from '../content/replays';
 import { botById } from './bots';
-import { currentRungIndex, loadProgress, saveProgress, type Progress } from './progress';
+import { currentRungIndex, loadProgress, saveProgress, setQuestions, type Progress } from './progress';
 import { LADDER } from '../content/ladder';
 import { RECIPES } from '../content/recipes';
 
@@ -45,6 +45,10 @@ export class App {
     this.screens.onRecipe = (r) => void this.goRecipe(r.id);
     this.screens.onReplay = (r) => void this.goReplay(r.id);
     this.screens.onDaily = () => void this.daily.run();
+    this.screens.onQuestions = (mode) => {
+      this.saveP(setQuestions(this.progress, mode));
+      this.goHome();
+    };
     (window as unknown as { __app: App }).__app = this;
   }
 

@@ -1,10 +1,17 @@
 import type { Ladder } from '../content/ladder';
+import type { QuestionMode } from './questions';
 
 export interface RungProgress {
   solved: number;
   firstTry: number;
   revealed: number;
   attempts: number;
+  /** "why did that work?" answered right on this rung */
+  principleRight: number;
+}
+
+export interface Settings {
+  questions: QuestionMode;
 }
 
 export interface RecipeProgress {
@@ -34,6 +41,9 @@ export interface Progress {
   recipes: Record<string, RecipeProgress>;
   replays: Record<string, ReplayProgress>;
   today: Today | null;
+  settings: Settings;
+  /** last few diagnosis-question results, newest last */
+  whyRecent: boolean[];
   /** ISO dates (YYYY-MM-DD) of days with at least one solve */
   days: string[];
   /** diagnosis / principle questions: right vs asked */
@@ -41,10 +51,12 @@ export interface Progress {
   whyAsked: number;
 }
 
-export const EMPTY_PROGRESS: Progress = { version: 1, rungs: {}, recipes: {}, replays: {}, today: null, days: [], whyRight: 0, whyAsked: 0 };
+export const EMPTY_PROGRESS: Progress = { version: 1, rungs: {}, recipes: {}, replays: {}, today: null, settings: { questions: 'quick' }, whyRecent: [], days: [], whyRight: 0, whyAsked: 0 };
 
 export function rungProgress(p: Progress, id: string): RungProgress {
-  return p.rungs[id] ?? { solved: 0, firstTry: 0, revealed: 0, attempts: 0 };
+  const r = p.rungs[id];
+  if (!r) return { solved: 0, firstTry: 0, revealed: 0, attempts: 0, principleRight: 0 };
+  return { ...r, principleRight: r.principleRight ?? 0 }; // older saves predate principleRight
 }
 
 export function isUnlocked(p: Progress, ladder: Ladder, index: number): boolean {
@@ -101,7 +113,17 @@ export function recordTodayStep(p: Progress, step: string, extra: Partial<Pick<T
 }
 
 export function recordWhy(p: Progress, right: boolean): Progress {
-  return { ...p, whyAsked: p.whyAsked + 1, whyRight: p.whyRight + (right ? 1 : 0) };
+  const whyRecent = [...(p.whyRecent ?? []), right].slice(-5);
+  return { ...p, whyRecent, whyAsked: p.whyAsked + 1, whyRight: p.whyRight + (right ? 1 : 0) };
+}
+
+export function recordPrinciple(p: Progress, rungId: string, right: boolean): Progress {
+  const r = rungProgress(p, rungId);
+  return recordWhy({ ...p, rungs: { ...p.rungs, [rungId]: { ...r, principleRight: r.principleRight + (right ? 1 : 0) } } }, right);
+}
+
+export function setQuestions(p: Progress, questions: QuestionMode): Progress {
+  return { ...p, settings: { ...p.settings, questions } };
 }
 
 /** Consecutive days ending today or yesterday. */
@@ -128,7 +150,7 @@ export function loadProgress(): Progress {
     const raw = localStorage.getItem(KEY);
     if (!raw) return EMPTY_PROGRESS;
     const p = JSON.parse(raw) as Progress;
-    return p.version === 1 ? { ...EMPTY_PROGRESS, ...p } : EMPTY_PROGRESS;
+    return p.version === 1 ? { ...EMPTY_PROGRESS, ...p, settings: { ...EMPTY_PROGRESS.settings, ...(p.settings ?? {}) } } : EMPTY_PROGRESS;
   } catch {
     return EMPTY_PROGRESS;
   }
