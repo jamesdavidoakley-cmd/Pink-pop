@@ -46,3 +46,26 @@
 - `npm run typecheck` clean · `npm test` 18/18 · `boot-check` OK · `puzzle-check` drives rung card → why question → wrong move hint (leads with the diagnosis) → solve → principle → saved progress with `whyRight`.
 
 **Next (P2)**: bots with flaws per rung (JSON), the spar debrief ("best attacking moment, one missed moment, why"), and the daily 15-minute session flow.
+
+## P2 — Attack recipes, the payoff ledger, bots with flaws (2026-11-07)
+
+**Why this phase changed shape.** Two corrections from James mid-build: (1) puzzles cannot teach the *trick*: getting castle-ready, offering a pawn so a capture opens the file, then walking in. That needs multi-move plans. (2) The game must teach **calculating the payoff** of a sacrifice, never reward giving pieces away.
+
+**Built**
+- **Attack recipes / Plan Lab** (`content/recipes.json`, `src/game/recipe.ts`): five plans on rails: the f-pawn lever (with the preparation step: chase the bishop that pins the f-pawn first), the Greek gift, Morphy's opera game, the Danish gambit's two roads, the h-pawn battering ram. Each player move has a prompt and a why; wrong moves get mechanism hints. Every bait step carries a **ledger** (`give`, `get`, `decoys`, `payoffPly`, `count`): he must answer *"you want to give X: what does it buy?"* **before** the sacrifice executes, then sees the full ledger. The lens verifies the payoff when it arrives ("Paid: pressure 18 → 25"). The plan ends with the payoff card and a **Try it live** game from the same position against a bait-taking bot.
+- **Lens upgrade**: x-ray roads (`findXRays`): lines from our sliders to the king zone blocked only by our own non-pawn pieces. They score (the f-file lever's payoff is a half-open file, not an immediate attacker) and feed a new `open-file` diagnosis: "your rook on f1 sees f7 through your own knight, which can step aside with a threat".
+- **Sacrifice auditor** (`src/game/auditor.ts`): when the player loses material, a ledger opens ("You gave 2. Now show me what it buys."). It settles as soon as pressure arrives, or at the end of a three-turn window, with Stockfish (depth 8) as truth-teller: **paid** (pressure arrived and eval holds), **gamble** (pressure arrived but it does not hold: "count their best defence before you give"), **giveaway** (nothing bought: "material is fuel, not confetti"). Giveaways are never rewarded by the meter.
+- **Debrief** at game end: paid-for moment or best pressure gain, any giveaway, and one missed chance (engine's best vs his move on the last ten turns, explained with the diagnosis).
+- **Bots with flaws** (`content/bots.json`, `src/game/bots.ts`): 12 named bots matching the ladder. Stockfish MultiPV candidates are re-scored by flaw features (greedy, blind, late castler, thin defence, roof pusher, no luft, huddle, queen trader, trader) and sampled; nothing outside the slack is ever chosen, so bots stay beatable, not suicidal. Play mode defaults to the current rung's bot.
+- Home → Attack recipes screen; `?recipe=<id>` dev URL; `scripts/recipe-check.mjs` and `scripts/audit-check.mjs`.
+
+**Decisions and findings**
+- **The first Greek gift position was unsound.** Black's queen on e7 covered g5, so …Qxg5 refuted the knight check; the scripted defence was a blunder. Caught by the live auditor (verdict giveaway, engine -3.7) and confirmed with Stockfish at depth 16. Replaced with a position where Bxh7+ is the engine's first choice (+5.3) and the recipe now teaches the four Greek-gift conditions explicitly. The auditor doing its job on our own content is the best evidence the design is right.
+- Ledger distractors are Tal-wrong habits, not alternative truths.
+- A sacrifice's payoff can be several moves away (the lever: four plies), so both the recipe test and the live auditor use a window rather than a one-move check.
+- The live audit check adapts to the bot's defence because a strong engine will not follow a script; the auditor's logic is unit-tested on fixed lines.
+
+**Gate evidence**
+- typecheck clean · 32 unit tests (recipes: every line legal, every player ply annotated, every bait raises pressure by its payoff ply) · boot-check, puzzle-check, recipe-check ×5, audit-check all OK.
+
+**Next (P3)**: the daily 15-minute session (warm-up idea → three puzzles → one recipe or live game → debrief), Tal/Morphy/Anderssen guess-the-move replays with reasons, and more recipes including Black-side ones.

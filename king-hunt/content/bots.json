@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "bots": [
+    { "id": "pawnsworth", "name": "Pawnsworth", "blurb": "A friendly beginner. Leaves pieces lying around and loves a free pawn.", "skillLevel": 0, "depth": 3, "multiPv": 5, "slack": 300, "flaws": { "greedy": 1.0, "blind": 0.8 } },
+    { "id": "sir-scatter", "name": "Sir Scatter", "blurb": "Leaves pieces loose all over the board. Punish him with forks and f7.", "skillLevel": 1, "depth": 3, "multiPv": 5, "slack": 260, "flaws": { "blind": 1.0, "greedy": 0.6 } },
+    { "id": "baron-dawdle", "name": "Baron Dawdle", "blurb": "Never castles in time. Keep his king in the middle.", "skillLevel": 2, "depth": 4, "multiPv": 5, "slack": 220, "flaws": { "lateCastle": 1.0, "greedy": 0.5 } },
+    { "id": "duchess-thin", "name": "Duchess Thin", "blurb": "Defends her king with as few pieces as possible. Bring everyone.", "skillLevel": 3, "depth": 4, "multiPv": 5, "slack": 200, "flaws": { "thinDefence": 1.0, "greedy": 0.4 } },
+    { "id": "captain-pusher", "name": "Captain Pusher", "blurb": "Pushes the pawns in front of his own king. Rip the roof.", "skillLevel": 3, "depth": 4, "multiPv": 5, "slack": 200, "flaws": { "roofPusher": 1.0, "greedy": 0.6 } },
+    { "id": "lady-lockstep", "name": "Lady Lockstep", "blurb": "Never makes a hole for her king. Back-rank tricks work.", "skillLevel": 4, "depth": 4, "multiPv": 5, "slack": 180, "flaws": { "noLuft": 1.0, "greedy": 0.4 } },
+    { "id": "colonel-column", "name": "Colonel Column", "blurb": "Lines his king and queen up. Pins and skewers.", "skillLevel": 5, "depth": 5, "multiPv": 5, "slack": 160, "flaws": { "blind": 0.7, "greedy": 0.5 } },
+    { "id": "madame-mask", "name": "Madame Mask", "blurb": "Ignores what is hiding behind your pieces. Discovered attacks.", "skillLevel": 6, "depth": 5, "multiPv": 4, "slack": 140, "flaws": { "blind": 0.8 } },
+    { "id": "earl-boxed", "name": "Earl Boxed", "blurb": "Huddles his pieces around his king until it cannot breathe.", "skillLevel": 7, "depth": 5, "multiPv": 4, "slack": 130, "flaws": { "noLuft": 0.8, "huddle": 1.0 } },
+    { "id": "one-guard-gwen", "name": "One-Guard Gwen", "blurb": "Trusts a single defender. Deflect it.", "skillLevel": 8, "depth": 6, "multiPv": 4, "slack": 120, "flaws": { "thinDefence": 1.0 } },
+    { "id": "professor-assume", "name": "Professor Assume", "blurb": "Assumes you will always recapture. Zwischenzug.", "skillLevel": 9, "depth": 6, "multiPv": 4, "slack": 110, "flaws": { "greedy": 0.8 } },
+    { "id": "marathon-mo", "name": "Marathon Mo", "blurb": "Trades everything and runs for the endgame. Finish him.", "skillLevel": 10, "depth": 6, "multiPv": 4, "slack": 100, "flaws": { "queenTrader": 1.0, "trader": 0.8 } }
+  ]
+}

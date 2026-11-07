@@ -20,17 +20,21 @@ npm run dev        # → http://localhost:5174
 | `npm run ci` | typecheck + test + build |
 | `node scripts/boot-check.mjs http://localhost:5174 shot.png` | Headless boot into Play: zero console errors, engine replies, screenshot |
 | `node scripts/puzzle-check.mjs http://localhost:5174` | Headless why-first puzzle loop: question → hint → solve → principle → saved |
+| `node scripts/recipe-check.mjs http://localhost:5174 greek-gift` | Headless Plan Lab: hint → ledger question before the sacrifice → payoff → Try it live |
+| `node scripts/audit-check.mjs http://localhost:5174` | Live-game sacrifice audit: a sound sacrifice is *paid*, a pointless drop is a *giveaway* |
 | `npm run electron` | Run the desktop shell against `dist/` |
 | `npm run dist` | Build desktop installers for this OS into `release/` |
 
 Downloadable installers for Windows, macOS and Linux are built by the `king-hunt-release` GitHub Actions workflow on every tag `king-hunt-v*`.
 
-Dev URLs: `?mode=play` boots into a game, `?rung=3` boots into ladder rung 4.
+Dev URLs: `?mode=play` boots into a game, `?rung=3` boots into ladder rung 4, `?recipe=greek-gift` boots into a recipe.
 
 ## Content
 
 - `content/puzzles/*.json` — 31 attack-themed packs derived from the [Lichess puzzle database](https://database.lichess.org/#puzzles) (CC0). Rebuild with `python3 scripts/build-puzzles.py <lichess_db_puzzle.csv.zst>` (needs `pip install zstandard`).
-- `content/ladder.json` — the attack curriculum: rungs, their packs and the bot each rung punishes.
+- `content/ladder.json` — the attack curriculum: rungs, their packs, why each works, and the bot each rung punishes.
+- `content/recipes.json` — attack recipes (multi-move plans) with a payoff ledger on every sacrifice.
+- `content/bots.json` — sparring bots: strength plus a flaw profile.
 
 ## Licences
 

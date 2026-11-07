@@ -79,7 +79,13 @@ Pure, engine-free analysis run every move for both sides:
 
 Per-move coaching lines come from the delta between before/after reports (`describeDelta`). Stockfish is consulted separately for blunder guardrails (later phase) and for the bots.
 
-## 5 · Visual language
+## 5 · Attack recipes and the payoff ledger
+
+Puzzles teach moments. Recipes teach **plans**: get castle-ready, offer the bait, let the capture open the door, walk in. Each recipe (`content/recipes.json`) is a real line with a prompt and a why for every player move. On a bait move the player must first answer *"you want to give X: what does it buy?"* with the real payoff (open file, tempo, king dragged out, defender removed, mate threat) against Tal-wrong decoys, then sees the full ledger, and the lens confirms the payoff when it lands. The plan ends with a *Try it live* game from the same position against a bait-taking bot.
+
+**Calculation, not generosity.** In live games the **sacrifice auditor** opens a ledger whenever material is given and settles it within three turns with Stockfish as the truth-teller: *paid* (pressure arrived, position holds), *gamble* (pressure arrived, but their best defence refutes it), *giveaway* (nothing bought). The attack meter never rewards a giveaway, and the debrief names it.
+
+## 6 · Visual language
 
 - **Board**: dark-navy stage, cream + deep-teal tiles, bloom + vignette, ACES tone mapping.
 - **Heat**: our pressure glows warm orange in enemy territory and on enemy pieces; their pressure on *our* king zone glows cold blue (danger awareness without teaching passivity).
@@ -87,11 +93,11 @@ Per-move coaching lines come from the delta between before/after reports (`descr
 - **Danger ring**: pulses under the enemy king; intensity follows pressure; flares when mate is on.
 - Later: storm clouds and lightning over a king under heavy attack, slow-motion sacrifice moment, orbiting mate replay, voice coach.
 
-## 6 · Sparring bots
+## 7 · Sparring bots
 
-Stockfish lite (single-threaded WASM) is the muscle; `content/bots/*.json` (later phase) supplies strength (Skill Level / depth / move slack) and a **flaw profile** that biases move choice toward the rung's teachable weakness. Phase 0 ships one soft bot, Pawnsworth.
+Stockfish lite (single-threaded WASM) is the muscle; `content/bots.json` supplies strength (Skill Level, depth, slack) and a **flaw profile** (greedy, blind, late castler, thin defence, roof pusher, no luft, huddle, queen trader) that re-scores the engine's candidate moves toward the rung's teachable weakness. Nothing outside the slack is ever chosen: bots are beatable, not suicidal.
 
-## 7 · Daily session (15 minutes)
+## 8 · Daily session (15 minutes)
 
 1. **Warm-up** (3 min): one taught idea or a replay of a famous attack (Morphy, Anderssen, Tal), guess-the-move style.
 2. **Hunt** (4 min): three puzzles from the current rung, attack heat map on.
@@ -99,17 +105,17 @@ Stockfish lite (single-threaded WASM) is the muscle; `content/bots/*.json` (late
 
 Progress, streaks and rung unlocks save locally (`localStorage`, later file-backed in Electron).
 
-## 8 · Tech
+## 9 · Tech
 
 TypeScript strict · Vite · Three.js + `postprocessing` · chess.js · Stockfish 17.1 lite-single WASM (Web Worker, no COOP/COEP headers needed) · Vitest · Playwright boot checks · Electron + electron-builder for Windows/macOS/Linux installers via GitHub Actions.
 
-## 9 · Phases
+## 10 · Phases
 
 | Phase | Ships | Gate |
 |---|---|---|
 | **P0 Skeleton** ✅ | 3D board, legal play vs a soft bot, Attack Lens + heat/fire/ring visuals, attack meter HUD, puzzle packs built from Lichess | typecheck · tests · `boot-check.mjs` zero console errors + bot replies |
 | **P1 Puzzles** ✅ | Why-first puzzle mode on the ladder's packs (diagnose → move → name the principle), hints that show mechanism, rung progression, save | puzzle-check script solves/fails a pack headless |
-| **P2 Bots with flaws** | 12 bots in JSON, flaw-biased move choice, bot clock, debrief | ai-sim proves each bot exhibits its flaw ≥ N% of games |
+| **P2 Recipes, ledger, bots** ✅ | Attack recipes (Plan Lab) with the payoff ledger before every sacrifice; x-ray roads in the lens; the sacrifice auditor (paid / gamble / giveaway) and end-of-game debrief; 12 bots with flaw profiles; Try it live | recipe test (legal, annotated, baits pay off) · recipe-check ×5 · audit-check |
 | **P3 Lessons & replays** | Why-stories per rung, Tal/Morphy/Anderssen guess-the-move replays with reasons, why-first debriefs, daily session flow | session-check completes a full 15-minute loop |
 | **P4 Voice & polish** | Coach voice (Web Speech API), storm/lightning, sacrifice slow-mo, mate replay camera | voice degrades gracefully; 60 fps on mid laptop |
 | **P5 Download** | Electron shell, installers from CI, file-backed saves | installers build green for win/mac/linux |

@@ -22,6 +22,12 @@ export interface FireLine {
   to: Square; // king-zone square it hits
 }
 
+export interface XRay {
+  from: Square; // our sliding piece
+  to: Square; // king-zone square at the end of the road
+  through: Square[]; // our own non-pawn pieces in the way (they can step aside with tempo)
+}
+
 export interface AttackReport {
   side: Color;
   enemyKing: Square;
@@ -31,6 +37,8 @@ export interface AttackReport {
   kingZoneAttackers: number;
   zoneSquaresHit: number;
   fireLines: FireLine[];
+  /** roads to the king zone that only our own pieces block: the payoff of a lever or a sacrifice */
+  xrays: XRay[];
   /** enemy pieces we attack that are undefended or attacked by something cheaper */
   looseTargets: { square: Square; value: number; by: Square }[];
   givesCheck: boolean;
@@ -83,6 +91,45 @@ function hasMateInOne(chess: Chess, side: Color): boolean {
   return false;
 }
 
+const SLIDES: Record<'r' | 'b' | 'q', [number, number][]> = {
+  r: [[1, 0], [-1, 0], [0, 1], [0, -1]],
+  b: [[1, 1], [1, -1], [-1, 1], [-1, -1]],
+  q: [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]],
+};
+
+/** Lines from our sliders to the king zone where the only blockers are our own non-pawn pieces. */
+export function findXRays(chess: Chess, side: Color, zone: Square[]): XRay[] {
+  const zoneSet = new Set(zone);
+  const out: XRay[] = [];
+  for (const row of chess.board()) {
+    for (const cell of row) {
+      if (!cell || cell.color !== side || !(cell.type in SLIDES)) continue;
+      const from = cell.square as Square;
+      for (const [df, dr] of SLIDES[cell.type as 'r' | 'b' | 'q']) {
+        let f = fileOf(from) + df;
+        let r = rankOf(from) + dr;
+        const through: Square[] = [];
+        while (f >= 0 && f < 8 && r >= 0 && r < 8) {
+          const s = sq(f, r);
+          const p = chess.get(s);
+          if (zoneSet.has(s)) {
+            if (through.length > 0 && through.length <= 2) out.push({ from, to: s, through: [...through] });
+            break; // direct hits are already counted as attackers
+          }
+          if (p) {
+            if (p.color !== side || p.type === 'p') break; // enemy piece or our pawn: not a road
+            through.push(s);
+            if (through.length > 2) break;
+          }
+          f += df;
+          r += dr;
+        }
+      }
+    }
+  }
+  return out;
+}
+
 export function analyseAttack(chess: Chess, side: Color): AttackReport {
   const enemy = other(side);
   const enemyKing = chess.findPiece({ type: 'k', color: enemy })[0] as Square;
@@ -127,11 +174,13 @@ export function analyseAttack(chess: Chess, side: Color): AttackReport {
 
   const givesCheck = chess.turn() === enemy && chess.inCheck();
   const mateInOne = hasMateInOne(chess, side);
+  const xrays = findXRays(chess, side, zone);
 
   // Score: pressure on the king dominates, loose pieces and development support it.
   let score = 0;
   score += Math.min(kingZoneAttackers, 8) * 7; // up to 56
   score += Math.min(zoneSquaresHit, 6) * 3; // up to 18
+  score += Math.min(xrays.length, 3) * 3; // up to 9: open roads count even before the blocker steps aside
   score += Math.min(looseTargets.reduce((n, t) => n + t.value, 0), 9) * 1.5; // up to 13.5
   score += developed * 2; // up to 8
   score += castled ? 4 : 0;
@@ -147,6 +196,7 @@ export function analyseAttack(chess: Chess, side: Color): AttackReport {
     kingZoneAttackers,
     zoneSquaresHit,
     fireLines,
+    xrays,
     looseTargets,
     givesCheck,
     mateInOne,
@@ -265,9 +315,15 @@ export function diagnoseKing(chess: Chess, side: Color): Diagnosis[] {
     out.push({ code: 'centre-king', text: 'The king is still in the middle. Open the centre before it can castle.', principle: 'The king cannot run', squares: [king] });
   }
 
+  // A road along a file to the king zone that only our own piece blocks (the lever's payoff).
+  const road = findXRays(chess, side, zone).find((x) => fileOf(x.from) === fileOf(x.to) && (chess.get(x.from)?.type === 'r' || chess.get(x.from)?.type === 'q'));
+  if (road) {
+    const blocker = chess.get(road.through[0]!)!;
+    out.push({ code: 'open-file', text: `The ${FILE_NAMES[fileOf(road.from)]}-file is your road to the king. Your ${PIECE_NAME[chess.get(road.from)!.type]} on ${road.from} sees ${road.to} through your own ${PIECE_NAME[blocker.type]}, which can step aside with a threat.`, principle: 'Open lines', squares: [road.from, ...road.through, road.to] });
+  }
   // Open file on or beside the king, with a heavy piece of ours to use it.
   const heavy = chess.findPiece({ type: 'r', color: side }).length + chess.findPiece({ type: 'q', color: side }).length;
-  if (heavy > 0) {
+  if (heavy > 0 && !road) {
     for (const f of [kf - 1, kf, kf + 1]) {
       if (f < 0 || f > 7) continue;
       let pawnOnFile = false;

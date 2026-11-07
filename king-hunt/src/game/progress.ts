@@ -7,9 +7,16 @@ export interface RungProgress {
   attempts: number;
 }
 
+export interface RecipeProgress {
+  done: number;
+  countRight: number; // payoff ("what do you get?") answers right
+  countAsked: number;
+}
+
 export interface Progress {
   version: 1;
   rungs: Record<string, RungProgress>;
+  recipes: Record<string, RecipeProgress>;
   /** ISO dates (YYYY-MM-DD) of days with at least one solve */
   days: string[];
   /** diagnosis / principle questions: right vs asked */
@@ -17,7 +24,7 @@ export interface Progress {
   whyAsked: number;
 }
 
-export const EMPTY_PROGRESS: Progress = { version: 1, rungs: {}, days: [], whyRight: 0, whyAsked: 0 };
+export const EMPTY_PROGRESS: Progress = { version: 1, rungs: {}, recipes: {}, days: [], whyRight: 0, whyAsked: 0 };
 
 export function rungProgress(p: Progress, id: string): RungProgress {
   return p.rungs[id] ?? { solved: 0, firstTry: 0, revealed: 0, attempts: 0 };
@@ -44,6 +51,16 @@ export function recordSolve(p: Progress, rungId: string, opts: { firstTry: boole
   if (opts.revealed) r.revealed++;
   const days = p.days.includes(today) ? p.days : [...p.days, today];
   return { ...p, rungs: { ...p.rungs, [rungId]: r }, days };
+}
+
+export function recipeProgress(p: Progress, id: string): RecipeProgress {
+  return p.recipes[id] ?? { done: 0, countRight: 0, countAsked: 0 };
+}
+
+export function recordRecipe(p: Progress, id: string, countRight: number, countAsked: number, today = isoToday()): Progress {
+  const r = recipeProgress(p, id);
+  const days = p.days.includes(today) ? p.days : [...p.days, today];
+  return { ...p, days, recipes: { ...p.recipes, [id]: { done: r.done + 1, countRight: r.countRight + countRight, countAsked: r.countAsked + countAsked } } };
 }
 
 export function recordWhy(p: Progress, right: boolean): Progress {
@@ -74,7 +91,7 @@ export function loadProgress(): Progress {
     const raw = localStorage.getItem(KEY);
     if (!raw) return EMPTY_PROGRESS;
     const p = JSON.parse(raw) as Progress;
-    return p.version === 1 ? p : EMPTY_PROGRESS;
+    return p.version === 1 ? { ...EMPTY_PROGRESS, ...p } : EMPTY_PROGRESS;
   } catch {
     return EMPTY_PROGRESS;
   }

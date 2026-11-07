@@ -15,8 +15,9 @@ engine.whenReady().then(
 const app = new App(scene, hudRoot, screensRoot, engine);
 scene.start();
 
-// Dev convenience: ?mode=play | ?rung=<n> boots straight into a mode.
+// Dev convenience: ?mode=play | ?rung=<n> | ?recipe=<id> boots straight into a mode.
 const params = new URLSearchParams(location.search);
 if (params.get('mode') === 'play') app.goPlay();
 else if (params.has('rung')) void app.goPuzzle(Number(params.get('rung')));
+else if (params.has('recipe')) void app.goRecipe(String(params.get('recipe')));
 else app.goHome();
