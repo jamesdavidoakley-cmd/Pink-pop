@@ -157,6 +157,66 @@ export class BoardView {
     }
   }
 
+  /**
+   * The execution: the checking piece walks up to the king, winds up and strikes in its own
+   * style; the king bursts into rubble and the attacker takes the square. Resolves at impact
+   * (so lightning and sound can land with it) and again when the attacker has settled.
+   */
+  executeKing(attacker: Square, king: Square): { impact: Promise<void>; done: Promise<void> } {
+    const mover = this.meshes.get(attacker);
+    const victim = this.meshes.get(king);
+    let impactResolve: () => void = () => {};
+    let doneResolve: () => void = () => {};
+    const impact = new Promise<void>((r) => (impactResolve = r));
+    const done = new Promise<void>((r) => (doneResolve = r));
+    if (!mover || !victim) {
+      impactResolve();
+      doneResolve();
+      return { impact, done };
+    }
+    this.sleep();
+    this.liveSide = null;
+    const at = victim.position.clone().setY(0);
+    const dir = at.clone().sub(mover.position).setY(0).normalize();
+    const style = strikeStyle(mover.userData.type);
+    const approach = at.clone().addScaledVector(dir, style === 'smash' ? -0.95 : -0.62);
+    const color = (victim.material as THREE.MeshStandardMaterial).color.getHex();
+    const gen = this.generation;
+    this.fx.puff(mover.position.clone(), 3);
+    this.tweens.add(
+      sequence([
+        () => tweenMove(mover, approach, 0.55, 0.12),
+        () => {
+          if (gen === this.generation) {
+            sfx.swing(style);
+            this.tweens.add(tweenBrace(victim, mover.position.clone()));
+          }
+          return tweenStrike(mover, dir, style, () => {
+            this.scene.piecesGroup.remove(victim);
+            this.meshes.delete(king);
+            if (gen !== this.generation) return;
+            this.fx.shatter(at.clone().setY(0.3), color, 44, dir);
+            this.fx.puff(at, 12, color);
+            this.fx.shockwave(at, 0xff3b1a);
+            sfx.strike(style);
+            impactResolve();
+          });
+        },
+        () => tweenMove(mover, at, 0.3, 0.1),
+        () => {
+          impactResolve(); // safety: never leave the cut scene waiting
+          doneResolve();
+          return { update: () => false };
+        },
+      ]),
+    );
+    // Keep the mesh map honest: the attacker now stands on the king's square.
+    this.meshes.delete(attacker);
+    this.meshes.set(king, mover);
+    mover.userData.square = king;
+    return { impact, done };
+  }
+
   /** A translucent red copy of the king that tries an escape square and either arrives or bumps back. */
   ghostKing(color: Color, from: Square, to: Square, blocked: boolean): Promise<void> {
     const g = makePiece('k', color, from);

@@ -305,6 +305,12 @@ export function tweenStrike(mesh: THREE.Object3D, dir: THREE.Vector3, style: Str
     update(dt) {
       t += dt;
       const { windup, blow, settle } = timing;
+      // The blow is short; on a slow frame it can be stepped over entirely, so the impact
+      // is guaranteed here rather than inside the blow branch.
+      if (!hit && t >= windup + blow * 0.82) {
+        hit = true;
+        onImpact();
+      }
       let lean = 0; // rotation about the side axis: negative = lean back
       let push = 0; // along fwd
       let rise = 0; // up
@@ -326,10 +332,6 @@ export function tweenStrike(mesh: THREE.Object3D, dir: THREE.Vector3, style: Str
           case 'smash': push = -0.22 + 1.0 * k; lean = -0.15 + 0.4 * k; break;
           case 'chop': rise = 0.4 * (1 - k); lean = -0.8 + 1.5 * k; push = -0.1 + 0.7 * k; break;
           default: lean = -0.55 + 1.0 * k; push = -0.1 + 0.7 * k;
-        }
-        if (!hit && k > 0.82) {
-          hit = true;
-          onImpact();
         }
       } else {
         const k = Math.min(1, (t - windup - blow) / settle);

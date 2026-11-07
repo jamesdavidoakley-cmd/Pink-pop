@@ -18,6 +18,14 @@ export interface Beat {
 
 const NAME: Record<string, string> = { p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' };
 
+/** The piece(s) giving check in a position (the king's executioner comes first). */
+export function checkers(fen: string): { king: Square; by: Square[] } {
+  const chess = new Chess(fen);
+  const mated: Color = chess.turn();
+  const king = chess.findPiece({ type: 'k', color: mated })[0] as Square;
+  return { king, by: chess.attackers(king, other(mated)) as Square[] };
+}
+
 export function explainMate(fen: string, maxBeats = 5): { king: Square; mated: Color; beats: Beat[] } {
   const chess = new Chess(fen);
   const mated: Color = chess.turn();

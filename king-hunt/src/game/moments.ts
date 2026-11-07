@@ -6,7 +6,7 @@ import { squareToWorld } from '../board3d/coords';
 import type { CinemaOverlay } from '../cinema/overlay';
 import { sfx } from '../audio/sfx';
 import type { Color, Square } from '../chess/types';
-import { explainMate } from '../chess/mate-explain';
+import { checkers, explainMate } from '../chess/mate-explain';
 import { PALETTE } from '../board3d/palette';
 
 const reduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
@@ -167,11 +167,45 @@ export class Moments {
     await this.scene.director.play([{ ...close, duration: 0.8, fov: 34, ease: Director.easeOut, hold: 0.15 }]);
     if (fen) await this.escapeTour(fen, kingSquare, dir);
     if (this.skipTour) this.skipTour = false;
-    this.view.fx.lightning(king);
-    await sleep(140);
-    this.view.topple(kingSquare, king.clone().add(dir));
-    this.view.fx.shockwave(king, 0xff3b1a);
-    sfx.thud();
+    // The execution: the checking piece comes for the king.
+    let executed = false;
+    if (fen) {
+      try {
+        const c = checkers(fen);
+        const attacker = c.by[0];
+        if (attacker) {
+          const from = squareToWorld(attacker);
+          const approachDir = king.clone().sub(from).setY(0).normalize();
+          const side = new THREE.Vector3(-approachDir.z, 0, approachDir.x);
+          const name = ({ p: 'pawn', n: 'knight', b: 'bishop', r: 'rook', q: 'queen', k: 'king' } as Record<string, string>)[this.view.meshAt(attacker)?.userData.type ?? 'p'];
+          this.overlay.caption(`The ${name} on ${attacker} takes the king.`);
+          const run = this.view.executeKing(attacker, kingSquare);
+          // Low three-quarter shot: between attacker and king, off to the side, looking at the king.
+          const dist = Math.min(3.2, Math.max(1.8, from.distanceTo(king) * 0.6));
+          const pos = king.clone().addScaledVector(approachDir, -dist).addScaledVector(side, 1.7).setY(1.5);
+          void this.scene.director.play([{ pos, look: king.clone().setY(0.45), duration: 0.5, fov: 46, ease: Director.easeOut, hold: 8 }]);
+          this.view.timeScale = 0.7;
+          await run.impact;
+          this.view.timeScale = 1;
+          this.view.fx.lightning(king);
+          this.scene.director.shakeCamera(0.16, 0.5);
+          this.overlay.flash('rgba(255,255,255,.4)', 200);
+          executed = true;
+          await run.done;
+          this.scene.director.cancel();
+        }
+      } catch {
+        executed = false;
+      }
+    }
+    if (!executed) {
+      this.view.fx.lightning(king);
+      await sleep(140);
+      this.view.topple(kingSquare, king.clone().add(dir));
+      this.view.fx.shockwave(king, 0xff3b1a);
+      sfx.thud();
+    }
+    this.overlay.caption('');
     const title = this.overlay.showTitle(winner === 'you' ? 'Checkmate' : 'Mated', winner === 'you' ? 'The king hunt is complete' : 'Their hunt got there first', '', 2600);
     if (winner === 'you') sfx.fanfare();
     const look = king.clone().setY(0.4);
