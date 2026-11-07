@@ -5,6 +5,7 @@ import { TILE, squareToWorld } from './coords';
 import { sq, type Square } from '../chess/types';
 import { Director } from './director';
 import { stoneTexture } from './pieces';
+import { BoardLabels } from './labels';
 
 export interface Tile {
   square: Square;
@@ -21,6 +22,7 @@ export class BoardScene {
   readonly piecesGroup = new THREE.Group();
   readonly fxGroup = new THREE.Group();
   readonly director: Director;
+  readonly labels: BoardLabels;
   private clock = new THREE.Clock();
   private tickers = new Set<(dt: number, t: number, realDt: number) => void>();
   private orientation: 'w' | 'b' = 'w';
@@ -62,6 +64,7 @@ export class BoardScene {
 
     this.buildBoard();
     this.scene.add(this.piecesGroup, this.fxGroup);
+    this.labels = new BoardLabels(this.scene);
     this.director = new Director(this.camera);
     this.director.onFinish = () => this.restoreFraming();
 
@@ -93,7 +96,7 @@ export class BoardScene {
       }
     }
     const frame = new THREE.Mesh(
-      new THREE.BoxGeometry(8 * TILE + 0.7, 0.3, 8 * TILE + 0.7),
+      new THREE.BoxGeometry(8 * TILE + 1.1, 0.3, 8 * TILE + 1.1),
       new THREE.MeshStandardMaterial({ color: PALETTE.frame, roughness: 0.4, metalness: 0.3 }),
     );
     frame.position.y = -0.24;
@@ -162,7 +165,7 @@ export class BoardScene {
     const aspect = w / fullH;
     const f = this.framing();
     const dist = Math.hypot(f.y + 0.4, f.z);
-    const halfWidth = 5.2; // board + frame + a little air
+    const halfWidth = 5.5; // board + frame + labels + a little air
     const fovX = 2 * Math.atan(halfWidth / dist);
     const fovY = (2 * Math.atan(Math.tan(fovX / 2) / aspect) * 180) / Math.PI;
     this.camera.aspect = aspect;

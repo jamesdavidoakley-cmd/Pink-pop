@@ -57,6 +57,7 @@ export class AttackEffects {
 
   setHighlights(map: Map<Square, THREE.Color>) {
     this.highlight = map;
+    this.board.labels.highlight([...map.keys()]);
     this.applyTiles();
   }
 
